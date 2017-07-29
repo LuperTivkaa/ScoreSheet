@@ -1,0 +1,30 @@
+{
+  "name": "scoresheet",
+  "version": "1.0.0",
+  "description": "School Management Software",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LuperTivkaa/ScoreSheet.git"
+  },
+  "author": "Tivkaa Luper Manasseh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LuperTivkaa/ScoreSheet/issues"
+  },
+  "homepage": "https://github.com/LuperTivkaa/ScoreSheet#readme",
+  "dependencies": {
+    "gulp": "^3.9.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-inject": "^4.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-uglify": "^3.0.0"
+  }
+}
