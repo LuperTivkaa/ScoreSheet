@@ -1,5 +1,5 @@
 <?php 
-include 'inc/header.php';
+include 'app/inc/mainHeader.php';
 include'inc/autoload.php';
 //$new_signup = new signUp();
 ?>
@@ -142,161 +142,13 @@ include'inc/autoload.php';
       <!-- Pricing -->
       <h1 id="pricing" class="dispaly-4 text-xs-center my-3 leadText">Flexible Pricing</h1>
       <p class="lead text-xs-center">A smart school management App with easy to use features with unbeatable price of <span>  N 53/Month/Student</span></p>
-        <!-- pricing features -->
-      <!--   <div class="card-group my-3">
-
-          <div class="card card-inverse text-xs-center bg-info">
-                <div class="card-header">
-               <h4 class="card-title display-4 text-primary">Basic</h4>
-                </div>
-            <div class="card-block">
-              <h4 class="card-title">N 60/Student/Month</h4>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">Pay As You Go</li>
-              <li class="list-group-item">5 teachers</li>
-              <li class="list-group-item">50 students</li>
-              <li class="list-group-item">1 GB Storage Space</li>
-              <li class="list-group-item">Cloud and Secure Hosting</li>
-              <li class="list-group-item">Weekly Backups</li>
-              <li class="list-group-item">Only Basic Modules</li>
-              <li class="list-group-item">Free Initial Setup</li>
-              <li class="list-group-item">Limited Support</li>
-              <li class="list-group-item">Free Onsite Training</li>
-              <li class="list-group-item">Guaranteed Updates</li>
-              </ul>
-              <div class="card-block">
-                
-                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#register">Sign up</button>
-              </div>
-          </div>
-          <div class="card card-outline-primary text-xs-center">
-                <div class="card-header">
-                <h4 class="card-title display-4">Popular</h4>
-                </div>
-            <div class="card-block">
-              <h4 class="card-title">N 82/Month/Student</h4>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">Pay As You Go</li>
-              <li class="list-group-item">Unlimited Students</li>
-              <li class="list-group-item">Unlimited Teachers</li>
-              <li class="list-group-item">Unlimited Storage Space</li>
-              <li class="list-group-item">Cloud and Secure Hosting</li>
-              <li class="list-group-item">Weekly Backups</li>
-              <li class="list-group-item">All Modules</li>
-              <li class="list-group-item">Free Initial Setup</li>
-              <li class="list-group-item">Email and Phone Support</li>
-              <li class="list-group-item">Free Onsite Training</li>
-              <li class="list-group-item">Guaranteed Updates</li>
-              </ul>
-              <div class="card-block">
-                
-                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#register">Sign up</button>
-              </div>
-          </div>
-
-          <div class="card card-inverse text-xs-center bg-info">
-                <div class="card-header">
-                <h4 class="card-title display-4 text-primary">Branded</h4>
-                </div>
-            <div class="card-block">
-              <h4 class="card-title">N 700,000/Per Annum</h4>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">One Free Customized Institutional website</li>
-              <li class="list-group-item">Mobile App</li>
-              <li class="list-group-item">Unlimited Students</li>
-              <li class="list-group-item">Unlimited Teachers</li>
-              <li class="list-group-item">Cloud and Secure Hosting</li>
-              <li class="list-group-item">Daily Backups</li>
-              <li class="list-group-item">1 year Free Website Maintenance</li>
-              <li class="list-group-item">Free Initial Setup</li>
-              <li class="list-group-item">Email and Phone Support</li>
-              <li class="list-group-item">Free Onsite Training</li>
-              <li class="list-group-item">All Modules</li>
-              <li class="list-group-item">Guaranteed Updates</li>
-              </ul>
-              <div class="card-block">
-                
-                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#register">Sign up</button>
-              </div>
-          </div>
-        </div> -->
-        
-        <!--  Pricing features ends -->
-
-
-        <!-- Modules descripion begins here -->
+      
 
         <h1 id="modules" class="dispaly-4 text-xs-center my-3 leadText">ScoreSheet Modules</h1>
         <p class="lead text-xs-center">ScoreSheet is engineered to ease institutional management by Staff, Students and Admministors. The App is made up of modules that help you manage your school needs stargting from admission to examination reporting. Please register for a free account and start enjoying the benefits of Facile<br>
         <button type="button" class="btn btn-outline-info btn-lg d-block mx-auto my-3" id="signup">Register for free</button></p>
         
-          <!-- Modules description begins -->
-          <!-- <div class="row">
-          <div class="col-sm-4">
-          <h3 class="mb-2 excite">Basic Modules</h3>
-          
-          <ul class="fa-ul">
-            
-            <li><i class="fa-li fa fa-file-text-o fa-fw" aria-hidden="true"></i>Courses and Batches</li>
-            <li><i class="fa-li fa fa-info fa-fw" aria-hidden="true"></i>Student Information</li>
-            <li><i class="fa-li fa fa-line-chart fa-fw" aria-hidden="true"></i>Finance (Income/Expenses)</li>
-            <li><i class="fa-li fa fa-calendar-check-o fa-fw" aria-hidden="true"></i>School Event/Calendar</li>
-            <li><i class="fa-li fa fa-key fa-fw" aria-hidden="true"></i>Teacher Login</li>
-            <li><i class="fa-li fa fa-certificate fa-fw" aria-hidden="true"></i>Examination/Assessment</li>
-          </ul>
-
-        </div>
-
-        <div class="col-sm-4">
-          <h3 class="mb-2 excite">Popular Modules</h3>
-        <ul class="fa-ul">
-            
-            <li><i class="fa-li fa fa-file-text-o fa-fw" aria-hidden="true"></i>Courses and Batches</li>
-            <li><i class="fa-li fa fa-info fa-fw" aria-hidden="true"></i>Student Information</li>
-            <li><i class="fa-li fa fa-line-chart fa-fw" aria-hidden="true"></i>Finance (Income/Expenses)</li>
-            <li><i class="fa-li fa fa-calendar-check-o fa-fw" aria-hidden="true"></i>School Event/Calendar</li>
-            <li><i class="fa-li fa fa-key fa-fw" aria-hidden="true"></i>Teacher Login</li>
-            <li><i class="fa-li fa fa-certificate fa-fw" aria-hidden="true"></i>Examination/Assessment</li>
-            <li><i class="fa-li fa fa-user-plus"></i>Student Admission</li>
-            <li><i class="fa-li fa fa-files-o fa-fw" aria-hidden="true"></i>Customized Reports</li>
-            <li><i class="fa-li fa fa-table fa-fw" aria-hidden="true"></i>Time Table</li>
-            <li><i class="fa-li fa fa-envelope-open-o"></i>Internal Messaging System</li>
-            <li><i class="fa-li fa fa-cogs fa-fw" aria-hidden="true"></i>Data Management</li>
-            <li><i class="fa-li fa fa-user-plus fa-fw" aria-hidden="true"></i>Online Admission Application</li>
-            <li><i class="fa-li fa fa-at fa-fw" aria-hidden="true"></i>Email Integration</li>
-          </ul>
-        </div>
-        
-        <div class="col-sm-4">
-         <h3 class="mb-2 excite">Branded</h3>
-          <ul class="fa-ul">
-            <li><i class="fa-li fa fa-file-text-o fa-fw" aria-hidden="true"></i>Courses and Batches</li>
-            <li><i class="fa-li fa fa-info fa-fw" aria-hidden="true"></i>Student Information</li>
-            <li><i class="fa-li fa fa-line-chart fa-fw" aria-hidden="true"></i>Finance (Income/Expenses)</li>
-            <li><i class="fa-li fa fa-calendar-check-o fa-fw" aria-hidden="true"></i>School Event/Calendar</li>
-            <li><i class="fa-li fa fa-key fa-fw" aria-hidden="true"></i>Teacher Login</li>
-            <li><i class="fa-li fa fa-certificate fa-fw" aria-hidden="true"></i>Examination/Assessment</li>
-            <li><i class="fa-li fa fa-user-plus"></i>Student Admission</li>
-            <li><i class="fa-li fa fa-files-o fa-fw" aria-hidden="true"></i>Customized Reports</li>
-            <li><i class="fa-li fa fa-table fa-fw" aria-hidden="true"></i>Time Table</li>
-            <li><i class="fa-li fa fa-envelope-open-o"></i>Internal Messaging System</li>
-            <li><i class="fa-li fa fa-cogs fa-fw" aria-hidden="true"></i>Data Management</li>
-            <li><i class="fa-li fa fa-user-plus fa-fw" aria-hidden="true"></i>Online Admission Application</li>
-            <li><i class="fa-li fa fa-at fa-fw" aria-hidden="true"></i>Email Integration</li>
-            <li><i class="fa-li fa fa-paperclip fa-fw" aria-hidden="true"></i>Data Export</li> 
-            <li><i class="fa-li fa fa-mobile fa-fw" aria-hidden="true"></i>Mobile App</li> 
-            <li><i class="fa-li fa fa-picture-o fa-fw" aria-hidden="true"></i>Gallery</li>  
-             <li><i class="fa-li fa fa-database fa-fw" aria-hidden="true"></i>Inventory</li>  
-              <li><i class="fa-li fa fa-comments-o fa-fw" aria-hidden="true"></i>Discussion Board</li>
-               <li><i class="fa-li fa fa-link fa-fw" aria-hidden="true"></i>Free Institutional Website</li>        
-            </ul>
-        </div>
-      </div> -->
-
-        <!-- Modules description ends here -->
+         
 
 
         <!-- testimonials -->
@@ -313,15 +165,7 @@ include'inc/autoload.php';
         <div class="col-md-4 mb-r">
             
             <div class="testimonial">
-                <!--Avatar-->
-                <!-- <div class="avatar">
-                    <img src="images/avatar-2.jpg" class="rounded-circle img-fluid">
-                </div> -->
-                
-                <!--Content-->
-                <!-- <h4>Anna Deynah</h4>
-                <h5>Web Designer</h5>
-                <p><i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod eos id officiis hic tenetur quae quaerat ad velit ab.</p>  -->     
+                   
             </div>
         </div>
         <!--/First column-->
@@ -345,14 +189,7 @@ include'inc/autoload.php';
         <!--Third column-->
         <div class="col-md-4 mb-r">
             <div class="testimonial">
-                <!--Avatar-->
-                <!-- <div class="avatar">
-                    <img src="images/avatar-1.jpg" class="rounded-circle img-fluid">
-                </div> -->
-                <!--Content-->
-                <!-- <h4>Maria Kate</h4>
-                <h5>Photographer</h5>
-                <p><i class="fa fa-quote-left"></i> At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti.</p> -->
+             
             </div>
         </div>
         <!--/Third column-->
@@ -514,4 +351,4 @@ include'inc/autoload.php';
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 
-    <?php include'inc/footer.php';?>
+    <?php include'app/inc/mainFooter.php';?>
