@@ -9,7 +9,7 @@
 <title> ScoreSheet | Home</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
-    <link rel="stylesheet" href="fonts/css/font-awesome.min.css">
+    <link rel="stylesheet" href="app/fonts/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://fonts.googleapis.com/css?family=Fjalla+One|Baloo+Chettan|Just+Another+Hand|Comfortaa|Dancing+Script">
     <link rel="stylesheet" href="customCss/custom.css">
