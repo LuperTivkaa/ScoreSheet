@@ -1,6 +1,6 @@
 <?php 
 include 'app/inc/mainHeader.php';
-include'inc/autoload.php';
+//include'inc/autoload.php';
 //$new_signup = new signUp();
 ?>
 <!-- jumbotron for key markup begins here -->
