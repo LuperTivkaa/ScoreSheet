@@ -1,0 +1,10 @@
+{
+    "autoload": {
+        "psr-4": {
+            "ScoreSheet\\": "app/lib/"
+        }
+    },
+    "require": {
+        "fzaninotto/faker": "^1.6"
+    }
+}
