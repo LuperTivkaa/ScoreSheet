@@ -1,0 +1,106 @@
+                            //Import partials
+                            @import 'partials/variables';
+                            @import 'partials/mixins';
+                            //=================================
+                            //background cover
+                            //=================================
+                            .newsletterJumbo {
+                                background: url("../images/bg.jpg");
+                                background-size: cover;
+                                background-position: center;
+                            }
+                            
+                            .jumb {
+                                background: url("../images/pencil.jpg");
+                                background-size: cover;
+                                background-position: center;
+                            }
+                            
+                            .error {
+                                color: $error;
+                                text-align: center;
+                            }
+                            
+                            .mylogo img {
+                                width: 50px;
+                                height: 50px;
+                            }
+                            
+                            .headerImage {
+                                border-radius: 50%;
+                                padding: 1px;
+                                border: 1px solid $color-shade;
+                            }
+                            
+                            .testimonial-name {
+                                font-family: $testimonial-font;
+                                color: $testimonial-color;
+                            }
+                            
+                            .testimonial-note {
+                                font-family: $font-baloo;
+                                font-size: .7em;
+                                color: $testimonial-note;
+                            }
+                            
+                            .testimonial-text {
+                                font-family: $testimonial-font;
+                                font-size: .7em;
+                                color: $testimonial-color;
+                            }
+                            
+                            .underlineHr {
+                                border: 1px solid $hr-color;
+                                border-radius: 6.5px;
+                            }
+                            
+                            .success-msg {
+                                color: $success;
+                            }
+                            
+                            .navbackground {
+                                background-color: $navbg-color;
+                            }
+                            
+                            a {
+                                color: $link-color;
+                                font-family: $font-primary;
+                                font-size: 14px;
+                            }
+                            
+                            a:hover {
+                                text-decoration: none;
+                                color: $link-color;
+                            }
+                            
+                            .leadText {
+                                font-family: $font-primary;
+                                color: $headerText-color;
+                            }
+                            
+                            .leadp {
+                                font-size: 16px;
+                            }
+                            
+                            .welcome {
+                                color: $general;
+                                font-family: $font-primary;
+                                font-size: 1.7em;
+                            }
+                            
+                            .intro {
+                                color: $general;
+                                font-family: $intro-font;
+                                font-size: 90px;
+                            }
+                            
+                            .excite {
+                                color: $color-shade;
+                                font-family: $font-primary;
+                            }
+                            
+                            .social a {
+                                font-family: $font-primary;
+                                color: $footer-social;
+                                font-size: 16px;
+                            }
