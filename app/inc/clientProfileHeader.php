@@ -1,20 +1,21 @@
 <?php
 
 ?>
-<script type="text/javascript" src="Jquery/jquery.js"></script>
+<!--CONCAT BOTH JQUERY AND JQUERY UI AND PRODUCE A SINGLE FILE  -->
+<script type="text/javascript" src="app/js/jquery.js"></script>
 
-<script type="text/javascript" src="Jquery/jquery-ui.js"></script>
+<script type="text/javascript" src="app/js/jquery-ui.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
-  <link rel="stylesheet" href="Bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="app/Bootstrap/css/bootstrap.min.css">
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="fonts/css/font-awesome.min.css">
+    <link rel="stylesheet" href="app/fonts/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css"
     href="https://fonts.googleapis.com/css?family=Nova+Mono|Baloo+Chettan|Open+Sans+Condensed|Ubuntu|Abel|Marmelad|Oswald|Arsenal">
-<link rel="stylesheet" href="customCss/normalize.css">
+<link rel="stylesheet" href="app/css/normalize.css">
+<!--CONCAT ALL CSS FILES INTO APP.CSS  -->
 <link rel="stylesheet" href="customCss/custom.css">
-<link rel="stylesheet" href="Bootstrap/css/bootstrap.min.css">
     <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="customCss/jquery-ui.css">
   </head>
