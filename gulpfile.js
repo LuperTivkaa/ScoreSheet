@@ -25,7 +25,7 @@ var paths = {
     distJS: 'dist/**/*.js',
 };
 
-//Task to copy all php files from app folder to sandbox for develpment and testing
+//Task to copy all php files from app folder to sandbox for development and testing
 gulp.task('copyPHP', function() {
     return gulp.src(paths.appPHP).pipe(gulp.dest(paths.sandbox));
 });
@@ -47,10 +47,21 @@ gulp.task('copyALL', ['copyPHP', 'copyCSS', 'copyJS'], function() {
 //inject test case
 //TODO: This is working well please change directroy
 gulp.task('injectCase', function() {
-    var target = gulp.src('./inject.php');
-    // It's not necessary to read the files (will speed up things), we're only after their paths: 
-    var sources = gulp.src(['app/**/*.js'], { read: false });
+    var target = gulp.src('app/inc/mainHeader.php');
+
+    var sources = gulp.src(['app/css/frontend.css'], { read: false });
 
     return target.pipe(inject(sources))
-        .pipe(gulp.dest('./src'));
+        .pipe(gulp.dest('app/inc/'));
+});
+
+//COMPILE SASS TO CSS
+gulp.task('compileSass', function() {
+    gulp.src("app/scss/frontend.scss")
+        .pipe(sass())
+        .pipe(gulp.dest('app/css'));
+});
+//watch task
+gulp.task('watchSass', function() {
+    gulp.watch('app/**/*.scss', ['compileSass']);
 });
