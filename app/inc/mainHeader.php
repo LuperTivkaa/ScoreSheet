@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="app/fonts/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://fonts.googleapis.com/css?family=Fjalla+One|Baloo+Chettan|Just+Another+Hand|Comfortaa|Dancing+Script">
-    <link rel="stylesheet" href="customCss/custom.css">
     <!-- inject:css -->
+    <link rel="stylesheet" href="app/css/frontend.css">
     <!-- endinject -->
   </head>
   <body id="home" data-spy="scroll" data-offset="100" data-target=".navbar">
