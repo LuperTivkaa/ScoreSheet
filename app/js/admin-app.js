@@ -2,33 +2,32 @@
      $("#datepicker").datepicker();
  });
 
- //    
+ ////load the content of a particuluar url that is clicked on
+ $('.nav-link').on('click', function(evt) {
+     evt.preventDefault();
+     $("#my-info").empty();
+     let url = $(this).attr('href');
+     $('#new-content').load(url);
+     // //console.log(url);
+ });
+
  //get birthdays NOT COMPLETE
 
  $('.birthdays').on('click', function(evt) {
-         evt.preventDefault();
-         let url = $(this).attr('href');
-         //alert(url);
-         $('#new-content').load(url, function() {
-             // put the set interval function or code here
-             //    $("#new-content").on('click', '#ID-BUTTON', function(e){
-             //on click of the send Message BUTTON, get the ID OF THE USER AND PASS INTO THE SEND MESSAGE FUNCTION
-             //       e.preventDefault();
-             //       //var id = $('#ID OF user ID element').attr('value');
-             //       sendMessage(id);
-         });
-
-         // });
-     })
-     //end getbirthdays ////NOT COMPLETE
+     evt.preventDefault();
+     let url = $(this).attr('href');
+     //alert(url);
+     $('#new-content').load(url, function() {});
+ });
+ //end getbirthdays ////NOT COMPLETE
 
  //get all students
  $('.all-students').on('click', function(evt) {
-         evt.preventDefault();
-         let url = $(this).attr('href');
-         getallStudents(url);
-     })
-     //get all students
+     evt.preventDefault();
+     let url = $(this).attr('href');
+     getallStudents(url);
+ });
+ //get all students
  function getallStudents(url) {
      //get inserted records from the database
      jQuery.getJSON(url, function(response) {
@@ -44,13 +43,7 @@
                  //generate HTML to display added information
                  profileHTML += '<li> ' + profile.fullname + ' </li>';
                  //  profileHTML+= '<li>' + profile.category_name + ' </li>';
-                 //  profileHTML+= '<li><strong>COUNTRY OF LOCATION: </strong> ' + profile.nationality + ' </li>';
-                 //  profileHTML+= '<li><strong>STATE OF LOCATION:</strong> ' + profile.state_name + ' </li>';
-                 //  profileHTML+= '<li><strong>LGA of Location:</strong> ' + profile.lga + ' </li>';
-                 //  profileHTML+= '<li><strong>CITY: </strong> ' + profile.city_name + ' </li>';
-                 //  profileHTML+= '<li><strong>INSTITUTION ADDRESS:</strong> ' + profile.inst_add + ' </li>';
-                 //  profileHTML+= '<li><strong>INSTITUTION MOBILE: </strong> ' + profile.inst_mobile + ' </li>';
-                 // profileHTML+= '<li><strong>INSTITUTION LOGO:</strong> ' + ' <img  class="headerImage mr-3" src="'+logo+'" height="40" width="40"></li>';
+                 //</li>';
              });
              profileHTML += '</ul>';
              $('#new-content').html(profileHTML);
@@ -87,13 +80,7 @@
                  //generate HTML to display added information
                  profileHTML += '<li> ' + profile.fullname + ' </li>';
                  //  profileHTML+= '<li>' + profile.category_name + ' </li>';
-                 //  profileHTML+= '<li><strong>COUNTRY OF LOCATION: </strong> ' + profile.nationality + ' </li>';
-                 //  profileHTML+= '<li><strong>STATE OF LOCATION:</strong> ' + profile.state_name + ' </li>';
-                 //  profileHTML+= '<li><strong>LGA of Location:</strong> ' + profile.lga + ' </li>';
-                 //  profileHTML+= '<li><strong>CITY: </strong> ' + profile.city_name + ' </li>';
-                 //  profileHTML+= '<li><strong>INSTITUTION ADDRESS:</strong> ' + profile.inst_add + ' </li>';
-                 //  profileHTML+= '<li><strong>INSTITUTION MOBILE: </strong> ' + profile.inst_mobile + ' </li>';
-                 // profileHTML+= '<li><strong>INSTITUTION LOGO:</strong> ' + ' <img  class="headerImage mr-3" src="'+logo+'" height="40" width="40"></li>';
+                 //</li>';
              });
              profileHTML += '</ul>';
              $('#new-content').html(profileHTML);
@@ -106,46 +93,7 @@
  }
  //End Get Staff Records
 
- //get all submitted tickets
- $(".all-tickets").on('click', function(e) {
-     e.preventDefault();
-     var url = $(this).attr('href');
-     //console.log(url);   
-     getTickets(url);
- });
- //call back for get all available tickets
- function getTickets(url) {
-     //get inserted records from the database
-     jQuery.getJSON(url, function(response) {
-         if (typeof response === 'object') {
-             var profileHTML = '<ul class="inst-profile">';
-             $.each(response, function(index, profile) {
-                 //generate HTML to display added information
-                 //profileHTML+= '<li> ' + profile.fullname + ' </li>';
-                 //  profileHTML+= '<li>' + profile.category_name + ' </li>';
-                 //  profileHTML+= '<li><strong>COUNTRY OF LOCATION: </strong> ' + profile.nationality + ' </li>';
-                 //  profileHTML+= '<li><strong>STATE OF LOCATION:</strong> ' + profile.state_name + ' </li>';
-                 //  profileHTML+= '<li><strong>LGA of Location:</strong> ' + profile.lga + ' </li>';
-                 //  profileHTML+= '<li><strong>CITY: </strong> ' + profile.city_name + ' </li>';
-                 //  profileHTML+= '<li><strong>INSTITUTION ADDRESS:</strong> ' + profile.inst_add + ' </li>';
-                 //  profileHTML+= '<li><strong>INSTITUTION MOBILE: </strong> ' + profile.inst_mobile + ' </li>';
-                 // profileHTML+= '<li><strong>INSTITUTION LOGO:</strong> ' + ' <img  class="headerImage mr-3" src="'+logo+'" height="40" width="40"></li>';
-             });
-             profileHTML += '</ul>';
-             $('#new-content').html(profileHTML);
-         } else {
-             $('#new-content').html(response);
-         }
-
-     });
-
- }
- //end of get all tickets
-
-
- //////////////////////////////////
-
- //add new Staff usable
+ //add new Staff
  $('.new-emplyee').on('click', function(evt) {
          evt.preventDefault();
          let url = $(this).attr('href');
@@ -153,23 +101,24 @@
              $("#new-content").on('click', '#staff-account', function(e) {
                  e.preventDefault();
                  $('#staff-account').text("Please wait....").prop("disabled", true);
+                 var email = $("#email").val();
                  var pass = $("#my-pass").val();
                  var username = $("#username").val();
                  var role = $("#role option:selected").val();
                  //var jsURL = $('#input').attr('value');
-                 submit(username, pass, role);
+                 submit(email, username, pass, role);
              });
 
          });
-         // console.log(url);   
+         //console.log(url);   
 
      })
      //function to add new staff call back
- function submit(user, pass, role) {
+ function submit(email, user, pass, role) {
      $.ajax({
          url: 'addNewStaff.php',
          type: 'POST',
-         data: { username: user, pass: pass, role: role },
+         data: { email: email, username: user, pass: pass, role: role },
          success: function(response) {
              var data = $.trim(response);
              if (data === "ok") {
@@ -268,7 +217,6 @@
          },
      });
  }
- //end add new subject call back
  //END CREATE NEW SCHOOL CLASS
  //=================================================================================
 
@@ -353,9 +301,6 @@
  //end add new subbject
 
 
-
-
-
  // new institution profile
  $('#sch-profile-btn').on('click', function() {
      //$(this).text("Submitting, please wait...").prop("disabled", true);
@@ -409,22 +354,11 @@
 
          var profileHTML = '<ul class="inst-profile">';
          $.each(response, function(index, profile) {
-             // if(profile.inst_logo === ""){
-             //     var logo = "Logo not uploaded!";
-             // }
-             // else{
-             //     logo = profile.inst_logo;
-             // }
+
              //generate HTML to display added information
              profileHTML += '<li> ' + profile.institution_name + ' </li>';
              profileHTML += '<li>' + profile.category_name + ' </li>';
-             // profileHTML+= '<li><strong>COUNTRY OF LOCATION: </strong> ' + profile.nationality + ' </li>';
-             // profileHTML+= '<li><strong>STATE OF LOCATION:</strong> ' + profile.state_name + ' </li>';
-             // profileHTML+= '<li><strong>LGA of Location:</strong> ' + profile.lga + ' </li>';
-             // profileHTML+= '<li><strong>CITY: </strong> ' + profile.city_name + ' </li>';
-             // profileHTML+= '<li><strong>INSTITUTION ADDRESS:</strong> ' + profile.inst_add + ' </li>';
-             // profileHTML+= '<li><strong>INSTITUTION MOBILE: </strong> ' + profile.inst_mobile + ' </li>';
-             // profileHTML+= '<li><strong>INSTITUTION LOGO:</strong> ' + ' <img  class="headerImage mr-3" src="'+logo+'" height="40" width="40"></li>';
+             //</li>';
          });
          profileHTML += '</ul>';
          $('#right-school-profile').html(profileHTML);
@@ -442,33 +376,6 @@
      });
  });
 
-
-
- // create ticket
- $('#my-ticket').on('click', function() {
-     $(this).text("Sending, please wait...").prop("disabled", true);
-     let inst_name = $("#title").val();
-     let priority = $("#priority").val();
-     let notes = $("#notes").val();
-     $.post("createTicket.php", {
-         title: title,
-         priority: priority,
-         notes: notes
-     }).done(myTicket);
- });
-
- //create ticket callback function
- function myTicket(result) {
-
-     var data = $.trim(result);
-     if (data === "ok") {
-         $("#my-ticket").text("Send Ticket").prop("disabled", false);
-         $("#info").html(data);
-     } else {
-         $("#my-ticket").text("Send Ticket").prop("disabled", false);
-         $("#info").html(data);
-     }
- }
 
  //load  states on selection of country 
  $("#nation").change(function() {
@@ -587,34 +494,3 @@
  $('#logo-file').on('change', uploadLogo);
 
  /////////////////////////
-
-
-
-
-
-
-
-
-
-
- //login call back
- function login_call(result) {
-     var a = 2;
-     var b = 1;
-     var c = 2;
-     var data = $.trim(result);
-     if (data === "successful") {
-         window.location.replace("home.php");
-     } else {
-         //alert("me");
-         $("#output").addClass("error");
-         $("#output").html(data);
-     }
- }
-
- //login method     
- function login() {
-     var pin = $("#pinnumber").val();
-     var reg = $("#reg").val();
-     $.post("login.php", { pin: pin, reg: reg }).done(login_call);
- }
