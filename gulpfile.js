@@ -65,3 +65,15 @@ gulp.task('compileSass', function() {
 gulp.task('watchSass', function() {
     gulp.watch('app/**/*.scss', ['compileSass']);
 });
+
+//task to concat javascript files
+gulp.task('concatScripts', function() {
+    gulp.src(['app/js/client-user-reg-login.js',
+            'app/js/admin.js',
+            'app/js/admin-app.js',
+            'app/js/academicRoutines.js'
+        ])
+        .pipe(concat('scoresheet.js'))
+        .pipe(gulp.dest('app/js'));
+
+});
