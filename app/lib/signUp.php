@@ -1,5 +1,6 @@
 <?php
-//
+namespace ScoreSheet;
+
 class signUp {
     private $instName;
     private $instType;
