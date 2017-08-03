@@ -56,14 +56,19 @@ gulp.task('injectCase', function() {
 });
 
 //COMPILE SASS TO CSS
-gulp.task('compileSass', function() {
+gulp.task('compileFrontendSass', function() {
     gulp.src("app/scss/frontend.scss")
+        .pipe(sass())
+        .pipe(gulp.dest('app/css'));
+});
+gulp.task('compilePortalSass', function() {
+    gulp.src("app/scss/portal.scss")
         .pipe(sass())
         .pipe(gulp.dest('app/css'));
 });
 //watch task
 gulp.task('watchSass', function() {
-    gulp.watch('app/**/*.scss', ['compileSass']);
+    gulp.watch('app/**/*.scss', ['compileFrontendSass', 'compilePortalSass']);
 });
 
 //task to concat javascript files
