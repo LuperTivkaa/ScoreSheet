@@ -1,0 +1,81 @@
+.newsletterJumbo {
+  background: url("../images/bg.jpg");
+  background-size: cover;
+  background-position: center; }
+
+.jumb {
+  background: url("../images/pencil.jpg");
+  background-size: cover;
+  background-position: center; }
+
+.error {
+  color: #ec7063;
+  text-align: center; }
+
+.mylogo img {
+  width: 50px;
+  height: 50px; }
+
+.headerImage {
+  border-radius: 50%;
+  padding: 1px;
+  border: 1px solid #eee; }
+
+.testimonial-name {
+  font-family: "Comfortaa";
+  color: #273746; }
+
+.testimonial-note {
+  font-family: "Baloo Chettan";
+  font-size: .7em;
+  color: #ccd1d1; }
+
+.testimonial-text {
+  font-family: "Comfortaa";
+  font-size: .7em;
+  color: #273746; }
+
+.underlineHr {
+  border: 1px solid #82e0aa;
+  border-radius: 6.5px; }
+
+.success-msg {
+  color: #82e0aa; }
+
+.navbackground {
+  background-color: #808B96; }
+
+a {
+  color: #273746;
+  font-family: "Fjalla One";
+  font-size: 14px; }
+
+a:hover {
+  text-decoration: none;
+  color: #273746; }
+
+.leadText {
+  font-family: "Fjalla One";
+  color: #76D7C4; }
+
+.leadp {
+  font-size: 16px; }
+
+.welcome {
+  color: #fff;
+  font-family: "Fjalla One";
+  font-size: 1.7em; }
+
+.intro {
+  color: #fff;
+  font-family: "Finger Paint";
+  font-size: 90px; }
+
+.excite {
+  color: #eee;
+  font-family: "Fjalla One"; }
+
+.social a {
+  font-family: "Fjalla One";
+  color: #78909C;
+  font-size: 16px; }
