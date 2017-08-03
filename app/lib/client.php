@@ -1,4 +1,5 @@
 <?php 
+namespace ScoreSheet;
 
 class client{
 
@@ -16,7 +17,7 @@ class client{
 	private $password;
 	private $priority;
 	private $notes;
-  private $role;
+    private $role;
 
 
 function setRole($role)
