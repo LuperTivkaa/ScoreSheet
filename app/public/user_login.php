@@ -1,10 +1,6 @@
 <?php
-//session_start();
-//include 'inc/regSession.php';
-
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
+require '../../vendor/autoload.php';
+use ScoreSheet\signUp;
 $login = new signUp();
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")

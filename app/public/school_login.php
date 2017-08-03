@@ -1,7 +1,5 @@
 <?php 
-include 'inc/header.php';
-include'inc/autoload.php';
-//$new_signup = new signUp();
+include '../inc/publicMainHeader.php';
 ?>
 <!-- About container begins here -->
         <div class="container pt-2 mt-3">
@@ -49,5 +47,5 @@ include'inc/autoload.php';
         </div>
     <!-- About container ends here -->
 
-    <?php include'inc/footer.php';?>
+    <?php include '../inc/publicMainFooter.php';?>
 

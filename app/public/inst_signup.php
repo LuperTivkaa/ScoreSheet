@@ -1,10 +1,9 @@
 <?php
-//session_start();
-//include 'inc/regSession.php';
+require '../../vendor/autoload.php';
+require_once '../../vendor/fzaninotto/Faker/src/autoload.php';
 
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
+use ScoreSheet\signUp;
+
 $myClient = new signUp();
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
