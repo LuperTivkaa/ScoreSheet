@@ -1,0 +1,78 @@
+                            //Import partials
+                            @import 'partials/variables';
+                            @import 'partials/mixins';
+                            //=====================================
+                            //General styles
+                            //=====================================
+                            body {
+                                background-color: $general;
+                                font-size: 1em;
+                            }
+                            /*
+                            ===================================
+                            LAYOUT STYLES
+                            ==================================*/
+                            
+                            .image-upload>input {
+                                display: none;
+                            }
+                            
+                            .inst-profile li {
+                                display: inline-block;
+                                margin: 0;
+                                width: 100%;
+                                padding: 12px 0;
+                                border-top: 1px solid #D5DDE4;
+                                font-size: .9em;
+                                font-family: 'Ubuntu';
+                                color: #566573;
+                            }
+                            
+                            .right-menu-header {
+                                font-family: 'Baloo Chettan';
+                                /*text-decoration: underline solid #ccd1d1;*/
+                                color: #ccd1d1;
+                            }
+                            
+                            ul li {
+                                list-style-type: none;
+                                font-size: .7em;
+                            }
+                            
+                            .headerImage {
+                                border-radius: 50%;
+                                padding: 2px;
+                                border: 2px solid $profile-image-border;
+                            }
+                            
+                            .error {
+                                color: $error;
+                            }
+                            
+                            .info {
+                                color: $info;
+                                text-align: center;
+                            }
+                            /* ======================
+                            NAVIGATION STYLES
+                            ===========================*/
+                            
+                            .navbar {
+                                min-height: 50px;
+                                margin-bottom: 0;
+                                border-radius: 0;
+                                background-color: $general;
+                                border-bottom: 2px solid $testimonial-note;
+                            }
+                            
+                            a {
+                                color: $paragraph;
+                                font-family: $font-abel;
+                                font-size: 1.2em;
+                                text-decoration: none !important;
+                            }
+                            
+                            a:hover {
+                                text-decoration: none;
+                                color: $navbg-color;
+                            }
