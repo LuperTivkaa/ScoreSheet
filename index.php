@@ -13,7 +13,7 @@ include 'app/inc/mainHeader.php';
     <p class="lead">...let your staff focus on delivering quality education to your students/pupils and allow ScoreSheet to handle the tedious task of computing and producing academic reports.</p>
     <h4 class="display-3 welcome">Sign Up Now! Its Free</h4>
       <div class="btn-group mt-2" role="group" aria-label="Basic example">
-      <a class="btn btn-secondary btn-lg" href="school_login.php" target="_blank">Go To My School</a>
+      <a class="btn btn-secondary btn-lg" href="app/public/school_login.php" target="_blank">Go To My School</a>
       </div>
   	</div>
   	<div class="col-md-4">
