@@ -6,7 +6,7 @@ $('#new-signup-btn').on('click', function() {
     let user_name = $("#username").val();
     let email = $("#signup-email").val();
     let password = $("#signup-pass").val();
-    $.post("inst_signup.php", { user_name: user_name, email: email, password: password }).done(newClient);
+    $.post("app/public/inst_signup.php", { user_name: user_name, email: email, password: password }).done(newClient);
 
 });
 // new client signup call back function
@@ -30,35 +30,14 @@ function newClient(result) {
 
 
 
-//User login     
-$('#sch_login_Btn').on('click', function() {
-    $(this).text("Please wait ...").prop("disabled", true);
-    let email = $("#email").val();
-    let password = $("#password").val();
-    $.post("user_login.php", { email: email, password: password }).done(Userlogin_call);
-});
-
-// user login call back
-function Userlogin_call(result) {
-
-    var data = $.trim(result);
-    if (data === "ok") {
-        $("#sch_login_Btn").text("Log Me In").prop("disabled", false);
-        window.location.replace("myapp/index.php");
-    } else {
-        $("#sch_login_Btn").text("Log Me In").prop("disabled", false);
-        $("#output").addClass("error");
-        $("#output").html(data);
-    }
-}
 
 //new client login
 //User login     
 $('#client-btn').on('click', function() {
     $(this).text("Please wait....").prop("disabled", true);
-    let email = $("#email").val();
-    let password = $("#password").val();
-    $.post("clientLogin.php", { email: email, password: password }).done(clientLogin_call);
+    var email = $("#email").val();
+    var password = $("#password").val();
+    $.post("app/public/clientLogin.php", { email: email, password: password }).done(clientLogin_call);
 });
 
 // user login call back
@@ -83,7 +62,7 @@ $("#sch_login_Btn").on('click', function() {
     $('#sch_login_Btn').text("Please wait...").prop("disabled", true);
     var email = $("#email").val();
     var password = $("#password").val();
-    $.post("user_login.php", { email: email, password: password }).done(userLogin);
+    $.post("app/public/user_login.php", { email: email, password: password }).done(userLogin);
 
 });
 
