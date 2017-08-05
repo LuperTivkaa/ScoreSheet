@@ -5,6 +5,7 @@ var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var sass = require('gulp-sass');
 var uglify = require('gulp-uglify');
+var gutil = require('gulp-util');
 
 //Path to files
 var paths = {
@@ -66,19 +67,32 @@ gulp.task('compilePortalSass', function() {
         .pipe(sass())
         .pipe(gulp.dest('app/css'));
 });
-//watch task
+//watch Sass
 gulp.task('watchSass', function() {
     gulp.watch('app/**/*.scss', ['compileFrontendSass', 'compilePortalSass']);
+    gulp.watch([
+        'app/js/admin.js',
+        'app/admin-app.js',
+        'app/js/academicRoutines.js'
+    ], ['concatScripts']);
 });
 
 //task to concat javascript files
 gulp.task('concatScripts', function() {
-    gulp.src(['app/js/client-user-reg-login.js',
+    return gulp.src(['app/js/admin-app.js',
             'app/js/admin.js',
-            'app/js/admin-app.js',
             'app/js/academicRoutines.js'
         ])
         .pipe(concat('scoresheet.js'))
+        .pipe(gulp.dest('app/js'));
+
+});
+//Task to minify
+gulp.task('minifyScripts', function() {
+    return gulp.src(['app/js/scoresheet.js'])
+        .pipe(uglify())
+        .on('error', function(err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
+        .pipe(rename('scoresheet.min.js'))
         .pipe(gulp.dest('app/js'));
 
 });
