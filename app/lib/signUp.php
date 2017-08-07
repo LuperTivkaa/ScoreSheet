@@ -1,5 +1,11 @@
 <?php
 namespace ScoreSheet;
+/*
+Remove PDO namespace in here
+Its  not needed
+Comment it out
+*/
+//use \PDO;
 
 class signUp {
     private $instName;
@@ -7,6 +13,7 @@ class signUp {
     private $email;
     private $password;
     private $username;
+    private $conn;
 
 // getters and setters
     //set Mail
@@ -57,38 +64,39 @@ public function getUserName()
   }
 
 
- //function to create ne
+//class contructor
+ public function __construct(dbConnection $db){
+    $this->conn = $db;
+  }
+
+ //function to create new
  public  function newClient($username,$email,$password)
     {
-  //database connection file
-  include 'db.php';
-// always use try and catch block to write code
-
+//always use try and catch block to write code
   try{
 
         //check for limit of qualifications added
                     $query ="SELECT * FROM client_signup where user_name=? || email =? || password=?";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $username, PDO::PARAM_STR);
-                    $stmt->bindParam(2, $email, PDO::PARAM_STR);
-                    $stmt->bindParam(3, $password, PDO::PARAM_STR);
-                    $stmt->execute();
-                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    if ($stmt->rowCount() >=1)
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $this->username, PDO::PARAM_STR);
+                    $this->conn->bind(2, $this->email, PDO::PARAM_STR);
+                    $this->conn->bind(3, $this->password, PDO::PARAM_STR);
+                    $this->conn->resultset();
+                    if ($this->conn->rowCount() >=1)
                     {
                       echo "Choose unique credentials";
                     }
                     else{
 
-          //this is code uses the PDO class with its related methods, pls check the PHP documentation for this, just type: PHP PDO
-          //There is so much information using the php documentation
-                            $sqlStmt = "INSERT INTO client_signup(user_name,email,password) values (?,?,?)";
-                            $result = $db->prepare($sqlStmt);
-                            $result->bindParam(1, $username, PDO::PARAM_STR,100);
-                            $result->bindParam(2, $email, PDO::PARAM_STR,100);
-                            $result->bindParam(3, $password, PDO::PARAM_STR);
-                            $result->execute();
-                        if ($result->rowCount() == 1)
+  //this is code uses the PDO class with its related methods, pls check the PHP documentation for this, just type: PHP PDO
+  //There is so much information using the php documentation
+                            $sqlQuery = "INSERT INTO client_signup(user_name,email,password) values (?,?,?)";
+                            $this->conn->query($sqlQuery);
+                            $this->conn->bind(1, $this->username, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $this->email, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $this->password, PDO::PARAM_STR);
+                            $this->conn->execute();
+                        if ($this->conn->rowCount() == 1)
                         {
                          // check number of inserted rows
                         echo "ok";
@@ -113,8 +121,6 @@ public function getUserName()
  //method to login into the client portal, after successful login redirect to the client portal
 public  function client_login($email,$password)
  {
-  //database connection file
-  include 'db.php';
 // always use try and catch block to write code
   try{
 
@@ -123,18 +129,17 @@ public  function client_login($email,$password)
     FROM client_signup WHERE email = ? && password =?";
     //this is a prepared statement, it is good to avoid injection
     //note that variables are named at users discretion, you can name them what you want
-    $result = $db->prepare($sql);
-    $result->bindParam(1, $email, PDO::PARAM_STR,12);
-    $result->bindParam(2, $password, PDO::PARAM_STR,12);
-    $result->execute();
-    $resultset = $result->fetchAll(PDO::FETCH_ASSOC);
+    $this->conn->query($sql);
+    $this->conn->bind(1, $this->email, PDO::PARAM_STR,12);
+    $this->conn->bind(2, $this->password, PDO::PARAM_STR,12);
+    $myResult = $this->conn->resultset();
 
     $sess_info = array();
 
-            if ($result->rowCount() ==1)
+            if ($this->conn->rowCount() ==1)
             {
 
-              foreach ($resultset as $row => $key)
+              foreach ($myResult as $row => $key)
               {
                 //loop through the resultset and get the values and store in variables
                 $clientid = $key['id'];
@@ -169,8 +174,6 @@ public  function client_login($email,$password)
 //log users and direct to the appropriate module
 public  function user_login($email,$password)
  {
-  //database connection file
-  include 'db.php';
     //try and catch block
   try{
 
@@ -186,19 +189,18 @@ public  function user_login($email,$password)
     users.created_By=institutional_signup.client_id
     WHERE users.email = ? && users.password =?";
     //note that variables are named at users discretion, you can name them what you want
-    $result = $db->prepare($sql);
-    $result->bindParam(1, $email, PDO::PARAM_STR,12);
-    $result->bindParam(2, $password, PDO::PARAM_STR,12);
-    $result->execute();
+    $this->conn->query($sql);
+    $this->conn->bind(1, $this->email, PDO::PARAM_STR,12);
+    $this->conn->bind(2, $this->password, PDO::PARAM_STR,12);
     $user_info = array();
     $myLoginObject = array();
-    $resultset = $result->fetchAll(PDO::FETCH_ASSOC);
-    $myLoginObject=$resultset;
+    $myResult = $this->conn->resultset();
+    $myLoginObject[]=$myResult;
 
-            if ($result->rowCount() ==1)
+            if ($this->conn->rowCount() ==1)
             {
 
-              foreach ($resultset as $row => $key)
+              foreach ($myResult as $row => $key)
               {
                 //loop through the resultset and get the values and store in variables
                 $user_id = $key['Myid'];
