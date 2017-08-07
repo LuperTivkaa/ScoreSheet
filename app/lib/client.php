@@ -18,6 +18,13 @@ class client{
 	private $priority;
 	private $notes;
     private $role;
+    private $conn;
+
+    //class  constructor
+public function __construct(dbConnection $db)
+    {
+    $this->conn = $db;
+    }
 
 
 function setRole($role)
@@ -202,14 +209,13 @@ function getNotes()
 public function getAllStudents($id)
         {
         try {
-            include'db.php';
                 $query ="SELECT id, CONCAT(UPPER(surname), ' ', lastName, ' ', lastname) AS fullname, gender,img,status_active FROM student_initial
                 WHERE stud_sch_id=? ORDER BY gender AND surname ASC";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $id, PDO::PARAM_INT); 
-                    $stmt->execute();
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
-                    $output = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $myResult = $this->conn->resultset();
+                    $output[]= $myResult;
                     if($output)
                     {
                       echo json_encode($output);
@@ -234,14 +240,13 @@ public function getAllStudents($id)
 public function getMaleStaff($id)
         {
         try {
-            include'db.php';
                 $query ="SELECT id, CONCAT(UPPER(surname), ' ', middle_name, ' ', lastname) AS fullname, user_img FROM staff_profile
                 WHERE my_school_id=? AND gender='male'";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $id, PDO::PARAM_INT); 
-                    $stmt->execute();
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
-                    $output = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $myResult = $this->conn->resultset();
+                    $output[] = $myResult;
                     if($output)
                     {
                       echo json_encode($output);
@@ -266,14 +271,13 @@ public function getMaleStaff($id)
 public function getFemaleStaff($id)
         {
         try {
-            include'db.php';
                 $query ="SELECT id, CONCAT(UPPER(surname), ' ', middle_name, ' ', lastname) AS fullname, user_img FROM staff_profile
                 WHERE my_school_id=? AND gender='female'";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $id, PDO::PARAM_INT); 
-                    $stmt->execute();
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
-                    $output = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $myResult = $this->conn->resultset();
+                    $output[] = $myResult;
                     if($output)
                     {
                       echo json_encode($output);
@@ -293,38 +297,34 @@ public function getFemaleStaff($id)
         //end get male staff
 
 
-//add subject taught
+//add subject taught by staff
 public  function addSubject($subject_id,$class_id,$staff_id,$sch_id,$addedDate,$editedDate,$createdBy)
   {
-  //database connection file
-  include 'db.php';
 // always use try and catch block to write code
-     
   try{
 
     //insert new subjects  taught by staff 
                             $sqlStmt = "INSERT INTO staff_subject_taught(subject_id,
                             class_taught,my_id,sch_identity,addedDate,editedDate,addedBy)
                              values (?,?,?,?,?,?,?)";
-                            $result = $db->prepare($sqlStmt);
-                            $result->bindParam(1, $subject_id, PDO::PARAM_STR,100);
-                            $result->bindParam(2, $class_id, PDO::PARAM_STR,100);
-                            $result->bindParam(3, $staff_id, PDO::PARAM_STR,100);
-                            $result->bindParam(4, $sch_id, PDO::PARAM_INT); 
-                            $result->bindParam(5, $addedDate, PDO::PARAM_STR);
-                            $result->bindParam(6, $editedDate, PDO::PARAM_STR); 
-                            $result->bindParam(7, $createdBy, PDO::PARAM_STR); 
-                            
-                            $result->execute(); 
-                        if ($result->rowCount() == 1) 
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $subject_id, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $class_id, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $staff_id, PDO::PARAM_STR,100);
+                            $this->conn->bind(4, $sch_id, PDO::PARAM_INT); 
+                            $this->conn->bind(5, $addedDate, PDO::PARAM_STR);
+                            $this->conn->bind(6, $editedDate, PDO::PARAM_STR); 
+                            $this->conn->bind(7, $createdBy, PDO::PARAM_STR); 
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
                         {
-                         //check number of inserted rows
+                        //check number of inserted rows
                         echo "ok";
                         } 
                         else
                         {
                         echo "Error adding subject";
-                      }
+                        }
 
                   
       }
@@ -335,59 +335,55 @@ public  function addSubject($subject_id,$class_id,$staff_id,$sch_id,$addedDate,$
         //this get an error thrown by the system
         echo "Error:". $e->getMessage();
          }
-}
+    }
 //end subject taught
 
 //Add New Staff
-public  function newStaff($email,$sur_name,$mypass,$role,$clientid,$editedDate,$createdDate)
+public  function newStaff($email,$username,$password,$role,$clientid,$editedDate,$createdDate)
   {
-  //database connection file
-  include 'db.php';
-// always use try and catch block to write code
-     
-  try{
+    // always use try and catch block to write code
+    try
+        {
 
-    //check for limit of qualifications added
+                   //check for existence of the staff
                     $query ="SELECT * FROM users where email=? || user_name =? || password=?";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $user_name, PDO::PARAM_STR);
-                    $stmt->bindParam(2, $mypass, PDO::PARAM_STR);
-                    $stmt->execute();
-                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    if ($stmt->rowCount() >=1)
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $this->user_name, PDO::PARAM_STR);
+                    $this->conn->bind(2, $this->password, PDO::PARAM_STR);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >=1)
                     {
                       echo "Please make sure your credentials are unique";
                     }
                     else{
 
-
-          //this is code uses the PDO class with its related methods, pls check the PHP documentation for this, just type: PHP PDO
-          //There is so much information using the php documentation 
+        
+                    //Insert new staff user
                             $sqlStmt = "INSERT INTO users(email,user_name,
                             password,role,created_By,
                             edited_on,created_on)
                              values (?,?,?,?,?,?)";
-                            $result = $db->prepare($sqlStmt);
-                            $result->bindParam(1, $email, PDO::PARAM_STR,100);
-                            $result->bindParam(2, $sur_name, PDO::PARAM_STR,100);
-                            $result->bindParam(3, $mypass, PDO::PARAM_STR,100);
-                            $result->bindParam(4, $role, PDO::PARAM_STR,100);
-                            $result->bindParam(5, $clientid, PDO::PARAM_INT); 
-                            $result->bindParam(6, $editedDate, PDO::PARAM_STR);
-                            $result->bindParam(7, $createdDate, PDO::PARAM_STR);
-                            $result->execute(); 
-
-                        if ($result->rowCount() == 1) 
-                        {
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $this->email, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $this->username, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $this->password, PDO::PARAM_STR,100);
+                            $this->conn->bind(4, $this->role, PDO::PARAM_STR,100);
+                            $this->conn->bind(5, $clientid, PDO::PARAM_INT); 
+                            $this->conn->bind(6, $editedDate, PDO::PARAM_STR);
+                            $this->conn->bind(7, $createdDate, PDO::PARAM_STR);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                            {
                          //check number of inserted rows
-                        echo "ok";
-                        } 
-                        else
-                        {
-                        echo "Error creating staff";
-                      }
+                            echo "ok";
+                            } 
+                            else
+                            {
+                            echo "Error creating staff";
+                            }
 
-                    }
+                     }
       }
 
         catch(Exception $e)
@@ -396,32 +392,26 @@ public  function newStaff($email,$sur_name,$mypass,$role,$clientid,$editedDate,$
         //this get an error thrown by the system
         echo "Error:". $e->getMessage();
          }
-}
+    }
 //end new staff
 
 
-
-
-
-
-//function to create institution profile
-public  function instProfile($inst_name,$inst_type, $clientid,$country,$state, $lg, $city,$address,$mobile)
+    //function to create institution profile
+public  function instProfile($sch_name,$sch_type,$clientid,$country,$state, $lg, $city,$address,$mobile)
  	{
-  //database connection file
-  include 'db.php';
-// always use try and catch block to write code
+    // always use try and catch block to write code
      
-  try{
+    try
+        {
 
-    //check for limit of qualifications added
-                    $query ="SELECT * FROM institutional_signup where client_id =?";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $clientid, PDO::PARAM_STR);
-                    $stmt->execute();
-                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    if ($stmt->rowCount() >=3)
+                //check for duplicate/u
+                    $query ="SELECT * FROM institutional_signup WHERE client_id =?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_STR);
+                    $this->conn->execute();
+                    if ($this->conn->rowCount() >3)
                     {
-                      echo "Choose unique credentials";
+                      echo "Please you can add only three institutions";
                     }
                     else{
 
@@ -432,27 +422,26 @@ public  function instProfile($inst_name,$inst_type, $clientid,$country,$state, $
                             client_id,country_id,state_id,
                             lg_id,inst_city_id,inst_add,
                             inst_mobile) values (?,?,?,?,?,?,?,?,?)";
-                            $result = $db->prepare($sqlStmt);
-                            $result->bindParam(1, $inst_name, PDO::PARAM_STR,100);
-                            $result->bindParam(2, $inst_type, PDO::PARAM_STR,100);
-                            $result->bindParam(3, $clientid, PDO::PARAM_STR,100);
-                            $result->bindParam(4, $country, PDO::PARAM_INT); 
-                            $result->bindParam(5, $state, PDO::PARAM_INT);
-                            $result->bindParam(6, $lg, PDO::PARAM_INT); 
-                            $result->bindParam(7, $city, PDO::PARAM_INT);
-                            $result->bindParam(8, $address, PDO::PARAM_STR); 
-                            $result->bindParam(9, $mobile, PDO::PARAM_INT);
-                            
-                            $result->execute(); 
-                        if ($result->rowCount() == 1) 
-                        {
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $this->sch_name, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $this->sch_type, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $clientid, PDO::PARAM_STR,100);
+                            $this->conn->bind(4, $this->country, PDO::PARAM_INT); 
+                            $this->conn->bind(5, $this->state, PDO::PARAM_INT);
+                            $this->conn->bind(6, $this->lg, PDO::PARAM_INT); 
+                            $this->conn->bind(7, $this->city, PDO::PARAM_INT);
+                            $this->conn->bind(8, $this->address, PDO::PARAM_STR); 
+                            $this->conn->bind(9, $this->mobile, PDO::PARAM_INT);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                            {
                          // check number of inserted rows
-                        echo "ok";
-                        } 
+                            echo "ok";
+                            } 
                         else
-                        {
-                        echo "Error creating institutional profile";
-                      }
+                            {
+                            echo "Error creating institutional profile";
+                            }
 
                     }
       }
@@ -463,47 +452,12 @@ public  function instProfile($inst_name,$inst_type, $clientid,$country,$state, $
         //this get an error thrown by the system
         echo "Error:". $e->getMessage();
          }
-}
+    }
 
-
-
-    //this function loads institution category
-    public function inst_category()
-        {
-        try {
-            include'db.php';
-                $query ="SELECT * FROM institutional_category";
-                    $stmt= $db->prepare($query);
-                 $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
-               $output =" "; 
-        foreach ($resultset as $row => $key) 
-        {
-            
-            $ID = $key['id'];
-            $inst_name = $key['category_name'];
-
-       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-      //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
-          $output .= "<option value=".$ID.">".$inst_name."</option>";
-                
-        }
-       echo $output;
-        }// End of try catch block
-         catch(Exception $e)
-        {
-            echo "Error: unexpected action, process terminated";
-        }
-        }
-// load institution category
-
-        // get profile of intitution form the database
-
-
+// get profile of intitution form the database
 public function schProfile($id)
         {
         try {
-            include'db.php';
                 $query ="SELECT institutional_signup.institution_name, 
                 institutional_category.category_name,
                 nationality.nationality,states.state_name,
@@ -516,17 +470,17 @@ public function schProfile($id)
                 INNER JOIN lga ON institutional_signup.lg_id=lga.id 
                 INNER JOIN city ON institutional_signup.inst_city_id=city.id 
                 WHERE client_id=?";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $id, PDO::PARAM_INT); 
-                    $stmt->execute();
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
-                    $output = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $myResult = $this->conn->resultset();
+                    $output[]=$myResult;
                     echo json_encode($output);
         }// End of try catch block
          catch(Exception $e)
-        {
+            {
             echo json_encode("Error: Unable to fetch school Profile");
-        }
+            }
         }
 
         //end get profile
@@ -541,77 +495,33 @@ public function schHeader($id)
                 $query ="SELECT institutional_signup.institution_name,             
                 institutional_signup.inst_logo FROM institutional_signup 
                 WHERE client_id=?";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $id, PDO::PARAM_INT); 
-                    $stmt->execute();
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
-                    $output = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $myResult = $this->conn->resultset();
+                    $output[]=$myResult;
                     return $output;
-        }// End of try catch block
+            }// End of try catch block
          catch(Exception $e)
-        {
+            {
             echo ("Error: Unable to fetch school Profile");
-        }
+            }
         }
 
         //end get profile
 
 //end of Institution Header
 
-//function to submit form
-public  function myTicket($clientid, $title,$priority,$notes,$date,$status="Open",$clientid)
- 	{
-  //database connection file
-  include 'db.php';
-//always use try and catch block to write code
-     
-  try{
-
-
-
-          //insert new ticket
-                            $sqlStmt = "INSERT INTO tickets(my_client_id,priority,notes,date_added,status_ticket,ticket_userid) 
-                            values (?,?,?,?,?,?)";
-                            $result = $db->prepare($sqlStmt);
-                            $result->bindParam(1, $clientid, PDO::PARAM_STR,100);
-                            $result->bindParam(2, $priority, PDO::PARAM_STR,100);
-                            $result->bindParam(3, $notes, PDO::PARAM_STR,100);
-                            $result->bindParam(4, $date, PDO::PARAM_INT);   
-                            $result->bindParam(5, $status, PDO::PARAM_STR); 
-                            $result->bindParam(6, $clientid, PDO::PARAM_INT); 
-                            $result->execute(); 
-                        if ($result->rowCount() == 1) 
-                        {
-                         // check number of inserted rows
-                        echo "ok";
-                        } 
-                        else
-                        {
-                        echo "Could not create your ticket";
-                      	}
-
-        }
-      
-        catch(Exception $e)
-        {
-        //echo error here
-        //this get an error thrown by the system
-        echo "Error:". $e->getMessage();
-        }
-}
-
-
  //this function loads institutional category
 public function loadInstCategory()
     {
         try {
-            include'db.php';
                 $query ="SELECT * FROM institutional_category";
-                    $stmt= $db->prepare($query);
- 		            $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $this->conn->query($query);
+ 		            //$this->conn->execute();
+                $myResult = $this->conn->resultset();
                $output =" "; 
-        foreach ($resultset as $row => $key) 
+        foreach ($myResult as $row => $key) 
         {
             
             $ID = $key['id'];
@@ -622,12 +532,12 @@ public function loadInstCategory()
           $output .= "<option value=".$ID.">".$category."</option>";
                 
         }
-       echo $output;
-        }// End of try catch block
-         catch(Exception $e)
-        {
+        echo $output;
+            }// End of try catch block
+            catch(Exception $e)
+            {
             echo "Error: Unable to institution category";
-        }
+            }
    }
    //end load institutional category
 
@@ -637,15 +547,12 @@ public function loadInstCategory()
 public function loadStaff($client_id)
     {
         try {
-
-            include'db.php';
                 $query ="SELECT users.id,users.user_name FROM users WHERE users.id NOT IN (SELECT user_id FROM staff_profile WHERE my_school_id=?)";
-                $stmt= $db->prepare($query);
-                $stmt->bindParam(1, $client_id, PDO::PARAM_INT);
-                $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $this->conn->query($query);
+                $this->conn->bind(1, $client_id, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
                 $output =" "; 
-        foreach ($resultset as $row => $key) 
+        foreach ($myResult as $row => $key) 
         {
             
             $ID = $key['id'];
@@ -657,11 +564,11 @@ public function loadStaff($client_id)
                 
         }
        echo $output;
-        }// End of try catch block
+            }// End of try catch block
          catch(Exception $e)
-        {
+            {
             echo "Error: Unable to get staff details";
-        }
+            }
    }
    //end load staff function
 
@@ -671,15 +578,12 @@ public function loadStaff($client_id)
 public function loadClass($client_id)
     {
         try {
-
-            include'db.php';
                 $query ="SELECT id,class_name FROM class WHERE my_inst_id=?";
-                $stmt= $db->prepare($query);
-                $stmt->bindParam(1, $client_id, PDO::PARAM_INT);
-                $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $this->conn->query($query);
+                $this->conn->bind(1, $client_id, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
                 $output =" "; 
-        foreach ($resultset as $row => $key) 
+        foreach ($myResult as $row => $key) 
         {
             
             $ID = $key['id'];
@@ -705,16 +609,13 @@ public function loadClass($client_id)
 public function loadSubject($class_id)
     {
         try {
-
-            include'db.php';
                 $query ="SELECT subjects.sub_id,subject_name FROM subjects INNER JOIN class_subject ON 
                 class_subject.subject_id=subjects.sub_id WHERE class_subject.class_id=?";
-                $stmt= $db->prepare($query);
-                $stmt->bindParam(1, $class_id, PDO::PARAM_INT);
-                $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $this->conn->query($query);
+                $this->conn->bind(1, $class_id, PDO::PARAM_INT);
+                $myResult= $this->conn->resultset();
                 $output =" "; 
-        foreach ($resultset as $row => $key) 
+        foreach ($myResult as $row => $key) 
         {
             
             $ID = $key['sub_id'];
@@ -766,19 +667,15 @@ public function loadSubject($class_id)
 
 // end of institutional category
 
-
-
  //this function loads nationality
 public function loadNationality()
     {
         try {
-            include'db.php';
                 $query ="SELECT * FROM nationality";
-                    $stmt= $db->prepare($query);
- 		            $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $this->conn->query($query);
+                $myResult = $this->conn->resultset();
                $output =" "; 
-        foreach ($resultset as $row => $key) 
+        foreach ($myResult as $row => $key) 
         {
             
             $ID = $key['id'];
@@ -799,27 +696,25 @@ public function loadNationality()
 
 // load states on selection of nationality
      //this function loads state
-    public function loadStates($id)
+public function loadStates($id)
     {
         try {
-            include'db.php';
                 $query ="SELECT id,state_name FROM states WHERE nation_id=?";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $id, PDO::PARAM_INT);
- 		            $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
                $output =" "; 
-        foreach ($resultset as $row => $key) 
-        {
+        foreach ($myResult as $row => $key) 
+            {
             
             $ID = $key['id'];
             $states = $key['state_name'];
 
-       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+            //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
                 //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
           $output .= "<option value=".$ID.">".$states."</option>";
                 
-        }
+            }
        echo $output;
         }// End of try catch block
          catch(Exception $e)
@@ -830,18 +725,17 @@ public function loadNationality()
 
 // load lga  on selection of states
      //this function loads state
-    public function loadLga($id)
+public function loadLga($id)
     {
         try {
-            include'db.php';
+        
                 $query ="SELECT id,lga FROM lga WHERE state_lg_id=?";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $id, PDO::PARAM_INT);
- 		            $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
                $output =" "; 
-        foreach ($resultset as $row => $key) 
-        {
+        foreach ($myResult as $row => $key) 
+            {
             
             $ID = $key['id'];
             $lga = $key['lga'];
@@ -865,14 +759,12 @@ public function loadNationality()
 public function loadCity($id)
     {
         try {
-            include'db.php';
                 $query ="SELECT id,city_name FROM city WHERE lg_govt_id=?";
-                    $stmt= $db->prepare($query);
-                    $stmt->bindParam(1, $id, PDO::PARAM_INT);
- 		            $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT);
+                    $myResult= $this->conn->resultset();
                $output =" "; 
-        foreach ($resultset as $row => $key) 
+        foreach ($myResult as $row => $key) 
         {
             
             $ID = $key['id'];
