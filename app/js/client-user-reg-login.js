@@ -62,18 +62,20 @@ $("#sch_login_Btn").on('click', function() {
     $('#sch_login_Btn').text("Please wait...").prop("disabled", true);
     var email = $("#email").val();
     var password = $("#password").val();
-    $.post("app/public/user_login.php", { email: email, password: password }).done(userLogin);
+    console.log(email);
+    console.log(password);
+    $.post("./user_login.php", { email: email, password: password }).done(userLogin);
+
 
 });
 
 
 function userLogin(response) {
-    var obj = JSON.parse(response);
-    //console.log(typeof obj);
+    //var obj = JSON.parse(response);
     //console.log(obj);
-    if (typeof obj === "object") {
-        console.log(obj);
-        $.each(obj, function(index, profile) {
+    if (typeof response === "object") {
+        //console.log(obj);
+        $.each(response, function(index, profile) {
             //GET THE ROLE ID OF THE USER
             //var my_role = profile.roleID;
             //console.log(profile.roleID);
@@ -82,11 +84,11 @@ function userLogin(response) {
 
                 //console.log(profile.roleID);
                 // check and redirect to the staff tutor module
-                window.location.replace("stafftutor/index.php");
+                window.location.replace("app/staff/index.php");
             } else if (profile.roleID == 3 || profile.roleID == 4) {
 
                 // check and redirect to the admin module
-                window.location.replace("admin/index.php");
+                window.location.replace("app/admin/index.php");
             } else {
                 // undefined role, contact your school administrator
                 $('#error-info').html("Sorry role undefined, check with the admin");
