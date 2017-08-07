@@ -1,6 +1,8 @@
 <?php
 require '../../vendor/autoload.php';
 use ScoreSheet\signUp;
+// $base = new base();
+// $base->Test();
 $login = new signUp();
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
