@@ -558,7 +558,7 @@ $("#sch_login_Btn").on('click', function() {
     $('#sch_login_Btn').text("Please wait...").prop("disabled", true);
     var email = $("#email").val();
     var password = $("#password").val();
-    $.post("app/public/user_login.php", { email: email, password: password }).done(userLogin);
+    $.post("./user_login.php", { email: email, password: password }).done(userLogin);
 
 });
 
@@ -578,11 +578,11 @@ function userLogin(response) {
 
                 //console.log(profile.roleID);
                 // check and redirect to the staff tutor module
-                window.location.replace("stafftutor/index.php");
+                window.location.replace("app/staff/index.php");
             } else if (profile.roleID == 3 || profile.roleID == 4) {
 
                 // check and redirect to the admin module
-                window.location.replace("admin/index.php");
+                window.location.replace("app/admin/index.php");
             } else {
                 // undefined role, contact your school administrator
                 $('#error-info').html("Sorry role undefined, check with the admin");
