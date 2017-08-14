@@ -3,9 +3,9 @@
 //new client sign up
 $('#new-signup-btn').on('click', function() {
     $(this).text("Creating account, please wait...").prop("disabled", true);
-    let user_name = $("#username").val();
-    let email = $("#signup-email").val();
-    let password = $("#signup-pass").val();
+    var user_name = $("#username").val();
+    var email = $("#signup-email").val();
+    var password = $("#signup-pass").val();
     $.post("app/public/inst_signup.php", { user_name: user_name, email: email, password: password }).done(newClient);
 
 });
@@ -71,11 +71,11 @@ $("#sch_login_Btn").on('click', function() {
 
 
 function userLogin(response) {
-    //var obj = JSON.parse(response);
-    //console.log(obj);
-    if (typeof response === "object") {
+    var obj = JSON.parse(response);
+    //console.log(response);
+    if (typeof obj === "object") {
         //console.log(obj);
-        $.each(response, function(index, profile) {
+        $.each(obj, function(index, profile) {
             //GET THE ROLE ID OF THE USER
             //var my_role = profile.roleID;
             //console.log(profile.roleID);
@@ -88,7 +88,7 @@ function userLogin(response) {
             } else if (profile.roleID == 3 || profile.roleID == 4) {
 
                 // check and redirect to the admin module
-                window.location.replace("app/admin/index.php");
+                window.location.replace("../admin/index.php");
             } else {
                 // undefined role, contact your school administrator
                 $('#error-info').html("Sorry role undefined, check with the admin");
