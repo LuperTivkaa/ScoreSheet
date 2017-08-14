@@ -1,7 +1,7 @@
 //add Session code
 $('.new-session').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         $('#new-content').load(url, function() {
             $("#new-content").on('click', '#add-session', function(e) {
                 e.preventDefault();
