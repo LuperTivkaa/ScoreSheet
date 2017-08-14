@@ -1,0 +1,26 @@
+//COLOR VARIABLES
+$general: #fff;
+$primary-nav: #17202a;
+$primary-nav-color:#d7dbdd;
+$secondary-nav:#f5eef8;
+$primary-light-profile: lighten($primary-nav, 15%);
+$primary-dark-profile: darken($primary-nav, 15%);
+$black: #000;
+$header: #ccd1d1;
+$color-primary: #278da4;
+$color-secondary: #613c69;
+$nav-link-color: #616a6b;
+$drop-down-content-color:#f9f9f9;
+$drop-down-hover-color:#f1f1f1;
+$error: #ec7063;
+$info: #5499c7;
+$aux-bg-color: #d4e6f1;
+$sub-menu-color: #d2b4de;
+//$color: complement($secondary-nav);
+//LAYOUT COMPLEMENT
+$header-height: 450px;
+$content-width: 80%;
+//Fonts
+$font-primary: 'Fjalla One';
+$font-secondary: 'Open Sans';
+$sub-menu-font: 'Raleway';
