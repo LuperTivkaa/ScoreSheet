@@ -1,5 +1,6 @@
 <?php 
 namespace ScoreSheet;
+use \PDO;
 
 class client{
 
@@ -204,7 +205,40 @@ function getNotes()
 	}
 
 
+//Create a function to get all sessions
 //all students
+
+
+//select all institutional subjects
+public function allSubjects($client_id)
+    {
+        try {
+
+                $query ="SELECT subjects.sub_id,subject_name AS subjectname FROM subjects 
+                WHERE my_sch_id=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $client_id, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['sub_id'];
+            $subjectname = $key['subjectname'];
+
+       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+      //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$subjectname."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get subject details";
+        }
+   }
+   //end all subjects
 
 public function getAllStudents($id)
         {
@@ -215,7 +249,7 @@ public function getAllStudents($id)
                     $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
                     $myResult = $this->conn->resultset();
-                    $output[]= $myResult;
+                    $output= $myResult;
                     if($output)
                     {
                       echo json_encode($output);
@@ -491,7 +525,6 @@ public function schProfile($id)
 public function schHeader($id)
         {
         try {
-            include'db.php';
                 $query ="SELECT institutional_signup.institution_name,             
                 institutional_signup.inst_logo FROM institutional_signup 
                 WHERE client_id=?";
@@ -499,7 +532,7 @@ public function schHeader($id)
                     $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
                     $myResult = $this->conn->resultset();
-                    $output[]=$myResult;
+                    $output=$myResult;
                     return $output;
             }// End of try catch block
          catch(Exception $e)
@@ -782,8 +815,6 @@ public function loadCity($id)
             echo "Error: Unable to load cities";
         }
         }
-
-
 
 }
 //end of client sign up
