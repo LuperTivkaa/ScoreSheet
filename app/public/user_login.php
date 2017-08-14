@@ -1,9 +1,11 @@
 <?php
 require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
 use ScoreSheet\signUp;
 // $base = new base();
 // $base->Test();
-$login = new signUp();
+$dbConnection = new dbConnection();
+$login = new signUp($dbConnection);
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
