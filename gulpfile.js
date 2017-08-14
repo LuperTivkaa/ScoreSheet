@@ -63,16 +63,31 @@ gulp.task('compileFrontendSass', function() {
         .pipe(gulp.dest('app/css'));
 });
 gulp.task('compilePortalSass', function() {
-    gulp.src("app/scss/portal.scss")
+    gulp.src("app/scss/scoresheet.scss")
         .pipe(sass())
         .pipe(gulp.dest('app/css'));
 });
+
+//new design task
+//USED ONLY FOR NEW DESIGN
+// gulp.task('newSass', function() {
+//     gulp.src("app/scss/styles.scss")
+//         .pipe(sass())
+//         .pipe(gulp.dest('app/css'));
+// });
+
+// gulp.task('watchNewDesign', function() {
+//     gulp.watch('app/scss/styles.scss', ['newSass']);
+// });
+//end  new design task
+
 //watch Sass
 gulp.task('watchSass', function() {
     gulp.watch('app/**/*.scss', ['compileFrontendSass', 'compilePortalSass']);
     gulp.watch([
         'app/js/admin.js',
-        'app/admin-app.js',
+        'app/js/new-design.js',
+        'app/js/admin-app.js',
         'app/js/academicRoutines.js'
     ], ['concatScripts']);
 });
@@ -80,6 +95,7 @@ gulp.task('watchSass', function() {
 //task to concat javascript files
 gulp.task('concatScripts', function() {
     return gulp.src(['app/js/admin-app.js',
+            'app/js/new-design.js',
             'app/js/admin.js',
             'app/js/academicRoutines.js'
         ])
