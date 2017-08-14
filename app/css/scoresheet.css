@@ -1,0 +1,271 @@
+* {
+  margin: 0 auto;
+  box-sizing: border-box; }
+
+.main-nav {
+  width: 80%;
+  margin: 0 auto; }
+
+.secondary-nav {
+  background-color: #f5eef8;
+  height: 50px;
+  padding: 1em 0; }
+  .secondary-nav .secondary-nav-content {
+    padding: 1.5px 1.5px 1.5px 1.5px;
+    width: 80%;
+    margin: 0 auto; }
+    .secondary-nav .secondary-nav-content h4 {
+      font-family: "Fjalla One";
+      font-size: 1em;
+      margin-top: 3px; }
+
+.primary-nav {
+  background-color: black;
+  color: #d7dbdd;
+  padding: 1px 1px 1px 1px; }
+  .primary-nav .primary-nav-content {
+    padding: 1.5px 1.5px 1.5px 1.5px;
+    width: 80%;
+    margin: 0 auto; }
+    .primary-nav .primary-nav-content ul {
+      margin-bottom: 0; }
+      .primary-nav .primary-nav-content ul li {
+        font-family: "Open Sans";
+        font-size: .75em;
+        font-weight: bold; }
+    .primary-nav .primary-nav-content h2 {
+      font-family: "Fjalla One";
+      font-size: 1.7em; }
+
+.menu-nav {
+  padding: .5em 0;
+  margin-bottom: 2px;
+  background-color: #f5eef8; }
+  .menu-nav .menu-nav-content {
+    background-color: #f5eef8;
+    width: 80%;
+    margin: 0 auto; }
+
+.menu-nav-list {
+  padding-left: 0; }
+  .menu-nav-list li {
+    display: inline-block;
+    font-family: "Open Sans";
+    list-style-type: none;
+    padding: 3px 3px 3px 3px; }
+    .menu-nav-list li a {
+      text-decoration: none !important;
+      color: #616a6b;
+      font-size: .85em; }
+
+.container {
+  width: 80%;
+  margin: 0 auto; }
+
+.primary-nav-content {
+  display: flex;
+  justify-content: space-between; }
+
+.primary-link {
+  display: flex;
+  margin-right: 0; }
+  .primary-link li {
+    margin: 0 0.65em;
+    list-style-type: none;
+    padding: 3px 0 3px 0; }
+    .primary-link li a {
+      text-decoration: none; }
+
+.aux-menu {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: 0;
+  background-color: #d4e6f1;
+  border-radius: 2px;
+  height: 60px; }
+  .aux-menu h6 {
+    font-family: "Raleway";
+    color: #17202a;
+    font-size: .75em;
+    margin: 2px 0 0 2px;
+    padding: 2px 2px 2px 2px;
+    display: inline-block;
+    border-bottom: 1.5px solid #d2b4de; }
+  .aux-menu ul {
+    padding-left: 0;
+    margin-bottom: 0; }
+    .aux-menu ul li {
+      display: inline-block;
+      font-family: "Open Sans";
+      list-style-type: none;
+      padding: 1.5px 1.5px 1.5px 1.5px; }
+      .aux-menu ul li a {
+        text-decoration: none !important;
+        color: #616a6b;
+        font-size: .65em; }
+
+.site-name {
+  margin-left: 0; }
+
+.wrap {
+  min-height: calc(100vh - 40px); }
+
+.footer {
+  text-align: center;
+  margin-bottom: 0;
+  height: 40px;
+  display: none; }
+  .footer p {
+    margin-bottom: 0;
+    padding: 2px; }
+
+.headings {
+  font-family: "Fjalla One";
+  /*text-decoration: underline solid #ccd1d1;*/
+  color: #ccd1d1;
+  font-size: .85em;
+  margin-top: .9em; }
+
+.top-header {
+  font-family: "Fjalla One";
+  color: #ccd1d1;
+  margin-top: 3px; }
+
+h1 {
+  font-size: 1.5em;
+  display: inline-block; }
+  .intro h1 {
+    margin: 90px 0px 70px 0px;
+    padding: 0px 0px 4px 0px;
+    font-size: .90em; }
+
+p {
+  font-size: 1em;
+  color: #000; }
+  .intro p {
+    font-size: .75em; }
+
+.user-profile-image {
+  width: 18px;
+  height: 20px;
+  border-radius: 2px; }
+
+/* Dropdown Button */
+.dropbtn {
+  padding: 3px 3px 3px 0;
+  border: none; }
+
+/* Dropdown button on hover & focus */
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block; }
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1; }
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: #000;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block; }
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: #f1f1f1; }
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {
+  display: block; }
+
+.error {
+  color: #ec7063; }
+
+.alert {
+  margin: auto;
+  display: block;
+  width: 60%; }
+
+.info {
+  color: #5499c7; }
+
+@media (max-width: 767px) {
+  .secondary-col {
+    width: 0%;
+    display: none !important; }
+    .secondary-col #right-bar-content {
+      display: none !important; }
+  .primary-col {
+    width: 100% !important;
+    display: block; }
+  .primary-nav-content {
+    width: 95%;
+    margin: 0 auto; }
+    .primary-nav-content h2 {
+      font-size: 1em; }
+  .secondary-nav-content {
+    width: 95%;
+    margin: 0 auto; }
+  .menu-nav-content {
+    width: 95%;
+    margin: 0 auto; }
+    .menu-nav-content li {
+      font-size: .9em; }
+  .container {
+    width: 95%;
+    margin: 0 auto; } }
+
+@media (max-width: 991px) {
+  .secondary-col {
+    display: inline-block !important;
+    width: 15%;
+    vertical-align: top;
+    padding-left: 2px;
+    padding-top: 1em 0; }
+  .primary-col {
+    display: inline-block !important;
+    width: 85%;
+    vertical-align: top;
+    margin-right: -6px;
+    padding-right: 2px; }
+  .primary-nav-content {
+    width: 95%;
+    margin: 0 auto; }
+    .primary-nav-content h2 {
+      font-size: 1.9em; }
+  .secondary-nav-content {
+    width: 90%;
+    margin: 0 auto; }
+    .secondary-nav-content h2 {
+      font-size: 1.2em; }
+  .menu-nav-content {
+    width: 90%;
+    margin: 0 auto; }
+    .menu-nav-content li {
+      font-size: .97em; }
+  .container {
+    width: 90%;
+    margin: 0 auto; } }
+
+/* Desktops and laptops ----------- */
+.primary-col {
+  display: inline-block;
+  width: 80%;
+  vertical-align: top;
+  margin-right: -6px;
+  padding-right: 2px;
+  padding-left: 12px; }
+
+.secondary-col {
+  display: inline-block;
+  width: 20%;
+  vertical-align: top;
+  padding-left: 2px;
+  padding-top: 1em 0; }
