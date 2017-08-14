@@ -1,6 +1,6 @@
 <?php
-
 namespace ScoreSheet;
+use \PDO;
 
 class staff {
 private $conn;
