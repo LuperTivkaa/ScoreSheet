@@ -7,7 +7,7 @@ if ($_SESSION['user_info'][2] == "3" || $_SESSION['user_info'][2] == "4" || $_SE
 }
 else
 {
-header("location:../index.php");
+header("location:../../index.php");
 exit(); 
 //echo ($_SESSION['user_info'][2]);
 }
