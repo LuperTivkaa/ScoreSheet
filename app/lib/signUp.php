@@ -1,5 +1,7 @@
 <?php
 namespace ScoreSheet;
+use \PDO;
+
 /*
 Remove PDO namespace in here
 Its  not needed
@@ -188,20 +190,19 @@ public  function user_login($email,$password)
     INNER JOIN client_signup ON users.created_By=client_signup.id INNER JOIN institutional_signup ON
     users.created_By=institutional_signup.client_id
     WHERE users.email = ? && users.password =?";
-    //note that variables are named at users discretion, you can name them what you want
     $this->conn->query($sql);
     $this->conn->bind(1, $this->email, PDO::PARAM_STR,12);
     $this->conn->bind(2, $this->password, PDO::PARAM_STR,12);
     $user_info = array();
     $myLoginObject = array();
     $myResult = $this->conn->resultset();
-    $myLoginObject[]=$myResult;
+    $myLoginObject=$myResult;
 
             if ($this->conn->rowCount() ==1)
             {
 
               foreach ($myResult as $row => $key)
-              {
+                {
                 //loop through the resultset and get the values and store in variables
                 $user_id = $key['Myid'];
                 $username = $key['username'];
@@ -209,16 +210,12 @@ public  function user_login($email,$password)
                 $rolename = $key['rolename'];
                 $schid = $key['schID'];
                 $schoolname = $key['schoolname'];
-              }
-              //create a session
+                }
+                    //create a session
                     session_start();
-
                     array_push($user_info, $user_id,$username,$roleid,$rolename,$schid,$schoolname);
-
                     $_SESSION['user_info'] = $user_info;
-
                     //$logInfo =$_SESSION['user_info'];
-
                     echo json_encode($myLoginObject);
             }
             else
