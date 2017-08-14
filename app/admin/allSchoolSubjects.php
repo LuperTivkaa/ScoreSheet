@@ -1,12 +1,13 @@
 <?php
-include 'inc/regSession.php';
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+//use \PDO;
+
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
-//including classes
-include 'inc/autoload.php';
-
-$myClient = new client();
-
-
-$myClient->allSubjects($clientid);
+$client->allSubjects($clientid);
 
 ?>
