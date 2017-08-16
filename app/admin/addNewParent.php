@@ -1,11 +1,17 @@
 <?php
-//session_start();
-include 'inc/regSession.php';
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use Carbon\Carbon;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
+$student = new student($dbConnection);
+
 $clientid = $_SESSION['user_info'][4];
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
-$mystudent = new student();
+$userid = $_SESSION['user_info'][0];
 $dateCreated = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
@@ -24,31 +30,31 @@ $relationship = filter_input(INPUT_POST, "relationship", FILTER_SANITIZE_STRING)
 $emergency = filter_input(INPUT_POST, "emergency", FILTER_SANITIZE_STRING);
 
 
-$mystudent->setSurname($surname);
-$surn = $mystudent->getSurname();
+$student->setSurname($surname);
+$surn = $student->getSurname();
 
-$mystudent->setFirstname($firstname);
-$fn = $mystudent->getFirstname();
+$student->setFirstname($firstname);
+$fn = $student->getFirstname();
 
-$mystudent->setLastname($lastname);
-$ln = $mystudent->getLastname();
+$student->setLastname($lastname);
+$ln = $student->getLastname();
 
-$mystudent->setOccupation($occupation);
-$occup = $mystudent->getOccupation();
+$student->setOccupation($occupation);
+$occup = $student->getOccupation();
 
-$mystudent->setAddress($address);
-$cont_add = $mystudent->getAddress();
+$student->setAddress($address);
+$cont_add = $student->getAddress();
 
-$mystudent->setEmail($mail);
-$mail = $mystudent->getEmail();
+$student->setEmail($mail);
+$mail = $student->getEmail();
 
-$mystudent->setMobile($mobile);
-$mobile = $mystudent->getMobile();
+$student->setMobile($mobile);
+$mobile = $student->getMobile();
 
-$mystudent->setGender($sex);
-$sex = $mystudent->getGender();
+$student->setGender($sex);
+$sex = $student->getGender();
 
-$mystudent->newParent($surn,$fn,$ln,$occup,$sex,$cont_add,$mobile,$mail,$relationship,$stud_id,$clientid,$emergency);
+$student->newParent($surn,$fn,$ln,$occup,$sex,$cont_add,$mobile,$mail,$relationship,$stud_id,$clientid,$emergency);
     
 }
 else
