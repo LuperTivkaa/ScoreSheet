@@ -1,12 +1,18 @@
 <?php
-//session_start();
-include 'inc/regSession.php';
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use Carbon\Carbon;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
+$student = new student($dbConnection);
+
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
-$mystudent = new student();
+
 $dateCreated = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
@@ -34,52 +40,52 @@ $adm_type = filter_input(INPUT_POST, "adm_type", FILTER_SANITIZE_STRING);
 
 
 
-$mystudent->setSurname($surname);
-$surn = $mystudent->getSurname();
+$student->setSurname($surname);
+$surn = $student->getSurname();
 
-$mystudent->setFirstname($firstname);
-$fn = $mystudent->getFirstname();
+$student->setFirstname($firstname);
+$fn = $student->getFirstname();
 
-$mystudent->setLastname($lastname);
-$ln = $mystudent->getLastname();
+$student->setLastname($lastname);
+$ln = $student->getLastname();
 
-$mystudent->setReligion($religion);
-$rel = $mystudent->getReligion();
+$student->setReligion($religion);
+$rel = $student->getReligion();
 
-$mystudent->setCountry($nation);
-$nation = $mystudent->getCountry();
+$student->setCountry($nation);
+$nation = $student->getCountry();
 
-$mystudent->setState($state);
-$state = $mystudent->getState();
+$student->setState($state);
+$state = $student->getState();
 
-$mystudent->setLga($lg);
-$lg = $mystudent->getLga();
+$student->setLga($lg);
+$lg = $student->getLga();
 
-$mystudent->setCity($city);
-$city = $mystudent->getCity();
+$student->setCity($city);
+$city = $student->getCity();
 
-$mystudent->setAddress($add1);
-$cont_add = $mystudent->getAddress();
+$student->setAddress($add1);
+$cont_add = $student->getAddress();
 
-$mystudent->setAddress($add2);
-$perm_add = $mystudent->getAddress();
+$student->setAddress($add2);
+$perm_add = $student->getAddress();
 
-$mystudent->setEmail($mail);
-$mail = $mystudent->getEmail();
+$student->setEmail($mail);
+$mail = $student->getEmail();
 
-$mystudent->setMobile($mobile);
-$mobile = $mystudent->getMobile();
+$student->setMobile($mobile);
+$mobile = $student->getMobile();
 
-$mystudent->setGender($sex);
-$sex = $mystudent->getGender();
+$student->setGender($sex);
+$sex = $student->getGender();
 
-$mystudent->setDob($dob);
-$dob = $mystudent->getDob();
+$student->setDob($dob);
+$dob = $student->getDob();
 
-$mystudent->setBloodGroup($blood_group);
-$blood = $mystudent->getBloodGroup();
+$student->setBloodGroup($blood_group);
+$blood = $student->getBloodGroup();
 
-$mystudent->newStudent($surn,$fn,$ln,$sex,$class_adm,$session,$adm_type,$arm,$dateCreated,
+$student->newStudent($surn,$fn,$ln,$sex,$class_adm,$session,$adm_type,$arm,$dateCreated,
 	$userid,$perm_add,$cont_add,$mail,$clientid,$nation,$state,$city,$lg,$rel,$dob,$mobile,$blood);
     
 }

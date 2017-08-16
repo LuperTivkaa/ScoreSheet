@@ -22,11 +22,9 @@ $clientid = $_SESSION['user_info'][4];
     <div class="form-group col-md-12">
                  <label for="student">Select Student</label>
                 <select class="custom-select form-control" id="student">
-                <?php 
-                    $student->loadNewStudent($clientid);
-                  ?>
                 </select> 
               </div>
+              <small>Click <i class="fa fa-refresh fa-fw load-new-student" aria-hidden="true"></i> to load new student whose parent details have not been added yet!.</small>
               <hr>
   </div>
       <h6 class="top-header text-xs-center">Parent Information</h6>  
