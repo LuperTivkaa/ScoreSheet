@@ -45,7 +45,7 @@ function addSession(session) {
 //add Fee Item
 $('.new-fee').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         $('#new-content').load(url, function() {
             $("#new-content").on('click', '#term-fee-items', function(e) {
                 e.preventDefault();
@@ -91,7 +91,7 @@ function addFeeItem(item, amount, amtwrds, term, session) {
 //add academic term
 $('.new-term').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         $('#new-content').load(url, function() {
             $("#new-content").on('click', '#add-term', function(e) {
                 e.preventDefault();
@@ -134,7 +134,7 @@ function addTerm(term) {
 //Retrieve all added session and display them on the page
 $('.my-session').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         getAddedSession(url);
     })
     //get session function
@@ -162,7 +162,7 @@ function getAddedSession(url) {
 //Retrieve all  added fee items
 $('.added-fee-item').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
 
         getAddedFeeItem(url);
     })
@@ -171,12 +171,12 @@ function getAddedFeeItem(url) {
     //get inserted records from the database
     jQuery.getJSON(url, function(response) {
         if (typeof response === 'object') {
-            var profileHTML = '<h5 class="right-menu-header">Available Fee Items</h5>';
+            var profileHTML = '<h5 class="top-header">Available Fee Items</h5>';
             profileHTML += '<ul>';
             $.each(response, function(index, profile) {
 
                 //generate HTML to display added information
-                profileHTML += '<li> ' + profile.name + '-' + profile.amt + '-' + profile.myt + '-' + profile.S + '</li>';
+                profileHTML += '<li class="display-list"> ' + profile.name + '-' + profile.amt + '-' + profile.myt + '-' + profile.S + '</li>';
             });
             profileHTML += '</ul>';
             $('#new-content').html(profileHTML);
@@ -192,7 +192,7 @@ function getAddedFeeItem(url) {
 //add new Student
 $('.new-student').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         $('#new-content').load(url, function() {
             $("#new-content").on('click', '#new-student-btn', function(e) {
                 e.preventDefault();
@@ -276,7 +276,7 @@ function newStudent(surname, firstname, lastname, religion, nation, state,
 //add new Student parent
 $('.new-parent').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         $('#new-content').load(url, function() {
             $("#new-content").on('click', '#add-parent-info', function(e) {
                 e.preventDefault();
@@ -337,7 +337,7 @@ function newParent(sn, fn, ln, occup, sex, relationship, address, parentmail, mo
 //ASSIGN NEW ADMISSION NUMBER
 $('.new-admission-no').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         $('#new-content').load(url, function() {
             $("#new-content").on('click', '#assign-admission-no', function(e) {
                 e.preventDefault();
@@ -379,7 +379,7 @@ function assignNewNumber(studid, admno) {
 //ADMISSION NUMBER SETTINGS
 $('.new-numbers').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         $('#new-content').load(url, function() {
             $("#new-content").on('click', '#add-prefix', function(e) {
                 e.preventDefault();
@@ -451,13 +451,3 @@ function addAdmNum(range) {
         //alert(user+pass+role);
     })
 } //end add new admission numbers
-
-
-//LIST CLASS ARM BASED ON CLASS SELECTED
-$("#new-content").on('change', '#class-admitted', function(e) {
-    var id = $("#class-admitted").val();
-    //var id = $("#state option:selected").val();
-    $.post("listClassArm.php", { id: id }, function(data) {
-        $("#arm").html(data);
-    });
-});

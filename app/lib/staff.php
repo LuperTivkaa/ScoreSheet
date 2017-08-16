@@ -3,7 +3,7 @@ namespace ScoreSheet;
 use \PDO;
 
 class staff {
-private $conn;
+public $conn;
 
 //class constructor for initialising the database class
  public function __construct(dbConnection $db){

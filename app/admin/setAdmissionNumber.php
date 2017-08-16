@@ -1,12 +1,10 @@
-            <?php 
-include 'inc/autoload.php';
-$newStudent = new student();
-?>
-
-<!-- Enter form to create new student here -->
+             <?php 
+// include 'inc/autoload.php';
+// $newStudent = new student();
+?> 
 <div class="row mb-3">
 <!--<div class="col-md-3"></div>-->
-    <div class="col-md-12"><h6 class="right-menu-header text-xs-center mt-3">Generate New Numbers</h6><small>Please specify how many numbers you wish to create eg 30 as range</small></div>
+    <div class="col-md-12"><h5 class="top-header text-xs-center mt-3">Generate New Numbers</h5><small>Please specify how many numbers you wish to create eg 30 as range</small></div>
 <!--<div class="col-md-3"></div>-->
 </div>
 
@@ -14,7 +12,7 @@ $newStudent = new student();
         
             <div class="row">
 
-            <div class="form-group col-md-5">
+            <div class="form-group col-md-12">
             <label for="range">Range:</label>
                 <input type="text" class="form-control" id="range" name="range" placeholder="Enter Number E.g 20">
             </div>
@@ -26,18 +24,18 @@ $newStudent = new student();
               <hr>
               <div class="row">
               <div class="col-md-12 mb-3">
-              <h6 class="right-menu-header text-xs-center mt-3">Admission Number Settings</h6><small>This section allows you to choose how your institution's  Admission Numbers will be represented e.g nadi/2012/0002. You can change this later if you wish.</small>
+              <h5 class="top-header text-xs-center mt-3">Admission Number Settings</h5><small>This section allows you to choose how your institution's  Admission Numbers will be represented e.g nadi/2012/0002. You can change this later if you wish.</small>
               </div>
               </div>
 
               <div class="row">
 
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-6">
                  <label for="prefix">Enter Prefix:</label>
                 <input type="text" class="form-control" id="prefix" name="prefix" placeholder="Enter prefix">
               </div>
 
-              <div class="form-group col-md-4">
+              <div class="form-group col-md-6">
                 
                  <label for="seperator">Separator</label>
                 <select class="custom-select form-control" id="seperator">

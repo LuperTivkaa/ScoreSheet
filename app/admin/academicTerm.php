@@ -1,11 +1,3 @@
-<?php 
-// include 'inc/regSession.php';
-// include 'inc/autoload.php';
-//$clientObj = new student();
-//$clientid = $_SESSION['user_info'][4];
-//echo $clientObj->loadStaff($clientid);
-?>
-
   <!-- create fee items -->
               <div id="fee-item-container">
 

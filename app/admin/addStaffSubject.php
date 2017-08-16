@@ -1,12 +1,14 @@
 <?php
-//session_start();
-include 'inc/regSession.php';
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
-//$userid = $_SESSION['user_info'][0];
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
-$client = new client();
+$userid = $_SESSION['user_info'][0];
 $dateCreated = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
@@ -15,10 +17,14 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
 $staff = filter_input(INPUT_POST, "staff", FILTER_SANITIZE_NUMBER_INT);
 $myclass = filter_input(INPUT_POST, "subj_class", FILTER_SANITIZE_NUMBER_INT);
 $subject = filter_input(INPUT_POST, "subj", FILTER_SANITIZE_NUMBER_INT);
-
-
-$client->addSubject($subject,$myclass,$staff,$clientid,$dateCreated,$dateCreated);
+if(empty($myclass))
+{
+  Exit("Please select a class");  
+}
+else{
+$client->addSubject($subject,$myclass,$staff,$clientid,$dateCreated,$dateCreated,$userid);
     
+}
 }
 else
 {

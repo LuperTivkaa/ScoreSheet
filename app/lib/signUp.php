@@ -10,12 +10,12 @@ Comment it out
 //use \PDO;
 
 class signUp {
-    private $instName;
-    private $instType;
-    private $email;
-    private $password;
-    private $username;
-    private $conn;
+    public $instName;
+    public $instType;
+    public $email;
+    public $password;
+    public $username;
+    public $conn;
 
 // getters and setters
     //set Mail

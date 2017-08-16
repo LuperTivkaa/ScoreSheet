@@ -1,33 +1,26 @@
 <?php
 namespace ScoreSheet;
 use \PDO;
-
-class student extends client{
-
+class student extends \ScoreSheet\client {
 
 /// class members
 
   //class propoerties
-  private $surname;
-  private $firstname;
-  private $lastname;
-  private $dateOfBirth;
-  private $sex;
-  private $religion;
-  private $relationship;
-  private $occupation;
-  private $class;
-  private $classArm;
-  private $bloodGroup;
-  private $admissionType;
-  private $sessionadmitted;
-  private $conn;
-   //constructor for initializing the database
-   public function __construct(dbConnection $db)
-    {
-    $this->conn = $db;
-    }
-
+  public $surname;
+  public $firstname;
+  public $lastname;
+  public $dateOfBirth;
+  public $sex;
+  public $religion;
+  public $relationship;
+  public $occupation;
+  public $class;
+  public $classArm;
+  public $bloodGroup;
+  public $admissionType;
+  public $sessionadmitted;
+  public $conn;
+ 
 
 function setClass($class)
   {
@@ -133,9 +126,11 @@ function getBloodGroup()
   }
 
 
-
-
-
+  //constructor for initializing the database
+   public function __construct(dbConnection $db)
+    {
+    $this->conn = $db;
+    }
 
 
 //Get student whose id not found in student parent

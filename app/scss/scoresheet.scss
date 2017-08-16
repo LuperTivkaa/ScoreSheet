@@ -80,7 +80,7 @@
                         }
                     }
                     
-                    .container {
+                    .wrapper {
                         @include center-content;
                     }
                     
@@ -156,6 +156,17 @@
                     //=========================================================
                     //MISCELLENOUS
                     //========================================================
+                    .display-list {
+                        display: inline-block;
+                        margin: 0;
+                        width: 100%;
+                        padding: 12px 0;
+                        border-top: 1px solid #D5DDE4;
+                        font-size: .9em;
+                        font-family: $font-primary;
+                        color: #566573;
+                    }
+                    
                     .headings {
                         font-family: $font-primary;
                         /*text-decoration: underline solid #ccd1d1;*/
@@ -282,7 +293,7 @@
                                 font-size: .9em;
                             }
                         }
-                        .container {
+                        .wrapper {
                             @include small-device-center-content;
                         }
                     }
@@ -307,7 +318,7 @@
                                 font-size: .97em;
                             }
                         }
-                        .container {
+                        .wrapper {
                             @include tablet-device-center-content;
                         }
                     }
@@ -326,7 +337,7 @@
                     //     @include small-device-center-content;
                     //     @include small-device-primary-col;
                     // }
-                    // .container {
+                    // .wrapper {
                     //     @include small-device-center-content;
                     // }
                     //Media query ranges

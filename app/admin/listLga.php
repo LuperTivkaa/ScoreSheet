@@ -1,16 +1,23 @@
 <?php
 
-//including classes
-include 'inc/autoload.php';
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
+$clientid = $_SESSION['user_info'][4];
 
-$myClient = new client();
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 $id = filter_input(INPUT_POST, "id", FILTER_SANITIZE_NUMBER_INT);
 // $app->setPin($id);
 // $did = $app->getPin();
-$myClient->loadLga($id);
+$client->loadLga($id);
 }
 else
 {

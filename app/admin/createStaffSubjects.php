@@ -1,19 +1,25 @@
 <?php 
-include 'inc/regSession.php';
-include 'inc/autoload.php';
-$clientObj = new student();
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
+
 //echo $clientObj->loadStaff($clientid);
 ?>
             
-                <h4 class="right-menu-header">Assign Subject</h4>
+                <h5 class="top-header">Assign Subject</h5>
               <div class="row">
               
               <div class="form-group col-md-6 margin-bottom-sm">
                  <label for="staff">Select Staff</label>
                 <select class="custom-select form-control" id="staff">
                 <?php 
-                    $clientObj->loadStaff($clientid);
+                    $client->loadStaff($clientid);
                   ?>
                 </select> 
               </div>
@@ -22,7 +28,7 @@ $clientid = $_SESSION['user_info'][4];
                  <label for="class-admitted">Class</label>
                 <select class="custom-select form-control" id="class-admitted">
                 <?php 
-                    $clientObj->loadClass($clientid);
+                    $client->loadClass($clientid);
                   ?>
                 </select> 
               </div>
@@ -37,14 +43,14 @@ $clientid = $_SESSION['user_info'][4];
                  <label for="subject">Subject</label>
                 <select class="custom-select form-control" id="subject">
                 <?php
-                  $clientObj->allSubjects($clientid);
+                  $client->allSubjects($clientid);
                     ?>
                 </select> 
               </div>
   
               </div>
                <hr class="mb-2">
-              <button type="submit" class="btn btn-primary btn-lg" id="add-subject">Add Subject</button>
+              <button type="submit" class="btn btn-primary btn-md" id="add-subject">Assign Subject</button>
             
           
       

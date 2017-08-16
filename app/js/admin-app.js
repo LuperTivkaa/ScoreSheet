@@ -10,7 +10,7 @@ $('.load-url').on('click', function(evt) {
     $('#new-content').load(url);
 });
 
-//get birthdays NOT COMPLETE
+//get birthdays NOT COMPvarE
 
 $('.birthdays').on('click', function(evt) {
     evt.preventDefault();
@@ -18,12 +18,12 @@ $('.birthdays').on('click', function(evt) {
     //alert(url);
     $('#new-content').load(url, function() {});
 });
-//end getbirthdays ////NOT COMPLETE
+//end getbirthdays ////NOT COMPvarE
 
 //get all students
 $('.all-students').on('click', function(evt) {
     evt.preventDefault();
-    let url = $(this).attr('href');
+    var url = $(this).attr('href');
     getallStudents(url);
 });
 //get all students
@@ -31,16 +31,10 @@ function getallStudents(url) {
     //get inserted records from the database
     jQuery.getJSON(url, function(response) {
         if (typeof response === 'object') {
-            var profileHTML = '<ul class="inst-profile">';
+            var profileHTML = '<ul>';
             $.each(response, function(index, profile) {
-                // if(profile.inst_logo === ""){
-                //     var logo = "Logo not uploaded!";
-                // }
-                // else{
-                //     logo = profile.inst_logo;
-                // }
-                //generate HTML to display added information
-                profileHTML += '<li> ' + profile.fullname + ' </li>';
+
+                profileHTML += '<li class="display-list"> ' + profile.fullname + ' </li>';
                 //  profileHTML+= '<li>' + profile.category_name + ' </li>';
                 //</li>';
             });
@@ -59,7 +53,7 @@ function getallStudents(url) {
 //Get Staff Records
 $('.my-staff').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
 
         getMyStaff(url);
     })
@@ -95,7 +89,7 @@ function getMyStaff(url) {
 //add new Staff
 $('.new-emplyee').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         $('#new-content').load(url, function() {
             $("#new-content").on('click', '#staff-account', function(e) {
                 e.preventDefault();
@@ -261,7 +255,7 @@ function assignSubject(subjectName, classid) {
 //add subject taught by  staff
 $('.new-subject').on('click', function(evt) {
         evt.preventDefault();
-        let url = $(this).attr('href');
+        var url = $(this).attr('href');
         $('#new-content').load(url, function() {
             $("#new-content").on('click', '#add-subject', function(e) {
                 e.preventDefault();
@@ -303,14 +297,14 @@ function createSubject(staff, subj_class, subj) {
 // new institution profile
 $('#sch-profile-btn').on('click', function() {
     //$(this).text("Submitting, please wait...").prop("disabled", true);
-    let inst_name = $("#institution_name").val();
-    let inst_category = $("#institution_category").val();
-    let nation = $("#nation").val();
-    let state = $("#state").val();
-    let lg = $("#lg").val();
-    let city = $("#city").val();
-    let address = $("#address").val();
-    let mobile = $("#mobile").val();
+    var inst_name = $("#institution_name").val();
+    var inst_category = $("#institution_category").val();
+    var nation = $("#nation").val();
+    var state = $("#state").val();
+    var lg = $("#lg").val();
+    var city = $("#city").val();
+    var address = $("#address").val();
+    var mobile = $("#mobile").val();
     $.post("addSchoolProfile.php", {
         inst_name: inst_name,
         inst_category: inst_category,
@@ -375,27 +369,32 @@ $("#new-content").on('change', '#class', function() {
     });
 });
 
+//LIST CLASS ARM BASED ON CLASS SELECTED
+$("#new-content").on('change', '#class-admitted', function(e) {
+    var id = $("#class-admitted option:selected").val();
+    //var id = $("#state option:selected").val();
+    $.post("listClassArm.php", { id: id }, function(data) {
+        $("#arm").html(data);
+    });
+});
 
-//load  states on selection of country 
-$("#nation").change(function() {
+//load states on selection of subjects
+$('#new-content').on('change', '#nation', function() {
     var id = $("#nation option:selected").val();
     $.post("listStates.php", { id: id }, function(data) {
         $("#state").html(data);
     });
 });
-
-
-//load  lga   
-$("#state").change(function() {
+//load lga on state selection
+$('#new-content').on('change', '#state', function() {
     var id = $("#state option:selected").val();
     $.post("listLga.php", { id: id }, function(data) {
         $("#lg").html(data);
     });
 });
 
-
-//load  cities   
-$("#lg").change(function() {
+//load city
+$('#new-content').on('change', '#lg', function() {
     var id = $("#lg option:selected").val();
     $.post("listCity.php", { id: id }, function(data) {
         $("#city").html(data);

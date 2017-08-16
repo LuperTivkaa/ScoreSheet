@@ -1,18 +1,18 @@
 <?php 
-include 'inc/regSession.php';
-include 'inc/autoload.php';
-$clientObj = new student();
-$clientid = $_SESSION['user_info'][4];
+// include 'inc/regSession.php';
+// include 'inc/autoload.php';
+// $clientObj = new student();
+// $clientid = $_SESSION['user_info'][4];
 //echo $clientObj->loadStaff($clientid);
-?>
+?> 
 
               <!-- create fee items -->
               <div id="fee-item-container">
 
-              <h4 class="right-menu-header ">Create New Class</h4>
+              <h5 class="top-header ">Create New Class</h5>
               <div class="row">
 
-            <div class="form-group col-md-5">
+            <div class="form-group col-md-12">
             <label for="class-name">Class Name:</label>
                 <input type="text" class="form-control" id="class-name" name="class-name" placeholder="E.g JSS1 or Primary 1">
             </div>
@@ -24,19 +24,19 @@ $clientid = $_SESSION['user_info'][4];
               <hr>
               <div class="row">
               <div class="col-md-12 mb-3">
-              <h4 class="right-menu-header text-xs-center mt-3">Specify Class Arm</h4><small>Select class and enter appropriate description. Click <i class="fa fa-refresh fa-fw reload-class" aria-hidden="true"></i> to load Classes.</small>
+              <h5 class="top-header text-xs-center mt-3">Specify Class Arm</h5><small>Select class and enter appropriate description. Click <i class="fa fa-refresh fa-fw reload-class" aria-hidden="true"></i> to load Classes.</small>
               </div>
               </div>
 
               <div class="row">
 
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-6">
                 <label for="class-list">Select Class</label>
                 <select class="custom-select form-control" id="class-list">
                 </select>
               </div>
 
-              <div class="form-group col-md-4">
+              <div class="form-group col-md-6">
                 
                  <label for="class-desc">Class Description</label>
                 <input type="text" class="form-control" id="subject" name="class-desc" placeholder="E.g Alpha or A">

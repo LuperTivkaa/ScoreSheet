@@ -58,7 +58,7 @@
       color: #616a6b;
       font-size: .85em; }
 
-.container {
+.wrapper {
   width: 80%;
   margin: 0 auto; }
 
@@ -118,6 +118,16 @@
   .footer p {
     margin-bottom: 0;
     padding: 2px; }
+
+.display-list {
+  display: inline-block;
+  margin: 0;
+  width: 100%;
+  padding: 12px 0;
+  border-top: 1px solid #D5DDE4;
+  font-size: .9em;
+  font-family: "Fjalla One";
+  color: #566573; }
 
 .headings {
   font-family: "Fjalla One";
@@ -218,7 +228,7 @@ p {
     margin: 0 auto; }
     .menu-nav-content li {
       font-size: .9em; }
-  .container {
+  .wrapper {
     width: 95%;
     margin: 0 auto; } }
 
@@ -250,7 +260,7 @@ p {
     margin: 0 auto; }
     .menu-nav-content li {
       font-size: .97em; }
-  .container {
+  .wrapper {
     width: 90%;
     margin: 0 auto; } }
 

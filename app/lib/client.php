@@ -5,27 +5,21 @@ use \PDO;
 class client{
 
 	//class propoerties
-	private $sch_name;
-	private $sch_type;
-	private $country;
-	private $state;
-	private $lga;
-	private $city;
-	private $email;
-	private $mobile;
-	private $address;
-	private $username;
-	private $password;
-	private $priority;
-	private $notes;
-    private $role;
-    private $conn;
-
-    //class  constructor
-public function __construct(dbConnection $db)
-    {
-    $this->conn = $db;
-    }
+	public $sch_name;
+	public $sch_type;
+	public $country;
+	public $state;
+	public $lga;
+	public $city;
+	public $email;
+	public $mobile;
+	public $address;
+	public $username;
+	public $password;
+	public $priority;
+	public $notes;
+    public $role;
+    public $conn;
 
 
 function setRole($role)
@@ -204,11 +198,128 @@ function getNotes()
 		return $this->notes;
 	}
 
+    //class  constructor
+public function __construct(dbConnection $db)
+    {
+    $this->conn = $db;
+    }
 
-//Create a function to get all sessions
-//all students
+//Test function
+ public function TestStudent(){
+        echo " This is all my student in the client class extended by student class";
+    }
+    //load class arm
+public function loadClassArm($class_id)
+    {
+        try {
+                $query ="SELECT id,arm_description AS arm FROM class_arm WHERE class_id=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $class_id, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['id'];
+            $arm = $key['arm'];
 
+       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+      //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$arm."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get class arms";
+        }
+   }
+   //end load class arm function
+    //get all fees
+    public function allFeeItems($clientid)
+        {
+        try {
+                $query ="SELECT fee_items.id,fee_items.item_name AS name, 
+                fee_items.amount AS amt,sch_term.term AS myt,session.session AS S
+                FROM fee_items 
+                INNER JOIN sch_term ON fee_items.item_term = sch_term.term_id 
+                INNER JOIN session ON fee_items.item_session=session.id  
+                WHERE fee_item_sch_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+                    $output = array();
+                    $output = $this->conn->resultset();
+                    if($output)
+                    {
+                      echo json_encode($output);
+                    }
+                    else
+                    {
+                      echo json_encode("No fee items added yet!");
+                    }
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Unable to fetch fee items");
+        }
+        }
 
+        //end get fee items
+//load sessions
+public function loadSession($clientid)
+    {
+        try {
+                $query ="SELECT id,session FROM session WHERE sess_inst_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $myResult = $this->conn->resultset();
+                   $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['id'];
+            $session = $key['session'];
+
+       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$session."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to load sessions";
+        }
+        }
+//load terms
+public function loadTerm($clientid)
+    {
+        try {
+                $query ="SELECT term_id,term FROM sch_term WHERE term_inst_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $myResult = $this->conn->resultset();
+                   $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['term_id'];
+            $term = $key['term'];
+
+       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$term."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to load sessions";
+        }
+        }
 //select all institutional subjects
 public function allSubjects($client_id)
     {
@@ -243,7 +354,7 @@ public function allSubjects($client_id)
 public function getAllStudents($id)
         {
         try {
-                $query ="SELECT id, CONCAT(UPPER(surname), ' ', lastName, ' ', lastname) AS fullname, gender,img,status_active FROM student_initial
+                $query ="SELECT id, CONCAT(UPPER(surname), ', ', lastName, ' ', lastname) AS fullname, gender,img,status_active FROM student_initial
                 WHERE stud_sch_id=? ORDER BY gender AND surname ASC";
                     $this->conn->query($query);
                     $this->conn->bind(1, $id, PDO::PARAM_INT); 
@@ -280,7 +391,7 @@ public function getMaleStaff($id)
                     $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
                     $myResult = $this->conn->resultset();
-                    $output[] = $myResult;
+                    $output = $myResult;
                     if($output)
                     {
                       echo json_encode($output);
@@ -311,7 +422,7 @@ public function getFemaleStaff($id)
                     $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
                     $myResult = $this->conn->resultset();
-                    $output[] = $myResult;
+                    $output = $myResult;
                     if($output)
                     {
                       echo json_encode($output);
@@ -348,7 +459,7 @@ public  function addSubject($subject_id,$class_id,$staff_id,$sch_id,$addedDate,$
                             $this->conn->bind(4, $sch_id, PDO::PARAM_INT); 
                             $this->conn->bind(5, $addedDate, PDO::PARAM_STR);
                             $this->conn->bind(6, $editedDate, PDO::PARAM_STR); 
-                            $this->conn->bind(7, $createdBy, PDO::PARAM_STR); 
+                            $this->conn->bind(7, $createdBy, PDO::PARAM_INT); 
                             $this->conn->execute(); 
                         if ($this->conn->rowCount() == 1) 
                         {
@@ -603,7 +714,7 @@ public function loadStaff($client_id)
             echo "Error: Unable to get staff details";
             }
    }
-   //end load staff function
+   //end load staff functionlist
 
 
 
@@ -673,13 +784,11 @@ public function loadSubject($class_id)
    public function loadRoles()
     {
         try {
-            include'db.php';
                 $query ="SELECT * FROM institutional_responsibilities";
-                    $stmt= $db->prepare($query);
-                $stmt->execute();
-                $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $this->conn->query($query);
+                $myResult = $this->conn->resultset();
                $output =" "; 
-        foreach ($resultset as $row => $key) 
+        foreach ($myResult as $row => $key) 
         {
             
             $ID = $key['id'];

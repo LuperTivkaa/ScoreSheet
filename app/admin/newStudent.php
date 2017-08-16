@@ -5,46 +5,52 @@
     $( "#datepicker" ).datepicker();
   });
     
-    //load  states on selection of country 
-$("#nation").change(function(){
-var id = $("#nation option:selected").val();  
-$.post("listStates.php",{id:id}, function(data){   
-$("#state").html(data);
-}); 
-});
+//     //load  states on selection of country 
+// $("#nation").change(function(){
+// var id = $("#nation option:selected").val();  
+// $.post("listStates.php",{id:id}, function(data){   
+// $("#state").html(data);
+// }); 
+// });
 
 
-//load  lga   
-$("#state").change(function(){
-var id = $("#state option:selected").val();  
-$.post("listLga.php",{id:id}, function(data){   
-$("#lg").html(data);
-}); 
-});
+// //load  lga   
+// $("#state").change(function(){
+// var id = $("#state option:selected").val();  
+// $.post("listLga.php",{id:id}, function(data){   
+// $("#lg").html(data);
+// }); 
+// });
 
 
-//load  cities   
-$("#lg").change(function(){
-var id = $("#lg option:selected").val();  
-$.post("listCity.php",{id:id}, function(data){   
-$("#city").html(data);
-});
-});
+// //load  cities   
+// $("#lg").change(function(){
+// var id = $("#lg option:selected").val();  
+// $.post("listCity.php",{id:id}, function(data){   
+// $("#city").html(data);
+// });
+// });
 </script>
            <?php 
-include 'inc/regSession.php';
-include 'inc/autoload.php';
-$newStudent = new student();
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 ?>
 
 <div class="row mb-3">
 <!--<div class="col-md-3"></div>-->
-    <div class="col-md-12"><h4 class="right-menu-header text-xs-center">New Student</h4></div>
+    <div class="col-md-12"><h5 class="top-header text-xs-center">New Student</h5></div>
 <!--<div class="col-md-3"></div>-->
     </div>
   
-  <h6 class="right-menu-header">Step 1: Personal Information</h6>
+  <h6 class="top-header">Step 1: Personal Information</h6>
         
     <div class="row">
             
@@ -76,7 +82,7 @@ $clientid = $_SESSION['user_info'][4];
                  <label for="nation">Nationality:</label>
                 <select class="custom-select form-control" id="nation">
                 <?php
-                  $newStudent->loadNationality();
+                  $client->loadNationality();
                     ?>
                 </select> 
               </div>
@@ -122,7 +128,7 @@ $clientid = $_SESSION['user_info'][4];
               </div>
                            
 
-  <h6 class="right-menu-header">Step 2: Bio Data Information</h6>
+  <h6 class="top-header">Step 2: Bio Data Information</h6>
         
     <div class="row">
             
@@ -150,7 +156,7 @@ $clientid = $_SESSION['user_info'][4];
             
               </div>                           
 
-  <h6 class="right-menu-header">Step 3: Educational Information</h6>
+  <h6 class="top-header">Step 3: Educational Information</h6>
         
     <div class="row">
             
@@ -158,7 +164,7 @@ $clientid = $_SESSION['user_info'][4];
                  <label for="class-admitted">Class Admitted:</label>
                 <select class="custom-select form-control" id="class-admitted" name="class-admitted">
                 <?php
-                  $newStudent->loadClass($clientid);
+                  $client->loadClass($clientid);
                     ?>
                 </select> 
               </div>
@@ -172,7 +178,7 @@ $clientid = $_SESSION['user_info'][4];
                  <label for="session">Session Admitted:</label>
                 <select class="custom-select form-control" id="session" name="session">
                 <?php
-                  $newStudent->loadSession($clientid);
+                  $client->loadSession($clientid);
                     ?>
                 </select> 
                 </select> 
@@ -187,7 +193,7 @@ $clientid = $_SESSION['user_info'][4];
               </div>
 
               </div>
-              <button class="submit btn btn-primary"  id="new-student-btn">Create New Student</button>
+              <button class="submit btn btn-primary mb-3"  id="new-student-btn">Create New Student</button>
         
 
 

@@ -14,7 +14,7 @@
 
             <?php include '../inc/scoresheet-nav.php';?>
 
-            <div class="container">
+            <div class="wrapper">
 
                 <div class="primary-col">
                     <p>This iisi iisn is isins kisghjghj jjkjkhjk jkjhkjh jbkjhkjh kjhkjhkjh kjbkjhkjhbkjhkjhkjh nmmn nn</p>

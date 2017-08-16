@@ -1,7 +1,12 @@
 <?php 
-include 'inc/regSession.php';
-include 'inc/autoload.php';
-$clientObj = new client();
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //echo $clientObj->loadStaff($clientid);
 ?>
@@ -9,7 +14,7 @@ $clientid = $_SESSION['user_info'][4];
               <!-- create fee items -->
               <div id="fee-item-container">
 
-              <h4 class="right-menu-header ">Create Fee Items</h4>
+              <h5 class="top-header ">Create Fee Items</h5>
               <div class="row">
 
               <div class="form-group col-md-6">
@@ -31,16 +36,17 @@ $clientid = $_SESSION['user_info'][4];
                  <label for="term">Term</label>
                 <select class="custom-select form-control" id="term">
                 <?php 
-                $clientObj->loadTerm($clientid);
+                $client->loadTerm($clientid); 
+              
                   ?>
                 </select> 
               </div>
     
-            <div class="form-group col-md-6 margin-bottom-sm">
+            <div class="form-group col-md-12 margin-bottom-sm">
                  <label for="session">Session</label>
                 <select class="custom-select form-control" id="session">
                  <?php 
-                $clientObj->loadSession($clientid);
+                $client->loadSession($clientid);
                   ?>
                 </select> 
               </div>
