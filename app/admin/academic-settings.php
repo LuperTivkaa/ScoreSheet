@@ -14,7 +14,7 @@
 
             <?php include '../inc/scoresheet-nav.php';?>
 
-            <div class="container">
+            <div class="wrapper">
 
                 <div class="primary-col">
                         <div class="aux-menu">
