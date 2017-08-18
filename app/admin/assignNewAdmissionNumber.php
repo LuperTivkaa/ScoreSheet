@@ -1,13 +1,17 @@
 <?php
-//THIS SCRIPT ASSIGNS NEW ADMISSION NUMBERS TO NEWLY ADDED STUDENTS
-//session_start();
-include 'inc/regSession.php';
-//client id is the school id
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use Carbon\Carbon;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
+$student = new student($dbConnection);
+
 $clientid = $_SESSION['user_info'][4];
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
-$myStudent = new student();
+$userid = $_SESSION['user_info'][0];
 $dateCreated = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
@@ -27,7 +31,7 @@ $adm_no_id = filter_input(INPUT_POST, "admno", FILTER_SANITIZE_STRING);
 // $role = $client->getRole();
 
 
-$myStudent->assignNewNumber($student_id,$adm_no_id,$clientid);
+$student->assignNewNumber($student_id,$adm_no_id,$clientid);
     
 }
 else
