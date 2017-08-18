@@ -20,14 +20,13 @@ $clientid = $_SESSION['user_info'][4];
 
         
         <!-- ASSIGN NEW ADMISSION NUMBER -->
+        <small>Click <i class="fa fa-refresh fa-fw loader" aria-hidden="true"></i> to load new student and their unassigned admission numbers.</small>
     <div class="row">
 
             <div class="form-group col-md-6">
                  <label for="student">Select Student</label>
                 <select class="custom-select form-control" id="student">
-                <?php 
-                    $student->getStudentAssign($clientid);
-                  ?>
+            
                 </select>
               </div>
 
@@ -35,12 +34,9 @@ $clientid = $_SESSION['user_info'][4];
                 
                  <label for="add-no">Admission Number</label>
                 <select class="custom-select form-control" id="add-no" disabled>
-                <?php 
-                    $student->loadUnassignedNumber($clientid);
-                  ?>
+          
                 </select>
               </div>
-              
               </div>
               <button class="submit btn btn-primary" id="assign-admission-no">Assign Admission Number</button>
               
