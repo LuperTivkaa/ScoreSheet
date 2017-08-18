@@ -6,6 +6,7 @@
 $('.load-url').on('click', function(evt) {
     evt.preventDefault();
     $("#my-info").empty();
+    $('#student-search-result').empty();
     var url = $(this).attr('href');
     $('#new-content').load(url);
 });
@@ -87,26 +88,18 @@ function getMyStaff(url) {
 //End Get Staff Records
 
 //add new Staff
-$('.new-emplyee').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        $('#new-content').load(url, function() {
-            $("#new-content").on('click', '#staff-account', function(e) {
-                e.preventDefault();
-                $('#staff-account').text("Please wait....").prop("disabled", true);
-                var email = $("#email").val();
-                var pass = $("#my-pass").val();
-                var username = $("#username").val();
-                var role = $("#role option:selected").val();
-                //var jsURL = $('#input').attr('value');
-                submit(email, username, pass, role);
-            });
+$("#new-content").on('click', '#staff-account', function(e) {
+    e.preventDefault();
+    $('#staff-account').text("Please wait....").prop("disabled", true);
+    var email = $("#email").val();
+    var pass = $("#my-pass").val();
+    var username = $("#username").val();
+    var role = $("#role option:selected").val();
+    //var jsURL = $('#input').attr('value');
+    submit(email, username, pass, role);
+});
 
-        });
-        //console.log(url);   
-
-    })
-    //function to add new staff call back
+//function to add new staff call back
 function submit(email, user, pass, role) {
     $.ajax({
         url: 'addNewStaff.php',
@@ -116,17 +109,20 @@ function submit(email, user, pass, role) {
             var data = $.trim(response);
             if (data === "ok") {
                 $('#staff-account').text("Create Staff").prop("disabled", false);
+                $("#email").val("");
+                $("#my-pass").val("");
+                $("#username").val("");
                 $("#my-info").addClass("info");
                 $("#my-info").html("Staff added successfully");
             } else {
                 //alert("me")
                 $('#staff-account').text("Create Staff").prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end new staff
 
 //load all institutional subjects
@@ -143,6 +139,15 @@ $("#new-content").on('click', '.reload-class', function(e) {
     });
 });
 //end of add load all institutional subjects
+
+//load all new students without parents
+$("#new-content").on('click', '.load-new-student', function(e) {
+    $.get("newStudentParent.php", function(data) {
+        $("#student").html(data);
+    });
+});
+
+//end  of all new students
 //=========================================================================
 //CREATE NEW SCHOOL SUBJECT
 
@@ -172,7 +177,7 @@ function newSubject(subj) {
                 $("#my-info").html(data);
             }
         },
-    })
+    });
 }
 //end add new subject call back
 //END CREATE NEW SCHOOL SUBJECT
@@ -253,23 +258,17 @@ function assignSubject(subjectName, classid) {
 // End assign block
 
 //add subject taught by  staff
-$('.new-subject').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        $('#new-content').load(url, function() {
-            $("#new-content").on('click', '#add-subject', function(e) {
-                e.preventDefault();
-                $('#add-subject').prop("disabled", true);
-                var staff = $("#staff option:selected").val();
-                var class_arm = $("#arm option:selected").val();
-                var subj = $("#subject option:selected").val();
-                createSubject(staff, class_arm, subj);
-            });
-        });
-        //console.log(url);   
 
-    })
-    //function to add new subject call back
+$("#new-content").on('click', '#add-subject', function(e) {
+    e.preventDefault();
+    $('#add-subject').prop("disabled", true);
+    var staff = $("#staff option:selected").val();
+    var class_arm = $("#arm option:selected").val();
+    var subj = $("#subject option:selected").val();
+    createSubject(staff, class_arm, subj);
+});
+
+//function to add new subject call back
 function createSubject(staff, subj_class, subj) {
     $.ajax({
         url: 'addStaffSubject.php',
@@ -369,14 +368,14 @@ $("#new-content").on('change', '#class', function() {
     });
 });
 
-//LIST CLASS ARM BASED ON CLASS SELECTED
-$("#new-content").on('change', '#class-admitted', function(e) {
-    var id = $("#class-admitted option:selected").val();
-    //var id = $("#state option:selected").val();
-    $.post("listClassArm.php", { id: id }, function(data) {
-        $("#arm").html(data);
-    });
-});
+// //LIST CLASS ARM BASED ON CLASS SELECTED
+// $("#new-content").on('change', '#class-admitted', function(e) {
+//     var id = $("#class-admitted option:selected").val();
+//     //var id = $("#state option:selected").val();
+//     $.post("listClassArm.php", { id: id }, function(data) {
+//         $("#arm").html(data);
+//     });
+// });
 
 //load states on selection of subjects
 $('#new-content').on('change', '#nation', function() {
@@ -492,3 +491,31 @@ $('#logo-file').on('change', prepareUpload);
 $('#logo-file').on('change', uploadLogo);
 
 /////////////////////////
+//STUDENT SEARCH FUNCTIONALITY
+$("#new-content").on('click', '#search-btn', function(e) {
+    e.preventDefault();
+    $('#search-btn').text("Searching...").prop("disabled", true);
+    var searchvar = $('#searchitem').val();
+    console.log(searchvar);
+    studentGeneralSearch(searchvar);
+});
+//end create new school subject
+//add new subject callback function
+function studentGeneralSearch(searchvar) {
+    $.ajax({
+        url: 'student-search-result.php',
+        type: 'POST',
+        data: { searchvar: searchvar },
+        success: function(response) {
+            //var data = $.trim(response);
+            if (response === undefined) {
+                $('#search-btn').text("Search Student").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $('#my-info').html(response);
+            } else {
+                $('#search-btn').text("Search Student").prop("disabled", false);
+                $('#student-search-result').html(response);
+            }
+        },
+    });
+}
