@@ -5,31 +5,6 @@
     $( "#datepicker" ).datepicker();
   });
     
-//     //load  states on selection of country 
-// $("#nation").change(function(){
-// var id = $("#nation option:selected").val();  
-// $.post("listStates.php",{id:id}, function(data){   
-// $("#state").html(data);
-// }); 
-// });
-
-
-// //load  lga   
-// $("#state").change(function(){
-// var id = $("#state option:selected").val();  
-// $.post("listLga.php",{id:id}, function(data){   
-// $("#lg").html(data);
-// }); 
-// });
-
-
-// //load  cities   
-// $("#lg").change(function(){
-// var id = $("#lg option:selected").val();  
-// $.post("listCity.php",{id:id}, function(data){   
-// $("#city").html(data);
-// });
-// });
 </script>
            <?php 
 session_start();
