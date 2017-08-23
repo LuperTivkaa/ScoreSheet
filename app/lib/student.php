@@ -235,9 +235,9 @@ public  function assignNewNumber($studid,$admissionNoId,$clientid)
                             $sqlStmt = "INSERT INTO student_admission_no(stud_id,admission_number,my_stud_sch_id) 
                             values (?,?,?)";
                             $this->conn->query($sqlStmt);
-                            $this->$this->conn->bind(1, $studid, PDO::PARAM_INT);
-                            $this->$this->conn->bind(2, $admissionNoId, PDO::PARAM_INT);
-                            $this->$this->conn->bind(3, $clientid, PDO::PARAM_INT); 
+                            $this->conn->bind(1, $studid, PDO::PARAM_INT);
+                            $this->conn->bind(2, $admissionNoId, PDO::PARAM_INT);
+                            $this->conn->bind(3, $clientid, PDO::PARAM_INT); 
                             $this->conn->execute(); 
                         if ($this->conn->rowCount() == 1) 
                         {
@@ -312,7 +312,7 @@ public function newAdmissionNumber($clientid,$limit,$dateCreated,$status='False'
                         $serial_no = $key['serial_number'];
                         }
                           //loop through the result
-                          //add the 1 value to the already existing number for the initial increment
+                          //add  1 value to the already existing number for the initial increment
                           $serial_no+=1;
                           for($i=1; $i <= $limit; $i++)
                           {
@@ -410,18 +410,18 @@ public  function newParent($surname,$firstname,$lastname,
                     sex,contact_add,mobile,email,relationship,student_id_no,parent_sch_id,emergency)
                              values (?,?,?,?,?,?,?,?,?,?,?,?)";
                     $this->conn->query($sqlStmt);
-                    $this->$this->conn->bind(1, $this->surname, PDO::PARAM_STR);
-                    $this->$this->conn->bind(2, $this->firstname, PDO::PARAM_STR);
-                    $this->$this->conn->bind(3, $this->lastname, PDO::PARAM_STR);
-                    $this->$this->conn->bind(4, $this->occupation, PDO::PARAM_STR);
-                    $this->$this->conn->bind(5, $this->sex, PDO::PARAM_STR);
-                    $this->$this->conn->bind(6, $contact_add, PDO::PARAM_STR);
-                    $this->$this->conn->bind(7, $this->mobile, PDO::PARAM_STR);
-                    $this->$this->conn->bind(8, $this->email, PDO::PARAM_STR);
-                    $this->$this->conn->bind(9, $relationship, PDO::PARAM_STR);
-                    $this->$this->conn->bind(10, $stud_id, PDO::PARAM_INT);
-                    $this->$this->conn->bind(11, $sch_id, PDO::PARAM_INT);
-                    $this->$this->conn->bind(12, $emergency, PDO::PARAM_STR);
+                    $this->conn->bind(1, $this->surname, PDO::PARAM_STR);
+                    $this->conn->bind(2, $this->firstname, PDO::PARAM_STR);
+                    $this->conn->bind(3, $this->lastname, PDO::PARAM_STR);
+                    $this->conn->bind(4, $this->occupation, PDO::PARAM_STR);
+                    $this->conn->bind(5, $this->sex, PDO::PARAM_STR);
+                    $this->conn->bind(6, $contact_add, PDO::PARAM_STR);
+                    $this->conn->bind(7, $this->mobile, PDO::PARAM_STR);
+                    $this->conn->bind(8, $this->email, PDO::PARAM_STR);
+                    $this->conn->bind(9, $relationship, PDO::PARAM_STR);
+                    $this->conn->bind(10, $stud_id, PDO::PARAM_INT);
+                    $this->conn->bind(11, $sch_id, PDO::PARAM_INT);
+                    $this->conn->bind(12, $emergency, PDO::PARAM_STR);
                     $this->conn->execute();
                     //can not fetch result after executing insert query, it will throw general error
                    // $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -482,7 +482,7 @@ public  function newStudent($surname,$firstname,$lastname,$sex,
                             $this->conn->bind(15, $this->country, PDO::PARAM_INT); 
                             $this->conn->bind(16, $this->state, PDO::PARAM_STR);
                             $this->conn->bind(17, $this->city, PDO::PARAM_STR);
-                            $this->conn->bind(18, $this->this->lga, PDO::PARAM_STR,100);
+                            $this->conn->bind(18, $this->lga, PDO::PARAM_STR,100);
                             $this->conn->bind(19, $this->religion, PDO::PARAM_STR,100);
                             $this->conn->bind(20, $dob, PDO::PARAM_STR,100);
                             $this->conn->bind(21, $this->mobile, PDO::PARAM_INT); 
@@ -518,9 +518,22 @@ public  function addPrefixSettings($name,$seperator,$sch_id,$addedby,$added_date
    // always use try and catch block to write code
    try{
      //TODO: Add a code  to check and make sure that school prefix is not added twice
+     //To add another setting, you must deactivate the use of the first one
      //TODO: Deactivate the older one first
-
-         //INSERT PREFIX SETTINGS
+       $query ="SELECT prefix_id FROM 
+            admission_number_prefix
+            WHERE prefix_sch_id=? AND status=?";
+             
+                $this->conn->query($query);
+                $this->conn->bind(1, $sch_id, PDO::PARAM_INT);
+                $this->conn->bind(2, $status, PDO::PARAM_STR);
+                $this->conn->resultset();
+                if ($this->conn->rowCount() >=1)
+                {
+                  exit("oops! Error creating prefix, to add another setting, you must deactivate the one added earlier");
+                }
+                  else{
+                     //INSERT PREFIX SETTINGS
                             $sqlStmt = "INSERT INTO admission_number_prefix (prefix_name,prefix_seperator,prefix_sch_id,prefix_addedby,prefix_added_date,prefix_edited_date,
                             status)
                              values (?,?,?,?,?,?,?)";
@@ -534,15 +547,16 @@ public  function addPrefixSettings($name,$seperator,$sch_id,$addedby,$added_date
                             $this->conn->bind(7, $status, PDO::PARAM_STR,100);
                             $this->conn->execute(); 
 
-                        if ($this->conn->rowCount() == 1) 
-                        {
-                         //check number of inserted rows
-                        echo "ok";
-                        } 
-                        else
-                        {
-                        echo "Error creating admission number prefix settings";
-                        }
+                            if ($this->conn->rowCount() == 1) 
+                            {
+                            //check number of inserted rows
+                          echo "ok";
+                            } 
+                          else
+                          {
+                          echo "Error creating admission number prefix settings";
+                          }
+                  }      
       }
 
         catch(Exception $e)
