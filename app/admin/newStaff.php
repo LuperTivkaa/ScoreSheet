@@ -17,6 +17,11 @@ $client = new client($dbConnection);
               </div>
 
               <div class="form-group col-md-12 margin-bottom-sm">
+                 <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email"> 
+              </div>
+
+              <div class="form-group col-md-12 margin-bottom-sm">
                  <label for="my-pass">Password</label>
                 <input type="password" class="form-control" id="my-pass" name="my-pass" placeholder="Enter Password"> 
               </div>
@@ -31,8 +36,7 @@ $client = new client($dbConnection);
               </div>
 
               </div>
-               <hr class="mb-2">
-              <button class="btn btn-primary btn-lg" id="staff-account">Create Staff</button>
+              <button class="btn btn-primary btn-md mb-3" id="staff-account">Create Staff</button>
             
           
       
