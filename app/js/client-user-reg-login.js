@@ -15,6 +15,9 @@ function newClient(result) {
     var data = $.trim(result);
     if (data === "ok") {
         $("#new-signup-btn").text("Sign Up!").prop("disabled", false);
+        $("#username").val("");
+        $("#signup-email").val("");
+        $("#signup-pass").val("");
         //reidrect to the client login page
         $("#client-signup").addClass("success-msg");
         $("#client-signup").html('Your account has been created successfully, login now to continue!');
@@ -46,7 +49,7 @@ function clientLogin_call(result) {
     var data = $.trim(result);
     if (data === "ok") {
         $("#client-btn").text("Client Login").prop("disabled", false);
-        window.location.replace("Clients/schoolProfile.php");
+        window.location.replace("app/client/schoolProfile.php");
     } else {
         $("#client-btn").text("Client Login").prop("disabled", false);
         $("#client-login").addClass("error");
