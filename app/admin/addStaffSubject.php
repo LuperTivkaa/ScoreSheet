@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 //$regno = $_SESSION['ID'];
 $staff = filter_input(INPUT_POST, "staff", FILTER_SANITIZE_NUMBER_INT);
-$myclass = filter_input(INPUT_POST, "subj_class", FILTER_SANITIZE_NUMBER_INT);
+$myclass = filter_input(INPUT_POST, "class_id", FILTER_SANITIZE_NUMBER_INT);
 $subject = filter_input(INPUT_POST, "subj", FILTER_SANITIZE_NUMBER_INT);
 if(empty($myclass))
 {
