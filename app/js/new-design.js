@@ -32,3 +32,27 @@ window.onclick = function(event) {
         }
     }
 };
+
+
+//Page scroll functionality
+
+$(window).scroll(function() {
+    if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+        loadmore();
+    }
+});
+
+function loadmore() {
+    var val = $("#row_no").val();
+    $.ajax({
+        type: 'post',
+        url: 'get_results.php',
+        data: {
+            getresult: val
+        },
+        success: function(response) {
+            $('class tr:last').append(response);
+            $("#row_no").value = Number(val) + 10;
+        }
+    });
+}
