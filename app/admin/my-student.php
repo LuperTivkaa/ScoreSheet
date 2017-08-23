@@ -23,15 +23,20 @@
                             <li><a class="load-url" href="newStudent.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Student</a></li>
                             <li><a class="load-url" href="studentParent.php"><i class="fa fa-male fa-fw fa-fw" aria-hidden="true"></i>Add Parent</a></li>
                             <li><a class="load-url" href="createAdmissionNumber.php"><i class="fa fa-sort-numeric-asc fa-fw" aria-hidden="true"></i> Assign Admission Number</a></li>
+                             <li><a class="load-url" href="student-list.php"><i class="fa fa-th-list fa-fw" aria-hidden="true"></i>Student's Preview</a></li>
+                             <li><a class="load-url" href="student-search.php"><i class="fa fa-search fa-fw" aria-hidden="true"></i>Search Student</a></li>
                             </ul>   
                         </div>  
-                    <!--You can put content here inside the primary column  -->
-
-                    <!--end custom content  -->
+                   
                     <div id="my-info">
                     </div>
+                     <!--You can put content here inside the primary column  -->
+
+                    <!--end custom content  -->
 
                     <div id="new-content">
+                    </div>
+                    <div id="student-search-result">
                     </div>
 
                 </div>
