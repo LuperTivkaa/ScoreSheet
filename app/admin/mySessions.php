@@ -10,5 +10,5 @@ $client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 
 //TODO: Create this  function in Client class
-//$client->allSessions($clientid);
+$client->allSessions($clientid);
     
