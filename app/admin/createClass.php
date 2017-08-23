@@ -39,7 +39,7 @@
               <div class="form-group col-md-6">
                 
                  <label for="class-desc">Class Description</label>
-                <input type="text" class="form-control" id="subject" name="class-desc" placeholder="E.g Alpha or A">
+                <input type="text" class="form-control" id="class-desc" name="class-desc" placeholder="E.g Alpha or A">
               </div>
               
               </div>
