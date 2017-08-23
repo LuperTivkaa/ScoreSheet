@@ -25,26 +25,23 @@ $clientid = $_SESSION['user_info'][4];
               </div>
 
               <div class="form-group col-md-6 margin-bottom-sm">
-                 <label for="class-admitted">Class</label>
-                <select class="custom-select form-control" id="class-admitted">
+                 <label for="class">Class</label>
+                <select class="custom-select form-control" id="class">
                 <?php 
                     $client->loadClass($clientid);
                   ?>
                 </select> 
               </div>
 
-              <div class="form-group col-md-6 margin-bottom-sm">
+              <!-- <div class="form-group col-md-6 margin-bottom-sm">
                  <label for="arm">Class Arm</label>
                 <select class="custom-select form-control" id="arm">
                 </select> 
-              </div>
+              </div> -->
     
-            <div class="form-group col-md-6 margin-bottom-sm">
+            <div class="form-group col-md-12 margin-bottom-sm">
                  <label for="subject">Subject</label>
                 <select class="custom-select form-control" id="subject">
-                <?php
-                  $client->allSubjects($clientid);
-                    ?>
                 </select> 
               </div>
   
