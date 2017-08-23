@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>ScoreSheet| Staff Settings </title>
+    <title>ScoreSheet| Fee Settings </title>
     <?php include '../inc/scoresheet-header.php';?>
 
     <body>
@@ -21,7 +21,7 @@
                             <h6> Fee Settings Sub Menu</h6>
                             <ul>
                             <li><a class="load-url" href="feeItems.php"><i class="fa fa-plus-square-o fa-fw" aria-hidden="true"></i>Add Fee</a></li>
-                            <li><a class="added-fee-item" href="myFeeItems.php"><i class="fa fa-bars fa-fw" aria-hidden="true"></i>All Fee</a></li>
+                            <li><a class="load-url" href="myFeeItems.php"><i class="fa fa-bars fa-fw" aria-hidden="true"></i>All Fee</a></li>
                             </ul>   
                         </div>  
                     <!--You can put content here inside the primary column  -->
