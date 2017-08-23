@@ -12,5 +12,5 @@
 
               </div>
                <hr class="mb-2">
-              <button class="btn btn-primary btn-lg" id="add-session">Add Session</button>
+              <button class="btn btn-primary btn-md" id="add-session">Add Session</button>
             </div>
