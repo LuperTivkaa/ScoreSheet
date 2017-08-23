@@ -1,10 +1,13 @@
 <?php
 require '../../vendor/autoload.php';
 require_once '../../vendor/fzaninotto/Faker/src/autoload.php';
-
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
 use ScoreSheet\signUp;
-
-$myClient = new signUp();
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
+$signup = new signUp($dbConnection);
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
@@ -14,18 +17,16 @@ $user_name = filter_input(INPUT_POST, "user_name", FILTER_SANITIZE_STRING);
 $email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
 $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_STRING);
 
-$myClient->setUserName($user_name);
-$username = $myClient->getUserName();
+$signup->setUserName($user_name);
+$username = $signup->getUserName();
 
-$myClient->setMail($email);
-$email = $myClient->getMail();
+$signup->setMail($email);
+$email = $signup->getMail();
 
-$myClient->setPassword($password);
-$password = $myClient->getPassword();
+$signup->setPassword($password);
+$password = $signup->getPassword();
 
-
-
-$myClient->newClient($username,$email,$password);
+$signup->newClient($username,$email,$password);
     
 }
 else
