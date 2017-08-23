@@ -1,23 +1,15 @@
 //add Session code
-$('.new-session').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        $('#new-content').load(url, function() {
-            $("#new-content").on('click', '#add-session', function(e) {
-                e.preventDefault();
-                $('#add-session').prop("disabled", true);
-                var session = $("#session").val();
-                //var username = $("#username").val();
-                //var role =  $("#role option:selected").val();
-                //var jsURL = $('#input').attr('value');
-                addSession(session);
-            });
+$("#new-content").on('click', '#add-session', function(e) {
+    e.preventDefault();
+    $('#add-session').prop("disabled", true);
+    var session = $("#session").val();
+    //var username = $("#username").val();
+    //var role =  $("#role option:selected").val();
+    //var jsURL = $('#input').attr('value');
+    addSession(session);
+});
 
-        });
-        //console.log(url);
-
-    })
-    //function to add new staff call back
+//function to add new staff call back
 function addSession(session) {
     $.ajax({
         url: 'addSession.php',
@@ -43,27 +35,18 @@ function addSession(session) {
 
 
 //add Fee Item
-$('.new-fee').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        $('#new-content').load(url, function() {
-            $("#new-content").on('click', '#term-fee-items', function(e) {
-                e.preventDefault();
-                $('#term-fee-items').prop("disabled", true);
-                var item = $("#item").val();
-                var amount = $("#amount").val();
-                var amtwrds = $("#amount-words").val();
-                var term = $("#term option:selected").val();
-                var session = $("#session option:selected").val();
-                //var jsURL = $('#input').attr('value');
-                addFeeItem(item, amount, amtwrds, term, session);
-            });
-
-        });
-        //console.log(url);
-
-    })
-    //function to add fee Items
+$("#new-content").on('click', '#term-fee-items', function(e) {
+    e.preventDefault();
+    $('#term-fee-items').prop("disabled", true);
+    var item = $("#item").val();
+    var amount = $("#amount").val();
+    var amtwrds = $("#amount-words").val();
+    var term = $("#term option:selected").val();
+    var session = $("#session option:selected").val();
+    //var jsURL = $('#input').attr('value');
+    addFeeItem(item, amount, amtwrds, term, session);
+});
+//function to add fee Items
 function addFeeItem(item, amount, amtwrds, term, session) {
     $.ajax({
         url: 'addFeeItems.php',
@@ -87,24 +70,15 @@ function addFeeItem(item, amount, amtwrds, term, session) {
 } //end add fee item
 
 
-
 //add academic term
-$('.new-term').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        $('#new-content').load(url, function() {
-            $("#new-content").on('click', '#add-term', function(e) {
-                e.preventDefault();
-                $('#add-term').prop("disabled", true);
-                var term = $("#term").val();
-                addTerm(term);
-            });
+$("#new-content").on('click', '#add-term', function(e) {
+    e.preventDefault();
+    $('#add-term').prop("disabled", true);
+    var term = $("#term").val();
+    addTerm(term);
+});
 
-        });
-        //console.log(url);
-
-    })
-    //function to add fee Items
+//function to add fee Items
 function addTerm(term) {
     $.ajax({
         url: 'addTerm.php',
@@ -125,11 +99,8 @@ function addTerm(term) {
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end new term
-
-
-
 
 //Retrieve all added session and display them on the page
 $('.my-session').on('click', function(evt) {
@@ -157,75 +128,67 @@ function getAddedSession(url) {
     });
 
 } //End Get Session added
-
+///DEPRECATED
 
 //Retrieve all  added fee items
-$('.added-fee-item').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
+// $('.added-fee-item').on('click', function(evt) {
+//         evt.preventDefault();
+//         var url = $(this).attr('href');
 
-        getAddedFeeItem(url);
-    })
-    //get fee items
-function getAddedFeeItem(url) {
-    //get inserted records from the database
-    jQuery.getJSON(url, function(response) {
-        if (typeof response === 'object') {
-            var profileHTML = '<h5 class="top-header">Available Fee Items</h5>';
-            profileHTML += '<ul>';
-            $.each(response, function(index, profile) {
+//         getAddedFeeItem(url);
+//     })
+//     //get fee items
+// function getAddedFeeItem(url) {
+//     //get inserted records from the database
+//     jQuery.getJSON(url, function(response) {
+//         if (typeof response === 'object') {
+//             var profileHTML = '<h5 class="top-header">Available Fee Items</h5>';
+//             profileHTML += '<ul>';
+//             $.each(response, function(index, profile) {
 
-                //generate HTML to display added information
-                profileHTML += '<li class="display-list"> ' + profile.name + '-' + profile.amt + '-' + profile.myt + '-' + profile.S + '</li>';
-            });
-            profileHTML += '</ul>';
-            $('#new-content').html(profileHTML);
-        } else {
-            $('#new-content').html(response);
-        }
+//                 //generate HTML to display added information
+//                 profileHTML += '<li class="display-list"> ' + profile.name + '-' + profile.amt + '-' + profile.myt + '-' + profile.S + '</li>';
+//             });
+//             profileHTML += '</ul>';
+//             $('#new-content').html(profileHTML);
+//         } else {
+//             $('#new-content').html(response);
+//         }
 
-    });
+//     });
 
-} //End Get added Fee item
+// } //End Get added Fee item
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //add new Student
-$('.new-student').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        $('#new-content').load(url, function() {
-            $("#new-content").on('click', '#new-student-btn', function(e) {
-                e.preventDefault();
-                $('#new-student-btn').prop("disabled", true);
-                var surname = $("#surname").val();
-                var firstname = $("#firstname").val();
-                var lastname = $("#lastname").val();
-                var religion = $("#religion").val();
-                var nation = $("#nation").val();
-                var state = $("#state").val();
-                var lg = $("#lg").val();
-                var city = $("#city").val();
-                var add1 = $("#address1").val();
-                var add2 = $("#address2").val();
-                var mail = $("#mail").val();
-                var mobile = $("#mobile").val();
-                var sex = $("#sex").val();
-                var dob = $("#datepicker").val();
-                var blood_group = $("#blood-group").val();
-                var class_adm = $("#class-admitted").val();
-                var arm = $("#arm").val();
-                var session = $("#session").val();
-                var adm_type = $("#adm-type").val();
-                newStudent(surname, firstname, lastname, religion, nation, state,
-                    lg, city, add1, add2, mail, mobile, sex, dob,
-                    blood_group, class_adm, arm, session, adm_type);
-            });
+$("#new-content").on('click', '#new-student-btn', function(e) {
+    e.preventDefault();
+    $('#new-student-btn').prop("disabled", true);
+    var surname = $("#surname").val();
+    var firstname = $("#firstname").val();
+    var lastname = $("#lastname").val();
+    var religion = $("#religion").val();
+    var nation = $("#nation").val();
+    var state = $("#state").val();
+    var lg = $("#lg").val();
+    var city = $("#city").val();
+    var add1 = $("#address1").val();
+    var add2 = $("#address2").val();
+    var mail = $("#mail").val();
+    var mobile = $("#mobile").val();
+    var sex = $("#sex").val();
+    var dob = $("#datepicker").val();
+    var blood_group = $("#blood-group").val();
+    var class_adm = $("#class-admitted").val();
+    var arm = $("#arm").val();
+    var session = $("#session").val();
+    var adm_type = $("#adm-type").val();
+    newStudent(surname, firstname, lastname, religion, nation, state,
+        lg, city, add1, add2, mail, mobile, sex, dob,
+        blood_group, class_adm, arm, session, adm_type);
+});
 
-        });
-        // console.log(url);
-
-    })
-    //function to add new student
+//function to add new student
 function newStudent(surname, firstname, lastname, religion, nation, state,
     lg, city, add1, add2, mail, mobile, sex, dob,
     blood_group, class_adm, arm, session, adm_type) {
@@ -258,6 +221,18 @@ function newStudent(surname, firstname, lastname, religion, nation, state,
             if (data === "ok") {
                 $('#new-student-btn').prop("disabled", false);
                 $("#my-info").addClass("info");
+                var surname = $("#surname").val();
+                $("#firstname").val("");
+                $("#lastname").val("");
+                $("#state").val("");
+                $("#lg").val("");
+                $("#city").val("");
+                $("#address1").val("");
+                $("#address2").val("");
+                $("#mail").val("");
+                $("#mobile").val("");
+                $("#datepicker").val("");
+                $("#arm").val("");
                 $("#my-info").html("New Student added successfully");
             } else {
                 //alert("me")
@@ -274,32 +249,24 @@ function newStudent(surname, firstname, lastname, religion, nation, state,
 ///////////////////////
 
 //add new Student parent
-$('.new-parent').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        $('#new-content').load(url, function() {
-            $("#new-content").on('click', '#add-parent-info', function(e) {
-                e.preventDefault();
-                $('#add-parent-info').prop("disabled", true);
-                var studid = $("#student").val();
-                var sn = $("#surname").val();
-                var fn = $("#firstname").val();
-                var ln = $("#lastname").val();
-                var occup = $("#occupation").val();
-                var sex = $("#sex").val();
-                var relationship = $("#relationship").val();
-                var address = $("#cont_add").val();
-                var parentmail = $("#parent-mail").val();
-                var mobile = $("#mobile").val();
-                var emergency = $("#emergency-contact").val();
-                newParent(sn, fn, ln, occup, sex, relationship, address, parentmail, mobile, emergency, studid);
-            });
+$("#new-content").on('click', '#add-parent-info', function(e) {
+    e.preventDefault();
+    $('#add-parent-info').prop("disabled", true);
+    var studid = $("#student").val();
+    var sn = $("#surname").val();
+    var fn = $("#firstname").val();
+    var ln = $("#lastname").val();
+    var occup = $("#occupation").val();
+    var sex = $("#sex").val();
+    var relationship = $("#relationship").val();
+    var address = $("#cont_add").val();
+    var parentmail = $("#parent-mail").val();
+    var mobile = $("#mobile").val();
+    var emergency = $("#emergency-contact").val();
+    newParent(sn, fn, ln, occup, sex, relationship, address, parentmail, mobile, emergency, studid);
+});
 
-        });
-        // console.log(url);
-
-    })
-    //function to add new parent
+//function to add new parent
 function newParent(sn, fn, ln, occup, sex, relationship, address, parentmail, mobile, emergency, studid) {
     $.ajax({
         url: 'addNewParent.php',
@@ -322,37 +289,57 @@ function newParent(sn, fn, ln, occup, sex, relationship, address, parentmail, mo
             if (data === "ok") {
                 $('#add-parent-info').prop("disabled", false);
                 $("#my-info").addClass("info");
+                var studid = $("#student").val();
+                $("#surname").val("");
+                $("#firstname").val("");
+                $("#lastname").val("");
+                $("#occupation").val("");
+                $("#cont_add").val("");
+                $("#parent-mail").val("");
+                $("#mobile").val("");
+                $("#emergency-contact").prop("checked", false);
                 $("#my-info").html("Parent added successfully");
+                $("#student").empty();
+
             } else {
                 //alert("me")
                 $('#add-parent-info').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
-    })
+    });
 } //END OF ADD PARENT FOR STUDENT
+//load new studens and their unassigned admission numbers on click
+$("#new-content").on('click', '.loader', function(e) {
+    noAdmissionNumberStud();
+    fetchUnassignedNumbers();
+});
+//load students without admission number
+function noAdmissionNumberStud() {
+    $.get("loadUnassignedStudents.php", function(data) {
+        $("#student").html(data);
+    });
+}
+//load unassigned admission numbers
+function fetchUnassignedNumbers() {
+    $.get("loadUnassignedNumbers.php", function(data) {
+        $("#add-no").html(data);
+    });
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //ASSIGN NEW ADMISSION NUMBER
-$('.new-admission-no').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        $('#new-content').load(url, function() {
-            $("#new-content").on('click', '#assign-admission-no', function(e) {
-                e.preventDefault();
-                $('#assign-admission-no').prop("disabled", true);
-                var student_id = $("#student").val();
-                var adm_num_id = $("#add-no").val();
+$("#new-content").on('click', '#assign-admission-no', function(e) {
+    e.preventDefault();
+    $('#assign-admission-no').prop("disabled", true);
+    var student_id = $("#student").val();
+    var adm_num_id = $("#add-no").val();
 
-                assignNewNumber(student_id, adm_num_id);
-            });
+    assignNewNumber(student_id, adm_num_id);
+});
 
-        });
-        // console.log(url);
-
-    })
-    //function to assign new admission number to a student
+//function to assign new admission number to a student
 function assignNewNumber(studid, admno) {
     $.ajax({
         url: 'assignNewAdmissionNumber.php',
@@ -363,10 +350,14 @@ function assignNewNumber(studid, admno) {
             if (data === "ok") {
                 $('#assign-admission-no').prop("disabled", false);
                 $("#my-info").addClass("info");
+                noAdmissionNumberStud();
+                fetchUnassignedNumbers();
                 $("#my-info").html("Admission number assigned successfully");
             } else {
                 //alert("me")
                 $('#assign-admission-no').prop("disabled", false);
+                noAdmissionNumberStud();
+                fetchUnassignedNumbers();
                 $("#my-info").addClass("error");;
                 $("#my-info").html(data);
             }
@@ -377,24 +368,16 @@ function assignNewNumber(studid, admno) {
 ////////////////////////////////////////////////////
 
 //ADMISSION NUMBER SETTINGS
-$('.new-numbers').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        $('#new-content').load(url, function() {
-            $("#new-content").on('click', '#add-prefix', function(e) {
-                e.preventDefault();
-                $('#add-prefix').prop("disabled", true);
-                var prefix = $("#prefix").val();
-                var seperator = $("#seperator").val();
+$("#new-content").on('click', '#add-prefix', function(e) {
+    e.preventDefault();
+    $('#add-prefix').prop("disabled", true);
+    var prefix = $("#prefix").val();
+    var seperator = $("#seperator").val();
 
-                addPrefixSettings(prefix, seperator);
-            });
+    addPrefixSettings(prefix, seperator);
+});
 
-        });
-        //console.log(url);
-
-    })
-    //function to add prefix settings
+//function to add prefix settings
 function addPrefixSettings(prefix, seperator) {
     $.ajax({
         url: 'addPrefixSettings.php',
@@ -420,7 +403,7 @@ function addPrefixSettings(prefix, seperator) {
 
 ////////////////////////
 //GENERATE NEW NUMBERS
-$("#new-content").on('click', '#add-number', function(e) {
+$("#new-content").on('click', '#add-numbers', function(e) {
     e.preventDefault();
     $('#add-numbers').prop("disabled", true);
     var range = $("#range").val();
@@ -439,12 +422,13 @@ function addAdmNum(range) {
             var data = $.trim(response);
             if (data === "ok") {
                 $('#add-numbers').prop("disabled", false);
+                $("#range").val("");
                 $("#my-info").addClass("info");
-                $("#my-info").html("Admission numbers generated successfully.");
+                $("#my-info").html(range + " " + "Admission numbers generated successfully.");
             } else {
                 //alert("me")
                 $('#add-numbers').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
