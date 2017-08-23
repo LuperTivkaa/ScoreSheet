@@ -318,10 +318,14 @@ function addTerminalExam($score,$subj,$class,$staffid,$schid,$stud_no,$date)
 
   //STUDENT SEARCH METHOD
   //SEARCH STUDENT BASED ON NAME OR REGISTRATION NUMBER
+  /*
+  use this function for the advanced search also
+  1. provide term, session, class, as null arguments to the function
+  */
 function searchStudent($searchVar,$schid)
   {
         //get active term
-        $activeSession= $this->getActiveSession($schid);
+       // $activeSession= $this->getActiveSession($schid);
         
         // Try and Catch block
         try{
@@ -329,68 +333,74 @@ function searchStudent($searchVar,$schid)
   		    if(is_numeric($searchVar))
   		    {
   			//SELECT STUDENT ID FROM THE STUDENT ADMISSION NUMBER TABLE
-  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID FROM student_initial WHERE student_initial.id=? && student_initial.stud_sch_id=?";
+  					$query ="SELECT student_initial.id AS studentID, CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID FROM student_initial WHERE student_initial.id=? AND student_initial.stud_sch_id=?";
                     $this->conn->query($query);
                     $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
 					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
                     $myResult= $this->conn->resultset();
+                    $output ="";
                     if($this->conn->rowCount() == 0)
                     {
-                      exit("No such student exist in the school!");
+                      exit("No such student exist in the school with such number");
                     }
                     else{
-                    $printOutput = " ";
-                    $printOutput.= "<table   width=634>";
-                    $printOutput.="<tr><th>S/NO</th><th>STUDENT FULL NAME</th><th>DETAIL ASSESSMENT</th><th>DETAIL TERMINAL EXAMINATION</th></tr>";
+                      $output .='<table class="table">';
+                       $output .='<thead><tr><th>#</th><th>Full Name</th><th>Detail Assessment</th><th>Detail Terminl Examination</th></tr></thead><tbody>';
                     $ci=1;
                       foreach($myResult as $row => $key)
                       {
                         //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
-                        $printOutput.="tr>";
-                        $printOutput.="<td>".$ci."</td>";
-                        $printOutput.='<td><button onclick="caDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm"> Assessment Details</button></td>';
-                        $printOutput.='<td><button onclick="examDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm">Exam Details</button></td>"; 
-                        $printOutput.="</tr>'; 
+                       $ID = $key['studentID'];
+                        $fullname = $key['Fullname'];
+                        $output.= '<tr>';
+                        $output.='<td>'.$ci.'</td>';
+                        $output.='<td>'.$fullname.'</td>';
+                        $output.='<td><button onclick="caDetails('.$ID.')" class="btn btn-info btn-sm">View</button></td>';
+                        $output.='<td><button onclick="examDetails('.$ID.')" class="btn btn-info btn-sm">View</button></td>';
+                        $output.='</tr>';                   
                         $ci++;
                         //$printOutput.="<td><a href=examScores.php?id=".$key['StudentID']." onclick="GetCourseDetails('.$row['ccid'].')">View Examination Scores </a></td>";
                       }
-                    $printOutput.= "</table>";
-                    return $printOutput;
+                       $output.=' </tbody></table>';
+                       echo $output;
   		      }
           }
   		 elseif(is_string($searchVar))
   		 {
   		 	//SELECT ID FROM THE STUDENT INITIAL TABLE BASED ON THE REGISTRATION NUMBER
          //FIND ID BASED ON THE REGISTRATION NUMBER
-         $student_ID = $this->getStudentId($searchVar,$schid);
-            		$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID FROM student_initial WHERE student_initial.id=? && student_initial.stud_sch_id=?";
-                    $searchVar = "%".$searchVar."%";
+         //$student_ID = $this->getStudentId($searchVar,$schid);
+            		$query ="SELECT student_initial.id AS studentID, CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID FROM student_initial WHERE student_initial.surname LIKE :searchVar AND student_initial.stud_sch_id=:schid";
+                    $searchVar = "%$searchVar%";
                     $this->conn->query($query);
-                    $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
-					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                    $this->conn->bind(':searchVar', $searchVar, PDO::PARAM_STR);
+					          $this->conn->bind(':schid', $schid, PDO::PARAM_INT);
                     $myResult= $this->conn->resultset();
+                    $output ="";
                     if($this->conn->rowCount() == 0)
                     {
-                      exit("No such student exist in the school!");
+                      exit("No such student exist in the school with that name");
                     }
                     else{
-                    $printOutput = " ";
-                    $printOutput.= "<table   width=634>";
-                    $printOutput.="<tr><th>S/NO</th><th>STUDENT FULL NAME</th><th>DETAIL ASSESSMENT</th><th>DETAIL TERMINAL EXAMINATION</th></tr>";
-                    $ci=1;
+                       $output .='<table class="table">';
+                       $output .='<thead><tr><th>#</th><th>Full Name</th><th>Detail Assessment</th><th>Detail Terminl Examination</th></tr></thead><tbody>';
+                       $ci=1;
                       foreach($myResult as $row => $key)
                       {
                         //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
-                        $printOutput.="tr>";
-                        $printOutput.="<td>".$ci."</td>";
-                        $printOutput.='<td><button onclick="caDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm"> Assessment Details</button></td>';
-                        $printOutput.='<td><button onclick="examDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm">Exam Details</button></td>"; 
-                        $printOutput.="</tr>'; 
+                        $ID = $key['studentID'];
+                        $fullname = $key['Fullname'];
+                        $output.= '<tr>';
+                        $output.='<td>'.$ci.'</td>';
+                        $output.='<td>'.$fullname.'</td>';
+                        $output.='<td><button onclick="caDetails('.$ID.')" class="btn btn-info btn-sm">View</button></td>';
+                        $output.='<td><button onclick="examDetails('.$ID.')" class="btn btn-info btn-sm">View</button></td>';
+                        $output.='</tr>';                   
                         $ci++;
                         //$printOutput.="<td><a href=examScores.php?id=".$key['StudentID']." onclick="GetCourseDetails('.$row['ccid'].')">View Examination Scores </a></td>";
                       }
-                    $printOutput.= "</table>";
-                    return $printOutput;
+                       $output.=' </tbody></table>';
+                       echo $output;
   		      }
 
   		 }
