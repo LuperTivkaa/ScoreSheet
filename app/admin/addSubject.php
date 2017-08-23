@@ -1,12 +1,17 @@
 <?php
-//session_start();
-include 'inc/regSession.php';
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use Carbon\Carbon;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
+$student = new student($dbConnection);
+
 $clientid = $_SESSION['user_info'][4];
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
-$client = new client();
-//$dateCreated = date("Y-m-d");
+$userid = $_SESSION['user_info'][0];
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
