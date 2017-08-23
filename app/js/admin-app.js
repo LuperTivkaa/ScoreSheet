@@ -54,6 +54,8 @@ function getallStudents(url) {
 //Get Staff Records
 $('.my-staff').on('click', function(evt) {
         evt.preventDefault();
+        $("#my-info").empty();
+        $('#student-search-result').empty();
         var url = $(this).attr('href');
 
         getMyStaff(url);
@@ -169,6 +171,7 @@ function newSubject(subj) {
             if (data === "ok") {
                 $('#add-new-subject').prop("disabled", false);
                 $("#my-info").addClass("info");
+                $('#subject').val("");
                 $("#my-info").html("Subject added successfully");
             } else {
                 //alert("me")
@@ -216,6 +219,40 @@ function newClass(myclass) {
     });
 }
 //END CREATE NEW SCHOOL CLASS
+
+//create Class description
+$("#new-content").on('click', '#assign-desc', function(e) {
+    e.preventDefault();
+    $('#assign-desc').prop("disabled", true);
+    var class_id = $('#class-list option:selected').val();
+    var description = $('#class-desc option:selected').val();
+    classDescription(description, class_id);
+});
+
+//call back to assign class description
+function classDescription(description, class_id) {
+    $.ajax({
+        url: 'assignClassArm.php',
+        type: 'POST',
+        data: { class_descr: description, class_id: class_id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#assign-desc').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Class arm created successfully");
+            } else {
+                //alert("me")
+                $('#assign-desc').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    })
+}
+// End assign block
+
+///end of class escription
 //=================================================================================
 
 //==================================================================================
@@ -263,17 +300,17 @@ $("#new-content").on('click', '#add-subject', function(e) {
     e.preventDefault();
     $('#add-subject').prop("disabled", true);
     var staff = $("#staff option:selected").val();
-    var class_arm = $("#arm option:selected").val();
+    var class_id = $("#class option:selected").val();
     var subj = $("#subject option:selected").val();
-    createSubject(staff, class_arm, subj);
+    createSubject(staff, class_id, subj);
 });
 
 //function to add new subject call back
-function createSubject(staff, subj_class, subj) {
+function createSubject(staff, class_id, subj) {
     $.ajax({
         url: 'addStaffSubject.php',
         type: 'POST',
-        data: { staff: staff, subj_class: subj_class, subj: subj },
+        data: { staff: staff, class_id: class_id, subj: subj },
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
