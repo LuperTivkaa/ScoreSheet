@@ -25,13 +25,20 @@
                        <div class="col-md-4">
                                 <div class="card">
                                     <div class="img-div">
-                                    <img src="../images/bg.jpg" alt="John" class="bg-image" style="width:100%">
+                                    <img src="../images/bg.jpg" alt="background image" style="width:100%">
+                                    <img src="../images/avatar.jpg" alt="John" class="bg-image">
                                     </div>
                                     <!-- <img src="img.jpg" alt="John" class="bg-image" style="width:100%"> -->
                                     <div class="card-container">
+                                        <span class="image-upload">
+                                        <label for="image-file">
+                                        <i class="fa fa-camera fa-fw" aria-hidden="true"></i>
+                                        </label>
+                                        <input type="file" name="image-file" class="form-control" id="image-file">
+                                        </span>
                                     <h1>John Doe</h1>
-                                    <p class="title">CEO & Founder, Example</p>
-                                    <p>Harvard University</p>
+                                    <p class="title">School Teacher</p>
+                                    <p>Nadi Schools, Makurdi</p>
                                     <a href="#"><i class="fa fa-dribbble"></i></a>
                                     <a href="#"><i class="fa fa-twitter"></i></a>
                                     <a href="#"><i class="fa fa-linkedin"></i></a>
@@ -42,12 +49,12 @@
                        </div>
 
                        <div class="col-md-8">
-                            <ul>
+                            <ul class="staff-menu">
                             <li><a class="load-url" href=""><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Profile</a></li>
-                            <li><a class="load-url" href=""><i class="fa fa-male fa-fw fa-fw" aria-hidden="true"></i> Edit Profile</a></li>
-                            <li><a class="load-url" href=""><i class="fa fa-sort-numeric-asc fa-fw" aria-hidden="true"></i> Assign Admission Number</a></li>
-                             <li><a class="load-url" href="student-list.php"><i class="fa fa-th-list fa-fw" aria-hidden="true"></i>Student's Preview</a></li>
+                            <li><a class="load-url" href=""><i class="fa fa fa-pencil fa-fw" aria-hidden="true"></i> Edit Profile</a></li>
+                             <li><a class="load-url" href="student-list.php"><i class="fa fa-eye fa-fw" aria-hidden="true"></i>Profile Preview</a></li>
                             </ul>
+                            <hr class="mt-2">
                        <div id="Staff-info">
                        </div>
                        </div>
