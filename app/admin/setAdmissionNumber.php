@@ -45,6 +45,6 @@
               </div>
               
               </div>
-              <button class="submit btn btn-primary" id="add-prefix">Create Prefix</button>
+              <button class="submit btn btn-primary mb-3" id="add-prefix">Create Prefix</button>
 
 
