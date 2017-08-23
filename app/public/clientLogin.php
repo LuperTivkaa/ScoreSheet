@@ -1,8 +1,12 @@
 <?php
 require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
 use ScoreSheet\signUp;
-
-$login = new signUp();
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
+$signup = new signUp($dbConnection);
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
@@ -12,15 +16,15 @@ $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_STRING);
 
 
 
-$login->setMail($email);
-$email = $login->getMail();
+$signup->setMail($email);
+$email = $signup->getMail();
 
-$login->setPassword($password);
-$password = $login->getPassword();
+$signup->setPassword($password);
+$password = $signup->getPassword();
 
 
 
-$login->client_login($email,$password);
+$signup->client_login($email,$password);
     
 }
 else
