@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>ScoreSheet| Admin </title>
+    <title>ScoreSheet| ACademic Settings</title>
     <?php include '../inc/scoresheet-header.php';?>
 
     <body>
