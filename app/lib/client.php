@@ -2,7 +2,7 @@
 namespace ScoreSheet;
 use \PDO;
 
-class client{
+class client {
 
 	//class propoerties
 	public $sch_name;
@@ -240,23 +240,46 @@ public function loadClassArm($class_id)
     public function allFeeItems($clientid)
         {
         try {
-                $query ="SELECT fee_items.id,fee_items.item_name AS name, 
+                $query ="SELECT fee_items.id AS ID,fee_items.item_name AS name, 
                 fee_items.amount AS amt,sch_term.term AS myt,session.session AS S
                 FROM fee_items 
                 INNER JOIN sch_term ON fee_items.item_term = sch_term.term_id 
                 INNER JOIN session ON fee_items.item_session=session.id  
                 WHERE fee_item_sch_id=?";
                     $this->conn->query($query);
-                    $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
-                    $output = array();
-                    $output = $this->conn->resultset();
-                    if($output)
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $myResult= $this->conn->resultset(); 
+                    $output = "";
+                    $output .= '<h5 class="top-header mt-2">All Fee Item(s)</h5><br/>';
+                    $output .='<table class="table">';
+                    $output .='<thead><tr><th>Item Name</th><th>Amount</th><th>Term</th><th>Session</th><th>Edit</th></tr></thead><tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
                     {
-                      echo json_encode($output);
+                    $ID = $key['ID'];
+                    $itemname = $key['name'];
+                    $itemamount = $key['amt'];
+                    $term = $key['myt'];
+                    $session = $key['S'];
+                    
+                    //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                    //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+                   $output.= '<tr>';
+                   $output.='<td>'.$itemname.'</td>';
+                   $output.= '<td>'.$itemamount.'</td>';
+                   $output.='<td>'.$term.'</td>';
+                   $output.= '<td>'.$session.'</td>';
+                   $output.='<td><button onclick="editFee('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>
+Edit</button></td>';
+                   $output.='</tr>';
+                   //$output .= "<option value=".$ID.">".$category."</option>";
+                    }
+                    $output.=' </tbody></table>';
+                    echo $output;
                     }
                     else
                     {
-                      echo json_encode("No fee items added yet!");
+                      echo ("No fee items added yet!");
                     }
         }// End of try catch block
          catch(Exception $e)
@@ -374,14 +397,138 @@ public function getAllStudents($id)
         {
             echo json_encode("Error: Uanble to fetch active students records");
         }
+    }
+    //end of all students
+//add new fee item
+public  function feeItem($item_name,$amount,$amt_wrds,$clientid,$term,$session)
+  {  
+  try{
+          //insert new term
+                            $sqlStmt = "INSERT INTO fee_items 
+                            (item_name,amount,amount_words,fee_item_sch_id,item_term,item_session) 
+                            values (?,?,?,?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $item_name, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $amount, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $amt_wrds, PDO::PARAM_STR,100);
+                            $this->conn->bind(4, $clientid, PDO::PARAM_STR,100);
+                            $this->conn->bind(5, $term, PDO::PARAM_STR,100);
+                            $this->conn->bind(6, $session, PDO::PARAM_STR,100);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Fee item not created, try again!";
+                        }
+
         }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+}
+//end  fee item method
 
+//Method to get student list that are active
+public function initialStudentList($schid,$status="Active")
+        {
+        try {
+                $query ="SELECT id AS studentID, CONCAT(UPPER(surname), ', ', lastName, ' ', lastname) AS fullname, gender AS Sex,img AS Image,status_active AS Active FROM student_initial
+                WHERE stud_sch_id=? && status_active =? ORDER BY gender AND surname DESC LIMIT 0,10";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $schid, PDO::PARAM_INT); 
+                    $this->conn->bind(2, $status, PDO::PARAM_STR); 
+                    $output = "";
+                    $myResult = $this->conn->resultset();
+                    //echo table headings
+                $output .='<table class="table">';
+                $output .='<thead><tr><th>Full Name</th><th>Sex</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
+                    {
+                    $ID = $key['studentID'];
+                    $fullname = $key['fullname'];
+                    $sex = $key['Sex'];
+                    $status = $key['Active'];
+                    //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                    //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+                   $output.= '<tr>';
+                   $output.='<td>'.$fullname.'</td>';
+                   $output.= '<td>'.$sex.'</td>';
+                   $output.='<td>'.$status.'</td>';
+                   $output.='<td><button onclick="displayDetails('.$ID.')" class="btn btn-info btn-sm">View</button></td>';
+                   $output.='</tr>';
+                   //$output .= "<option value=".$ID.">".$category."</option>";
+                    }
+                    $output.=' </tbody></table>';
+                    echo $output;
+                    }
+                    else{
+                        echo "No student found!";
+                    }
+                    
+                }//End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Uanble to fetch active students records");
+        }
+    }
+//End initial student list
 
-
-//end of all students
+//Other students list
+public function otherStudentList($schid,$status="Active",$no)
+        {
+        try {
+                $query ="SELECT id AS studentID, CONCAT(UPPER(surname), ', ', lastName, ' ', lastname) AS fullname, gender AS Sex,img AS Image,status_active AS Active FROM student_initial
+                WHERE stud_sch_id=? && status_active =? ORDER BY gender AND surname DESC LIMIT :start,10";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $schid, PDO::PARAM_INT); 
+                    $this->conn->bind(2, $status, PDO::PARAM_INT);
+                    $this->conn->bind(':start', $no, PDO::PARAM_INT);
+                    $output = "";
+                    $myResult = $this->conn->resultset();
+                    //echo table headings
+                //$output .='<table class="table">';
+                //$output .='<thead><tr><th>#</th><th>Full //Name</th><th>Sex</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
+                    {
+                    $ID = $key['studentID'];
+                    $fullname = $key['fullname'];
+                    $sex = $key['Sex'];
+                    $status = $key['Active'];
+                    //
+                   $output.='<tr>';
+                   $output.='<td>'.$fullname.'</td>';
+                   $output.='<td>'.$sex.'</td>';
+                   $output.='<td>'.$status.'</td>';
+                   $output.='<td><button onclick="displayDetails('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-eye fa-fw" aria-hidden="true"></i>
+View</button></td>';
+                   $output.='</tr>';
+                    }
+                    //$output.=' </tbody></table>';
+                    echo $output;
+                    }
+                    else{
+                        echo "No student found!";
+                    }
+                    
+                }//End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Uanble to fetch active students records");
+        }
+    }
+//end other student list
 
 //male staff count
-
 public function getMaleStaff($id)
         {
         try {
@@ -445,10 +592,35 @@ public function getFemaleStaff($id)
 //add subject taught by staff
 public  function addSubject($subject_id,$class_id,$staff_id,$sch_id,$addedDate,$editedDate,$createdBy)
   {
-// always use try and catch block to write code
+   // always use try and catch block to write code
   try{
-
-    //insert new subjects  taught by staff 
+      //ccheck for duplicate values for subject, class arm and staff
+                    $query ="SELECT * FROM staff_subject_taught WHERE subject_id=? AND class_taught=? AND my_id=? AND sch_identity=?";
+                    $this->conn->query($query);
+                     $this->conn->bind(1, $subject_id, PDO::PARAM_INT);
+                    $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                    $this->conn->bind(3, $staff_id, PDO::PARAM_INT);
+                    $this->conn->bind(4, $sch_id, PDO::PARAM_INT);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >= 1)
+                    {
+                      exit("This user already has already being assigned this subject for this class");
+                    }
+                    else{
+                        //check for duplicate subject per class
+                        $query ="SELECT * FROM staff_subject_taught WHERE subject_id=? AND class_taught=? AND sch_identity=?";
+                        $this->conn->query($query);
+                         $this->conn->bind(1, $subject_id, PDO::PARAM_INT);
+                        $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                        $this->conn->bind(3, $sch_id, PDO::PARAM_INT);
+                        $this->conn->execute();
+                        if ($this->conn->rowCount() >= 1)
+                        {
+                            exit("This subject exist for this class already");
+                        }
+                        else{
+                        //insert new subjects  taught by staff 
                             $sqlStmt = "INSERT INTO staff_subject_taught(subject_id,
                             class_taught,my_id,sch_identity,addedDate,editedDate,addedBy)
                              values (?,?,?,?,?,?,?)";
@@ -461,15 +633,17 @@ public  function addSubject($subject_id,$class_id,$staff_id,$sch_id,$addedDate,$
                             $this->conn->bind(6, $editedDate, PDO::PARAM_STR); 
                             $this->conn->bind(7, $createdBy, PDO::PARAM_INT); 
                             $this->conn->execute(); 
-                        if ($this->conn->rowCount() == 1) 
-                        {
-                        //check number of inserted rows
-                        echo "ok";
-                        } 
-                        else
-                        {
-                        echo "Error adding subject";
+                            if ($this->conn->rowCount() == 1) 
+                            {
+                            //check number of inserted rows
+                            echo "ok";
+                            } 
+                            else
+                            {
+                            echo "Error adding subject";
+                            }
                         }
+                    }        
 
                   
       }
@@ -481,7 +655,7 @@ public  function addSubject($subject_id,$class_id,$staff_id,$sch_id,$addedDate,$
         echo "Error:". $e->getMessage();
          }
     }
-//end subject taught
+    //end subject taught
 
 //Add New Staff
 public  function newStaff($email,$username,$password,$role,$clientid,$editedDate,$createdDate)
@@ -493,8 +667,9 @@ public  function newStaff($email,$username,$password,$role,$clientid,$editedDate
                    //check for existence of the staff
                     $query ="SELECT * FROM users where email=? || user_name =? || password=?";
                     $this->conn->query($query);
-                    $this->conn->bind(1, $this->user_name, PDO::PARAM_STR);
-                    $this->conn->bind(2, $this->password, PDO::PARAM_STR);
+                     $this->conn->bind(1, $this->email, PDO::PARAM_STR);
+                    $this->conn->bind(2, $this->username, PDO::PARAM_STR);
+                    $this->conn->bind(3, $this->password, PDO::PARAM_STR);
                     $this->conn->execute();
                     //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     if ($this->conn->rowCount() >=1)
@@ -508,7 +683,7 @@ public  function newStaff($email,$username,$password,$role,$clientid,$editedDate
                             $sqlStmt = "INSERT INTO users(email,user_name,
                             password,role,created_By,
                             edited_on,created_on)
-                             values (?,?,?,?,?,?)";
+                             values (?,?,?,?,?,?,?)";
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $this->email, PDO::PARAM_STR,100);
                             $this->conn->bind(2, $this->username, PDO::PARAM_STR,100);
@@ -539,7 +714,6 @@ public  function newStaff($email,$username,$password,$role,$clientid,$editedDate
          }
     }
 //end new staff
-
 
     //function to create institution profile
 public  function instProfile($sch_name,$sch_type,$clientid,$country,$state, $lg, $city,$address,$mobile)
@@ -619,7 +793,7 @@ public function schProfile($id)
                     $this->conn->bind(1, $id, PDO::PARAM_INT); 
                     $output = array();
                     $myResult = $this->conn->resultset();
-                    $output[]=$myResult;
+                    $output=$myResult;
                     echo json_encode($output);
         }// End of try catch block
          catch(Exception $e)
@@ -671,8 +845,8 @@ public function loadInstCategory()
             $ID = $key['id'];
             $category = $key['category_name'];
 
-       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-      //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+          //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
           $output .= "<option value=".$ID.">".$category."</option>";
                 
         }
@@ -750,13 +924,14 @@ public function loadClass($client_id)
 
 
 //Get subject
-public function loadSubject($class_id)
+public function loadSubject($class_id,$sch_id)
     {
         try {
                 $query ="SELECT subjects.sub_id,subject_name FROM subjects INNER JOIN class_subject ON 
-                class_subject.subject_id=subjects.sub_id WHERE class_subject.class_id=?";
+                class_subject.subject_id=subjects.sub_id WHERE class_subject.class_id=? AND subjects.my_sch_id=?";
                 $this->conn->query($query);
                 $this->conn->bind(1, $class_id, PDO::PARAM_INT);
+                $this->conn->bind(2, $sch_id, PDO::PARAM_INT);
                 $myResult= $this->conn->resultset();
                 $output =" "; 
         foreach ($myResult as $row => $key) 
@@ -925,5 +1100,396 @@ public function loadCity($id)
         }
         }
 
+
+//add new school term
+public  function newTerm($term,$clientid,$status='Inactive')
+  {
+
+  //always use try and catch block to write code   
+  try{
+          //insert new term
+                            $sqlStmt = "INSERT INTO sch_term (term,term_inst_id,term_status) 
+                            values (?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $term, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $clientid, PDO::PARAM_INT,100);
+                            $this->conn->bind(3, $status, PDO::PARAM_STR,100);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Could not create school term, try again";
+                        }
+
+        }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
 }
-//end of client sign up
+//new academic session
+ //create new academic sessionss
+public  function newAcademicSession($session,$clientid,$status="Inactive")
+  {
+     
+  try{
+
+
+
+          //insert new session
+                            $sqlStmt = "INSERT INTO session(session,sess_inst_id,active_status) 
+                            values (?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $session, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $clientid, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $status, PDO::PARAM_STR,100);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Could not create session, try again";
+                        }
+
+        }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+  }
+  //end  create academic session
+//Get My Session
+public function allSessions($clientid)
+        {
+        try {
+
+                $query ="SELECT id AS ID, session AS Session,active_status AS Status
+                FROM session
+                WHERE sess_inst_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+                    $output="";
+                    $myResult = $this->conn->resultset();
+                    $output .='<table class="table">';
+                    $output .='<thead><tr><th>Session</th><th>Status</th><th>Action</th><th>Edit</th></tr></thead><tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
+                    {
+                    $ID = $key['ID'];
+                    $session = $key['Session'];
+                    $status = $key['Status'];
+                    //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                    //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+                   $output.= '<tr>';
+                   $output.='<td>'.$session.'</td>';
+                   $output.= '<td>'.$status.'</td>';
+                     $output.='<td><button onclick="toggleActivate('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-toggle-on fa-fw" aria-hidden="true"></i>
+Activate/Deactivate</button></td>';
+                    $output.='<td><button onclick="editSession('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>Edit</button></td>';
+                   $output.='</tr>';
+                   //$output .= "<option value=".$ID.">".$category."</option>";
+                    }
+                    $output.=' </tbody></table>';
+                    echo $output;
+                    }
+                    else{
+                        echo "No session found yet!";
+                    }
+                    
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Unable to fetch sessions");
+        }
+        }
+
+        //end get my sessions
+
+        //============================================================
+//add new subject
+public  function newSubject($subjname,$clientid)
+  { 
+  try{
+
+                //insert new subject
+                            $sqlStmt = "INSERT INTO subjects (subject_name,my_sch_id) 
+                            values (?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $subjname, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                        // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Could not create school subject, try again";
+                        }
+
+        }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+    }
+//end new subject
+//=================================================
+/*
+method block to assign subject to class
+*/
+public  function assignSubject($subject_id,$class_id,$sch_id)
+  {
+  try{
+    //Check to prevent assigning the same subject to a class twice
+     $query ="SELECT id FROM 
+            class_subject
+            WHERE subject_id=? && class_id=? && school_id=?";
+             
+                $this->conn->query($query);
+                $this->conn->bind(1, $subject_id, PDO::PARAM_INT);
+                $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                $this->conn->bind(3, $sch_id, PDO::PARAM_INT);
+                $this->conn->resultset();
+                if ($this->conn->rowCount() >=1)
+                {
+                    exit("This subject has already been added to this class!");
+                }
+                else{
+                            //insert new subjects  taught by staff 
+                            $sql = "INSERT INTO class_subject(subject_id,
+                            class_id,school_id)
+                             values (?,?,?)";
+                            $this->conn->query($sql);
+                            $this->conn->bind(1, $subject_id, PDO::PARAM_INT);
+                            $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                            $this->conn->bind(3, $sch_id, PDO::PARAM_INT); 
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         //check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Error assigning subject to class";
+                      }
+                }     
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+    // End of method block to assign subject
+    //===========================================
+
+//================================================
+//ADD NEW SCHOOL CLASS
+public  function newClass($class,$clientid,$status='Unpublished')
+  {
+  
+  try{
+          //insert new class
+                            $sqlStmt = "INSERT INTO class (class_name,my_inst_id,published_status) 
+                            values (?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $class, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $status, PDO::PARAM_STR,100);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                        // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Could not create school class, try again";
+                        }
+
+        }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+        }
+    //end  create new class
+
+
+  /*
+method block to assign subject to class
+*/
+public  function assignClassArm($class_desc,$class_id)
+  {
+  try{
+
+                            //insert new subjects  taught by staff 
+                            $sql = "INSERT INTO class_arm(
+                            arm_description,class_id)
+                             values (?,?)";
+                            $this->conn->query($sql);
+                            $this->conn->bind(1, $class_desc, PDO::PARAM_STR);
+                            $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         //check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Error creating class description";
+                        }  
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+}
+// End of method block to assign class arm description
+//===========================================
+
+//================================
+//all terms 
+public function allTerms($clientid)
+        {
+        try {
+
+                $query ="SELECT term_id AS ID, term AS Term, term_status AS Status
+                FROM sch_term
+                WHERE term_inst_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+                    $output="";
+                    $myResult = $this->conn->resultset();
+                    $output.="<h5 class='top-header mt-2'>All Terms</h5><br/>";
+                    $output .='<table class="table">';
+                    $output .='<thead><tr><th>Term</th><th>Status</th><th>Action</th><th>Edit</th></tr></thead><tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
+                    {
+                    $ID = $key['ID'];
+                    $term = $key['Term'];
+                    $status = $key['Status'];
+                    //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                    //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+                   $output.= '<tr>';
+                   $output.='<td>'.$term.'</td>';
+                   $output.= '<td>'.$status.'</td>';
+                   $output.='<td><button onclick="ActivateTerm('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-toggle-on fa-fw" aria-hidden="true"></i>
+Activate/Deactivate</button></td>';
+                    $output.='<td><button onclick="editTerm('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>Edit</button></td>';
+                   $output.='</tr>';
+                   //$output .= "<option value=".$ID.">".$category."</option>";
+                    }
+                    $output.=' </tbody></table>';
+                    echo $output;
+                    }
+                    else{
+                        echo "No academic term added yet!";
+                    }
+                    
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Unable to fetch academic term");
+        }
+        }
+//end all terms
+
+
+//display all school subject
+//all terms 
+public function mySubjects($clientid)
+        {
+        try {
+
+                $query ="SELECT sub_id AS ID, subject_name AS Subject
+                FROM subjects
+                WHERE my_sch_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+                    $output="";
+                    $myResult = $this->conn->resultset();
+                    $output.="<h5 class='top-header mt-2'>All Subjects </h5><br/>";
+                    $output .='<table class="table">';
+                    $output .='<thead><tr><th>Subject</th><th>Edit</th></tr></thead><tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
+                    {
+                    $ID = $key['ID'];
+                    $subj = $key['Subject'];
+                    //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                    //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+                   $output.= '<tr>';
+                   $output.='<td>'.$subj.'</td>';
+                    $output.='<td><button onclick="editSubject('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>Edit</button></td>';
+                   $output.='</tr>';
+                   //$output .= "<option value=".$ID.">".$category."</option>";
+                    }
+                    $output.=' </tbody></table>';
+                    echo $output;
+                    }
+                    else{
+                        echo "No subject added yet!";
+                    }
+                    
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Unable to fetch academic term");
+        }
+        }
+//end all terms
+
+//end display school subject
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+  //end of client class
