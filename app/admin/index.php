@@ -17,47 +17,36 @@
             <div class="wrapper">
 
                 <div class="primary-col">
-                    <p>This iisi iisn is isins kisghjghj jjkjkhjk jkjhkjh jbkjhkjh kjhkjhkjh kjbkjhkjhbkjhkjhkjh nmmn nn</p>
-                    <p>this </p>
-                    <!--outside content row  -->
-                    <div class="row">
-                        <!--column 8  -->
-                        <div class="col-md-8">
-                            <!--content row  -->
-                            <div class="row">
-                                <div class="form-group col-md-4">
-                                    <label for="student">Select Student</label>
-                                    <select class="custom-select form-control" id="student">
-                    </select>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="student">Select Student</label>
-                                    <select class="custom-select form-control" id="student">
-                    </select>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="student">Select Student</label>
-                                    <select class="custom-select form-control" id="student">
-                    </select>
-                                </div>
-                            </div>
-                            <!--end content row  -->
+                       <!--bootstrap Container   -->
+                  <h5 class="top-header">All Student(s) List</h5>
+            <div class="container">
+            
+                       <div class="row">
+                       
 
+                        <div class="form-group sm-2">
+                        <label for="inputPassword2" class="sr-only">Password</label>
+                        <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+                        </div>
+
+                        <div class="form-group sm-2">
+                        <label for="inputPassword2" class="sr-only">Password</label>
+                        <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+                        </div>
+
+                        <div class="form-group sm-2">
+                        <label for="inputPassword2" class="sr-only">Password</label>
+                        <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+                        </div>
+
+                        <div class="form-group sm-2">
+                        <label for="inputPassword2" class="sr-only">Password</label>
+                        <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+                        </div>
 
                         </div>
-                        <!--end cloumn 8  -->
-
-                        <div class="col-md-4">
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="add-no">Admission Number</label>
-                                    <select class="custom-select form-control" id="add-no" disabled>
-                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--end outside row  -->
+                      </div>
+                  <!--end bootstrap container  -->
                     <div id="my-info">
                     </div>
 
