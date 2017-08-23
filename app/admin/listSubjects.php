@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
 $id = filter_input(INPUT_POST, "id", FILTER_SANITIZE_NUMBER_INT);
 // $app->setPin($id);
 // $did = $app->getPin();
-$client->loadSubject($id);
+$client->loadSubject($id,$clientid);
 }
 else
 {
