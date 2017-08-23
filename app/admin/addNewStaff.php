@@ -13,6 +13,7 @@ $dateCreated = date("Y-m-d");
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 //$regno = $_SESSION['ID'];
+$email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
 $username = filter_input(INPUT_POST, "username", FILTER_SANITIZE_STRING);
 $pass = filter_input(INPUT_POST, "pass", FILTER_SANITIZE_STRING);
 $role = filter_input(INPUT_POST, "role", FILTER_SANITIZE_STRING);
@@ -26,9 +27,10 @@ $pass = $client->getPassword();
 
 $client->setRole($role);
 $role = $client->getRole();
+$client->setEmail($email);
+$email = $client->getEmail();
 
-
-$client->newStaff($username,$pass,$role,$clientid,$dateCreated,$dateCreated);
+$client->newStaff($email,$username,$pass,$role,$clientid,$dateCreated,$dateCreated);
     
 }
 else
