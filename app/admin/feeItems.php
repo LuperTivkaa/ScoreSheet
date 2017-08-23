@@ -53,5 +53,5 @@ $clientid = $_SESSION['user_info'][4];
   
               </div>
                <hr class="mb-2">
-              <button class="btn btn-primary btn-lg" id="term-fee-items">Add Fee Item</button>
+              <button class="btn btn-primary btn-md" id="term-fee-items">Add Fee Item</button>
             </div>
