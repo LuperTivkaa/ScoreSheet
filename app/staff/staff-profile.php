@@ -36,37 +36,38 @@
                                         </label>
                                         <input type="file" name="image-file" class="form-control" id="image-file">
                                         </span>
-                                    <h1>John Doe</h1>
-                                    <p class="title">School Teacher</p>
-                                    <p>Nadi Schools, Makurdi</p>
-                                    <a href="#"><i class="fa fa-dribbble"></i></a>
-                                    <a href="#"><i class="fa fa-twitter"></i></a>
-                                    <a href="#"><i class="fa fa-linkedin"></i></a>
-                                    <a href="#"><i class="fa fa-facebook"></i></a>
-                                    <p><button>Contact</button></p>
+                                        <h1>John Doe</h1>
+                                        <p class="title">School Teacher</p>
+                                        <p>Nadi Schools, Makurdi</p>
+                                        <a href="#"><i class="fa fa-dribbble"></i></a>
+                                        <a href="#"><i class="fa fa-twitter"></i></a>
+                                        <a href="#"><i class="fa fa-linkedin"></i></a>
+                                        <a href="#"><i class="fa fa-facebook"></i></a>
+                                        <p><button>Contact</button></p>
                                     </div>
                                 </div>
                        </div>
 
                        <div class="col-md-8">
                             <ul class="staff-menu">
-                            <li><a class="load-url" href=""><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Profile</a></li>
-                            <li><a class="load-url" href=""><i class="fa fa fa-pencil fa-fw" aria-hidden="true"></i> Edit Profile</a></li>
-                             <li><a class="load-url" href="student-list.php"><i class="fa fa-eye fa-fw" aria-hidden="true"></i>Profile Preview</a></li>
+                            <li><a class="load-url" href="newStaff.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Profile</a></li>
+                            <li><a class="load-url" href="staffQualification.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Academic Qualifications</a></li>
+                             <li><a class="load-url" href="student-list.php"><i class="fa fa-eye fa-fw" aria-hidden="true"></i> Profile Preview</a></li>
                             </ul>
                             <hr class="mt-2">
                        <div id="Staff-info">
                        </div>
+                       <div id="my-info">
+                        </div>
+
+                        <div id="new-content">
+                    </div>
                        </div>
 
                         </div>
                       </div>
                   <!--end bootstrap container  -->
-                    <div id="my-info">
-                    </div>
-
-                    <div id="new-content">
-                    </div>
+                    
 
                 </div>
 
