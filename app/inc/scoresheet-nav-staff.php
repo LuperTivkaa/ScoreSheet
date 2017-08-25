@@ -6,17 +6,18 @@
                     <a href="" class="dropbtn"><i class="fa fa-user fa-fw" aria-hidden="true"></i>Staff Profile <i class="fa fa-caret-down dropbtn" aria-hidden="true"></i>
                     </a>
                             <div id="myDropdown" class="dropdown-content">
-                                <a href="my-school.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> Profile DashBoard</a>
+                                <a href="staff-profile.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> Profile DashBoard</a>
             
                             </div>
                         </div>
                     </li>
                      <li>
                         <div class="dropdown">
-                            <a href="" class="dropbtn"><i class="fa fa-book fa-fw" aria-hidden="true"></i>Academics <i class="fa fa-caret-down dropbtn" aria-hidden="true"></i>
-</a>
+                            <a href="" class="dropbtn"><i class="fa fa-book fa-fw" aria-hidden="true"></i>Academics <i class="fa fa-caret-down dropbtn" aria-hidden="true"></i></a>
                             <div id="myDropdown" class="dropdown-content">
-                                <a href=""><i class="fa fa-th-large fa-fw" aria-hidden="true"></i>Academic Routines</a>
+                                <a href="assRoutines.php"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i>Assessment Panel</a>
+                                <a href="examRoutines.php"><i class="fa fa-puzzle-piece fa-fw" aria-hidden="true"></i>Exam Panel</a>
+                                 <a href="resultCentre.php"><i class="fa fa-trophy fa-fw" aria-hidden="true"></i>Result Centre</a>
             
                             </div>
                         </div>
