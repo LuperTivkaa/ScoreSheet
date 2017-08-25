@@ -1,56 +1,94 @@
-            <?php
-include 'inc/regSession.php';
-include 'inc/autoload.php';
-$newStaff = new student();
+<?php
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
+$clientid = $_SESSION['user_info'][4];
+//$newStaff = new student();
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
 ?>
 
+<!--Row  to hold some sub menu  -->
+<div class="row">
+                       <div class="col-md-5 mt-1">
+                        <div class="row">
+                            <div class="col-6">
+                            <label for="class">Select Class</label>
+                            <select class="custom-select  form-control" id="class">
+                              <?php
+                                $student->loadClass($clientid);
+                              ?>
+                            </select>
+                            </div>
+                            <div class="col-6">
+                            <label for="class-desc">Class Arm</label>
+                            <select class="custom-select  form-control" id="class-desc">
+                            </select>
+                            </div>
+                        </div>
+                       </div>
+
+                    <div class="col-md-7 mt-1">
+                        <div class="row">
+                            <div class="col-4">
+                            <label for="list-subject">Subject</label>
+                            <select class="custom-select  form-control" id="list-subject">
+                              <?php
+                              $student->loadSubject($userid);
+                              ?>
+                            </select>
+                            </div>
+                            <div class="col-4">
+                            <label for="arm">Term</label>
+                            <select class="custom-select  form-control" id="arm">
+                            </select>
+                            </div>
+                            <div class="col-4">
+                            <label for="arm">Session</label>
+                            <select class="custom-select  form-control" id="arm">
+                            </select>
+                            </div>
+                        </div>  
+                    </div>
+  </div>
+<!--  -->
 <!-- Enter form to create new student here -->
-<div class="row mb-3">
-<!--<div class="col-md-3"></div>-->
-    <div class="col-md-12"><h6 class="right-menu-header text-xs-center mt-3">Add Terminal Examination Scores</h6></div>
-<!--<div class="col-md-3"></div>-->
-</div>
 
 
-        <!-- ASSIGN NEW ADMISSION NUMBER -->
+        <!-- ADD NEW CA-->
     <div class="row">
+      <div class="col-md-2">
+      </div>
 
-            <div class="form-group col-md-4">
-                 <label for="student-class">Select Class </label>
-                <select class="custom-select  form-control" id="student-class">
-                <?php
-                $newStaff->loadClass($clientid);
-                  ?>
-                </select>
-              </div>
+      <div class="col-md-8">
+        <h6 class="top-header text-xs-center mt-3">Add Exam Scores</h6>
+        <div class="row">
+          
+          <div class="col-md-6">
+                <label for="regno">Scores</label>
+                <input type="text" class="form-control" id="scores" name="regno" placeholder="CA Scores">
+            </div>
 
-              <div class="form-group col-md-4">
-                 <label for="arm">Class Arm</label>
-                 <select class="custom-select  form-control" id="arm">
-                 </select>
-              </div>
-
-              <div class="form-group col-md-4">
+            <div class="col-md-6">
                 <label for="regno">Reg Number</label>
-                <input type="text" class="form-control" id="regno" name="regno" placeholder="Reg Number">
-              </div>
+                <input type="text" class="form-control" id="regno" name="regno" placeholder="Reg Number"> 
+            </div>
 
-              <div class="form-group col-md-4">
+              <button class="submit btn btn-primary btn-md mt-3" id="add-ca">Enter Scores</button>
 
-                 <label for="list-subject">Select Subject</label>
-                <select class="custom-select form-control" id="list-subject">
-                  <?php
-                  $newStaff->loadSubject($userid);
-                  ?>
-                </select>
-              </div>
+        </div>
+      </div>
 
-              <div class="form-group col-md-4">
-                <label for="scores">Enter Scores:</label>
-                <input type="text" class="form-control" id="scores" name="scores" placeholder="Enter Scores">
-              </div>
+      <div class="col-md-2">
+      </div>
 
-              </div>
-              <button class="submit btn btn-primary btn-md" id="add-exam-scores">Enter Exam Scores</button>
+</div>
+<!--end row  -->
+
+           
