@@ -620,7 +620,36 @@ function searchExams($searchVar,$schid)
          }
     }
 
+//Staff profile method
+public function staffProfile($clientid,$staffid)
+        {
+        try {
+                $query ="SELECT id, CONCAT(UPPER(surname), ' ', middle_name, ' ', lastname) AS fullname, gender AS Gender, date_of_birth AS Dob, mobile AS Mobile, user_img FROM staff_profile
+                WHERE my_school_id=? AND gender='male'";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT); 
+                    $output = array();
+                    $myResult = $this->conn->resultset();
+                    $output = $myResult;
+                    if($output)
+                    {
+                      echo json_encode($output);
+                    }
+                    else
+                    {
+                      echo json_encode("No Male Staff Yet!");
+                    }
+                }//End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Unable to fetch Male Staff");
+        }
+        }
 
+        //end get male staff
+
+
+//End Staff Profile method
 
 
 
