@@ -1,8 +1,16 @@
             <?php 
-include 'inc/regSession.php';
-include 'inc/autoload.php';
-$newStudent = new student();
-$clientid = $_SESSION['user_info'][0];
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
+$clientid = $_SESSION['user_info'][4];
+//$newStaff = new student();
+$userid = $_SESSION['user_info'][0];
 ?>
 
 <!-- Enter form to create new student here -->
@@ -34,6 +42,9 @@ $clientid = $_SESSION['user_info'][0];
                   ?>
                 </select>
               </div>
+              <div class="col-6">
+                  <button class="submit btn btn-primary" id="assign-admission-no">Assign Admission Number</button>
+              </div>
               
               </div>
-              <button class="submit btn btn-primary" id="assign-admission-no">Assign Admission Number</button>
+              
