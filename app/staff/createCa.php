@@ -16,9 +16,9 @@ $userid = $_SESSION['user_info'][0];
 
 <!--Row  to hold some sub menu  -->
 <div class="row">
-                       <div class="col-md-5 mt-1">
+                       <div class="col-md-7 mt-1">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-4">
                             <label for="class">Select Class</label>
                             <select class="custom-select  form-control" id="class">
                               <?php
@@ -26,29 +26,38 @@ $userid = $_SESSION['user_info'][0];
                               ?>
                             </select>
                             </div>
-                            <div class="col-6">
+                            <div class="col-4">
                             <label for="class-desc">Class Arm</label>
                             <select class="custom-select  form-control" id="class-desc">
                             </select>
                             </div>
-                        </div>
-                       </div>
 
-                    <div class="col-md-7 mt-1">
-                        <div class="row">
                             <div class="col-4">
                             <label for="list-subject">Subject</label>
                             <select class="custom-select  form-control" id="list-subject">
+                            </select>
+                            </div>
+
+                        </div>
+                       </div>
+
+                    <div class="col-md-5 mt-1">
+                        <div class="row">
+                            <div class="col-4">
+                            <label for="ca-no">CA Number</label>
+                            <select class="custom-select  form-control" id="ca-no">
                               <?php
-                              $student->loadSubject($userid);
+                              $student->loadCASettings();
                               ?>
                             </select>
                             </div>
+
                             <div class="col-4">
                             <label for="arm">Term</label>
                             <select class="custom-select  form-control" id="arm">
                             </select>
                             </div>
+                            
                             <div class="col-4">
                             <label for="arm">Session</label>
                             <select class="custom-select  form-control" id="arm">
