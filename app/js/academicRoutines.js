@@ -49,6 +49,7 @@ $("#new-content").on('click', '#add-exam-scores', function(e) {
     var subject = $("#list-subject option:selected").val();
     newExamScores(regno, scores, studentClass, arm, subject);
 });
+
 //call back function to add new continous assessment scores
 function newExamScores(regno, scores, studentClass, arm, subject) {
     $.ajax({
@@ -63,9 +64,18 @@ function newExamScores(regno, scores, studentClass, arm, subject) {
                 $("#my-info").html("Examination scores added");
             } else {
                 $('#add-exam-scores').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
-    })
+    });
 } //end add ca method
+
+//load staff subject on selection of class
+//load states on selection of subjects
+$('#new-content').on('change', '#class', function() {
+    var id = $("#class option:selected").val();
+    $.post("", { id: id }, function(data) {
+        $("#list-subject").html(data);
+    });
+});
