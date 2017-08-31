@@ -24,10 +24,10 @@
                        <!--Div to hold card for user profile  -->
                        <div class="col-md-12 pl-0">
                             <ul class="staff-menu">
-                            <li><a class="load-url" href="createCa.php"><i class="fa fa-eraser fa-fw" aria-hidden="true"></i> New Exam Score</a></li>
-                            <li><a class="load-url" href=""><i class="fa fa-search fa-fw" aria-hidden="true"></i> Search  Exam</a></li>
-                             <li><a class="load-url" href=""><i class="fa fa-folder-o fa-fw" aria-hidden="true"></i> Exam Sheet</a></li>
-                              <li><a class="load-url" href=""><i class="fa fa-sort-numeric-asc fa-fw" aria-hidden="true"></i>Process Scores</a></li>
+                            <li><a class="load-url" href="createExam.php"><i class="fa fa-eraser fa-fw" aria-hidden="true"></i> New Exam Score</a></li>
+                            <li><a class="load-url" href="searchExam.php"><i class="fa fa-search fa-fw" aria-hidden="true"></i> Search  Exam</a></li>
+                             <li><a class="load-url" href="examSheet.php"><i class="fa fa-folder-o fa-fw" aria-hidden="true"></i> Exam Sheet</a></li>
+                              <li><a class="load-url" href="processExams.php"><i class="fa fa-sort-numeric-asc fa-fw" aria-hidden="true"></i>Process Scores</a></li>
 
                              <li><a class="load-url" href=""><i class="fa fa-upload fa-fw" aria-hidden="true"></i> Post Scores</a></li>
                              
