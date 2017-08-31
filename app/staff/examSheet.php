@@ -17,7 +17,7 @@ $userid = $_SESSION['user_info'][0];
 <!--Row  to hold some sub menu  -->
 <div class="row">
                     <div class="col-md-12 mt-1">
-                         <h5 class="top-header">Assessment Sheet</h6>
+                         <h5 class="top-header">Examination Sheet</h6>
                         <div class="row">
                             
                             <div class="col-4">
