@@ -17,14 +17,14 @@ $userid = $_SESSION['user_info'][0];
 <!--Row  to hold some sub menu  -->
 <div class="row">
                        <div class="col-md-4 mt-1">
-                            <h5 class="top-header">Basic Search</h5>
+                            <h5 class="top-header">Exams Basic Search</h5>
                         <div class="row">
 
                             <div class="col-12">
                                 <div class="input-group">
                                 <input type="text" class="form-control" id="tag" name="tag" placeholder="Search for CA...">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-primary" type="button">Search CA!</button>
+                                    <button class="btn btn-primary" type="button">Search Exams...</button>
                                 </span>
                                 </div>
                                 <small id="emailHelp" class="form-text text-muted">You can search by ID or Surname.</small>
@@ -34,7 +34,7 @@ $userid = $_SESSION['user_info'][0];
                        </div>
 
                     <div class="col-md-8 mt-1">
-                         <h5 class="top-header">Advanced Search</h5>
+                         <h5 class="top-header">Exams Advanced Search</h5>
                         <div class="row">
                             
                             <div class="col-4">
