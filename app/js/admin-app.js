@@ -10,8 +10,7 @@ $('.load-url').on('click', function(evt) {
     var url = $(this).attr('href');
     $('#new-content').load(url);
 });
-
-//get birthdays NOT COMPvarE
+//get birthdays NOT Complete
 
 $('.birthdays').on('click', function(evt) {
     evt.preventDefault();
@@ -19,7 +18,7 @@ $('.birthdays').on('click', function(evt) {
     //alert(url);
     $('#new-content').load(url, function() {});
 });
-//end getbirthdays ////NOT COMPvarE
+//end getbirthdays ////NOT Complete
 
 //get all students
 $('.all-students').on('click', function(evt) {
@@ -28,6 +27,7 @@ $('.all-students').on('click', function(evt) {
     getallStudents(url);
 });
 //get all students
+
 function getallStudents(url) {
     //get inserted records from the database
     jQuery.getJSON(url, function(response) {
