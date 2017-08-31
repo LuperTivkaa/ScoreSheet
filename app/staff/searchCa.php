@@ -1,23 +1,87 @@
-<?php 
-include 'inc/regSession.php';
-include 'inc/autoload.php';
-$newStaff = new student();
+<?php
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
-//echo $clientObj->loadStaff($clientid);
+//$newStaff = new student();
+$clientid = $_SESSION['user_info'][4];
+$userid = $_SESSION['user_info'][0];
 ?>
 
-              <!-- create fee items -->
-              <div id="fee-item-container">
-              <h4 class="right-menu-header mt-3">Search Continous Assessment</h4>
-              
-              <div class="row">
+<!--Row  to hold some sub menu  -->
+<div class="row">
+                       <div class="col-md-4 mt-1">
+                            <h5 class="top-header">Basic Search</h5>
+                        <div class="row">
 
-              <div class="form-group col-md-6">
-                 <label for="tag">Search Tag</label>
-                <input type="text" class="form-control" id="tag" name="tag" placeholder="Reg Number, surname"> 
-              </div>
+                            <div class="col-12">
+                                <div class="input-group">
+                                <input type="text" class="form-control" id="tag" name="tag" placeholder="Search for CA...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="button">Search CA!</button>
+                                </span>
+                                </div>
+                                <small id="emailHelp" class="form-text text-muted">You can search by ID or Surname.</small>
+                            </div>
 
-              </div>
-               <hr class="mb-2">
-              <button class="btn btn-primary btn-md" id="search-ca">Search</button>
-            </div>
+                        </div>
+                       </div>
+
+                    <div class="col-md-8 mt-1">
+                         <h5 class="top-header">Advanced Search</h5>
+                        <div class="row">
+                            
+                            <div class="col-4">
+                            <label for="tag">Select Subject</label>
+                            <select class="custom-select  form-control" id="ca-no">
+                            </select>
+                            
+                            </div>
+
+                            <div class="col-4">
+                            <label for="tag">Select Class</label>
+                            <select class="custom-select  form-control" id="arm">
+                            </select>
+                            </div>
+                            
+                            <div class="col-4">
+                                <label for="tag">Class Arm</label>
+                            <select class="custom-select  form-control" id="arm">
+                            </select>
+                            </div>
+
+                            <div class="col-4">
+                            <label for="tag">Session</label>
+                            <select class="custom-select  form-control" id="arm">
+                            </select>
+                            </div>
+
+                            <div class="col-4">
+                            <label for="tag">Term</label>
+                            <select class="custom-select  form-control" id="arm">
+                            </select>
+                            </div>
+
+                            <div class="col-4">
+                            <label for="tag">Search Tag</label>
+                            <input type="text" class="form-control" id="tag" name="tag" placeholder="Search for CA...">
+                            </div>
+                            <div class="col-4">
+                            <button class="btn btn-primary mt-3" type="button">Search CA!</button>
+                            </div>
+                        </div>  
+                    </div>
+  </div>
+<!--  -->
+<!-- Enter form to create new student here -->
+
+
+      
+
+           
