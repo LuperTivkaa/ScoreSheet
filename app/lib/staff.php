@@ -645,14 +645,81 @@ public function staffProfile($clientid,$staffid)
             echo json_encode("Error: Unable to fetch Male Staff");
         }
         }
-
-        //end get male staff
-
-
 //End Staff Profile method
 
 
+//print result method
 
+//select CA Method
+	function print_ca($id,$sid)
+	{
+		
+		try {
+			/*
+			1. select distinct subject name and subject id from the tables joined in the query
+			2. Loop through the array and echo first the subject name in a cell
+			3. Use the subject id and pass it to the second Method to fetch CA records to display in the <td>
+			4. use the suject ID to also fetch Exam scores using the same algorithm in the CA Method
+			*/
+      $query ="SELECT ca_score AS scores FROM assessment WHERE
+				assessment.ass_student_id=? AND assessment.ass_subject_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT); 
+					          $this->conn->bind(2, $sid, PDO::PARAM_INT);
+                   $output = $this->conn->resultset();
+					//echo count($output);
+					
+					foreach($output as $row => $key)
+					{
+						$scores = $key['scores'];
+						echo '<td>'.$scores.'</td>';
+					}	
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	}
+	//result method
+	function print_result($id)
+	{
+		
+		try {
+			/*
+			1. select distint subject name and subject id from the tables joined in the query
+			2. Loop through the array and echo first the subject name in a cell
+			3. Use the subject id and pass it to the Method to fetch CA records to display in the <td>
+			4. use the suject ID to also fetch Exam scores using the same algorithm in the CA Method
+			*/
+      $query ="SELECT DISTINCT subjects.subject_name AS Subject,subjects.sub_id AS ID,terminal_exam.exam_score AS ExamScore  FROM subjects INNER JOIN assessment ON
+				assessment.ass_subject_id=subjects.sub_id INNER JOIN terminal_exam ON subjects.sub_id=terminal_exam.exam_subj_id WHERE
+				assessment.ass_student_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $id, PDO::PARAM_INT); 
+                    $output = $this->conn->resultset();
+					//echo count($output);
+          //ouput table headers below here
+					
+					foreach($output as $row => $key)
+					{
+						echo '<tr>';
+						$s_id = 2;
+						$subjectID = $key['ID'];
+						$sub_name = $key['Subject'];
+						$score = $key['ExamScore'];
+						echo '<td>'.$sub_name.' | '.'</td>';
+						$this->print_ca($s_id,$subjectID);
+						echo '<td>'.' | '.$subjectID.' | '.'</td>';
+						echo '<td>'.' | '.$score.' | '.'</td>';
+						echo '</tr><br>';
+					}
+
+                }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	}
 
 
 
