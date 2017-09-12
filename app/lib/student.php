@@ -132,16 +132,16 @@ function getBloodGroup()
     $this->conn = $db;
     }
 
-//load staff subjects
-public function staffSubject($user_id,$classid)
+//load specific staff subjects
+public function staffSubject($user_id)
     {
         try {
 
-            $query = "SELECT subjects.sub_id AS SubjectID, subjects.subject_name AS SubjectName FROM subjects INNER JOIN staff_subject_taught ON subjects.sub_id=staff_subject_taught.subject_id WHERE staff_subject_taught.my_id=? AND staff_subject_taught.class_taught=?";
+            $query = "SELECT subjects.sub_id AS SubjectID, subjects.subject_name AS SubjectName FROM subjects INNER JOIN staff_subject_taught ON subjects.sub_id=staff_subject_taught.subject_id WHERE staff_subject_taught.my_id=?";
              
                 $this->conn->query($query);
                 $this->conn->bind(1, $user_id, PDO::PARAM_INT);
-                $this->conn->bind(2, $classid, PDO::PARAM_INT);
+               // $this->conn->bind(2, $classid, PDO::PARAM_INT);
                 $myResult = $this->conn->resultset();
                 $output =" "; 
         foreach ($myResult as $row => $key) 
