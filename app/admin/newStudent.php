@@ -143,11 +143,7 @@ $clientid = $_SESSION['user_info'][4];
                     ?>
                 </select> 
               </div>
-            <div class="form-group col-md-6">
-                 <label for="arm">Class Description:</label>
-                <select class="custom-select form-control" id="arm" name="arm">  
-                </select> 
-              </div>
+            
 
                <div class="form-group col-md-6">
                  <label for="session">Session Admitted:</label>
