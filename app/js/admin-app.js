@@ -134,13 +134,16 @@ $("#new-content").on('click', '.reload', function(e) {
     });
 });
 //end of add load all institutional subjects
+//============================
+//REMOVE THIS SNIPPET. NO LONGER IN USE
 //load all institutional subjects
-$("#new-content").on('click', '.reload-class', function(e) {
-    $.get("allClasses.php", function(data) {
-        $("#class-list").html(data);
-    });
-});
+// $("#new-content").on('click', '.reload-class', function(e) {
+//     $.get("allClasses.php", function(data) {
+//         $("#class-list").html(data);
+//     });
+// });
 //end of add load all institutional subjects
+//==================================================
 
 //load all new students without parents
 $("#new-content").on('click', '.load-new-student', function(e) {
@@ -219,40 +222,42 @@ function newClass(myclass) {
     });
 }
 //END CREATE NEW SCHOOL CLASS
+//=======================================================
+//THIS SECTION OF THE CODE IS NO LONGER IN USE
+//=======================================================
+// //create Class description
+// $("#new-content").on('click', '#assign-desc', function(e) {
+//     e.preventDefault();
+//     $('#assign-desc').prop("disabled", true);
+//     var class_id = $('#class-list option:selected').val();
+//     var description = $('#class-desc option:selected').val();
+//     classDescription(description, class_id);
+// });
 
-//create Class description
-$("#new-content").on('click', '#assign-desc', function(e) {
-    e.preventDefault();
-    $('#assign-desc').prop("disabled", true);
-    var class_id = $('#class-list option:selected').val();
-    var description = $('#class-desc option:selected').val();
-    classDescription(description, class_id);
-});
+// //call back to assign class description
+// function classDescription(description, class_id) {
+//     $.ajax({
+//         url: 'assignClassArm.php',
+//         type: 'POST',
+//         data: { class_descr: description, class_id: class_id },
+//         success: function(response) {
+//             var data = $.trim(response);
+//             if (data === "ok") {
+//                 $('#assign-desc').prop("disabled", false);
+//                 $("#my-info").addClass("info");
+//                 $("#my-info").html("Class arm created successfully");
+//             } else {
+//                 //alert("me")
+//                 $('#assign-desc').prop("disabled", false);
+//                 $("#my-info").addClass("error");
+//                 $("#my-info").html(data);
+//             }
+//         },
+//     })
+// }
+// // End assign block
 
-//call back to assign class description
-function classDescription(description, class_id) {
-    $.ajax({
-        url: 'assignClassArm.php',
-        type: 'POST',
-        data: { class_descr: description, class_id: class_id },
-        success: function(response) {
-            var data = $.trim(response);
-            if (data === "ok") {
-                $('#assign-desc').prop("disabled", false);
-                $("#my-info").addClass("info");
-                $("#my-info").html("Class arm created successfully");
-            } else {
-                //alert("me")
-                $('#assign-desc').prop("disabled", false);
-                $("#my-info").addClass("error");
-                $("#my-info").html(data);
-            }
-        },
-    })
-}
-// End assign block
-
-///end of class escription
+// ///end of class escription
 //=================================================================================
 
 //==================================================================================
