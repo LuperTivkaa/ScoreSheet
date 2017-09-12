@@ -22,7 +22,7 @@ function getStudentId($regnumber,$schid)
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $regnumber, PDO::PARAM_INT);
                             $this->conn->bind(2, $schid, PDO::PARAM_INT);
-                            $myResult = $this->con->resultset();
+                            $myResult = $this->conn->resultset();
                         if ($this->conn->rowCount() == 1)
                         {
                         	//loop through the result set
@@ -189,7 +189,7 @@ function getActiveTerm($schid,$status='Active')
 //METHOD TO ADD NEW ASSESSMENT
 //Get student id from a function that takes in reg number of a student and return the id of the student
 //get session id from a function that select the id of the active session
-function addCa($score,$stud_no,$subj,$class_arm,$staffid,$schid,$date)
+function addCa($score,$stud_no,$subj,$class_arm,$staffid,$canumber,$schid,$date)
   {
   // always use try and catch block to write code
        try {
@@ -199,36 +199,38 @@ function addCa($score,$stud_no,$subj,$class_arm,$staffid,$schid,$date)
                     $sessionid = $this->getActiveSession($schid);
                     $student_id = $this->getStudentId($stud_no,$schid);
                     //Check for the number of CA added
-                    $query ="SELECT ass_student_id AS studentID FROM assessment where ass_subject_id =?
-                    && ass_class_id=? && ass_term_id=? && ass_session_id=?";
+                    $query ="SELECT DISTINCT ass_student_id,ca_no_id AS studentID FROM assessment WHERE ass_subject_id =?
+                    && ass_class_id=? && ass_term_id=? && ass_session_id=? AND ca_no_id=?";
                     $this->conn->query($query);
                     $this->conn->bind(1, $subj, PDO::PARAM_INT);
 										$this->conn->bind(2, $class_arm, PDO::PARAM_INT);
 										$this->conn->bind(3, $termid, PDO::PARAM_INT);
 										$this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                    $this->conn->bind(5, $canumber, PDO::PARAM_INT);
                     $this->conn->execute();
                    
-                    	if ($this->conn->rowCount() > 3)
+                    	if ($this->conn->rowCount() == 1)
                     	  {
                     	//NUMBER OF ASESSMENT QUOTA PER TERM EXCEEDED
-                      exit("Number of assessment test per term exceeded");
+                      exit("This assessment has been added already!");
                     	}
                     	else{
 
           					        // ADD CONTINOUS ASSESSMENT
                             $sqlStmt = "INSERT INTO assessment(ca_score,ass_student_id,
-                            ass_subject_id,ass_class_id,ass_session_id,ass_term_id,ass_added_by,ass_sch_id,date_added)
-                            values (?,?,?,?,?,?,?,?,?)";
+                            ass_subject_id,ass_class_id,ass_session_id,ass_term_id,ass_added_by,ass_sch_id,date_added,ca_no_id)
+                            values (?,?,?,?,?,?,?,?,?,?)";
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $score, PDO::PARAM_INT,100);
-                            $this->conn->bind(2, $stud_id, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $student_id, PDO::PARAM_INT,100);
                             $this->conn->bind(3, $subj, PDO::PARAM_INT,100);
                             $this->conn->bind(4, $class_arm, PDO::PARAM_INT);
                             $this->conn->bind(5, $sessionid, PDO::PARAM_INT);
-                            $this->conn->bind(6, $term, PDO::PARAM_INT);
+                            $this->conn->bind(6, $termid, PDO::PARAM_INT);
                             $this->conn->bind(7, $staffid, PDO::PARAM_INT);
                             $this->conn->bind(8, $schid, PDO::PARAM_INT);
                             $this->conn->bind(9, $date, PDO::PARAM_STR);
+                            $this->conn->bind(10, $canumber, PDO::PARAM_INT);
                             $this->conn->execute();
                         		if ($this->conn->rowCount() == 1)
                         		{
@@ -271,14 +273,14 @@ function addTerminalExam($score,$subj,$class,$staffid,$schid,$stud_no,$date)
 										$this->conn->bind(3, $class, PDO::PARAM_INT);
 										$this->conn->bind(4, $schid, PDO::PARAM_INT);
                     $this->conn->execute();
-                    	if ($this->conn->rowCount() > 1)
+                    	if ($this->conn->rowCount() == 1)
                     	{
                     	//MESSAGE FOR EXCEEDED RECODS
-                      echo "Exam record already exist";
+                      echo "This examination record already exist";
                     	}
                     	else{
 
-          					         //ADD EXAM RECORD
+          					        //ADD EXAM RECORD
                             $sqlStmt = "INSERT INTO terminal_exam(exam_score,exam_subj_id,
                             exam_term_id,exam_session_id,exam_class_arm_id,
                             tutor_id,exam_sch_id,exam_stud_id,date_added)
@@ -647,7 +649,47 @@ public function staffProfile($clientid,$staffid)
         }
 //End Staff Profile method
 
+//DISTINCT METHOD NOT IN USE
+//Select DISTINCT SUBJECTs OFFERED BY THE Student based on class
+	function distinctSubjects($studentid,$schoolid)
+	{
+		
+		try {
+			/*
+			1. select distinct subject name and subject id from the tables joined in the query
+			2. Loop through the array and echo first the subject name in a cell
+			3. Use the subject id and pass it to the second Method to fetch CA records to display in the <td>
+			4. use the suject ID to also fetch Exam scores using the same algorithm in the CA Method
+			*/
+      $query ="SELECT DISTINCT subjects.sub_id AS SubjectID 
+	  FROM subjects INNER JOIN assessment ON 
+	  assessment.ass_subject_id=subjects.sub_id 
+	  WHERE assessment.ass_class_id IN (SELECT assessment.ass_class_id FROM assessment WHERE assessment.ass_student_id=? AND assessment.ass_sch_id=?)";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $studentid, PDO::PARAM_INT); 
+					          $this->conn->bind(2, $schoolid, PDO::PARAM_INT);
+                    $subject = array();
+                    $output = $this->conn->resultset();
+                    $subject = $output;
+					          //echo count($output);
+                    if($output){
+                      return $output;
+                    }
+                    else{
+                      exit("Unable to get subjects for this particular students for this class");
+                    }
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	}
 
+
+
+
+
+//END SELECT DISTINCT SUBJECT
 //print result method
 
 //select CA Method
@@ -680,8 +722,10 @@ public function staffProfile($clientid,$staffid)
             echo "Error:". $e->getMessage();
         }
 	}
+
+
 	//result method
-	function print_result($id)
+	function print_result($studentid,$classid,$termid,$sessionid,$schoolid)
 	{
 		
 		try {
@@ -691,21 +735,22 @@ public function staffProfile($clientid,$staffid)
 			3. Use the subject id and pass it to the Method to fetch CA records to display in the <td>
 			4. use the suject ID to also fetch Exam scores using the same algorithm in the CA Method
 			*/
-      $query ="SELECT DISTINCT subjects.subject_name AS Subject,subjects.sub_id AS ID,terminal_exam.exam_score AS ExamScore  FROM subjects INNER JOIN assessment ON
-				assessment.ass_subject_id=subjects.sub_id INNER JOIN terminal_exam ON subjects.sub_id=terminal_exam.exam_subj_id WHERE
-				assessment.ass_student_id=?";
-                    $this->conn->query($query);
-                    $this->conn->bind(1, $id, PDO::PARAM_INT); 
-                    $output = $this->conn->resultset();
+        $query ="SELECT DISTINCT subjects.subject_name AS subjectName,subjects.sub_id AS SubjectID 
+	      FROM subjects INNER JOIN assessment ON 
+	      assessment.ass_subject_id=subjects.sub_id 
+	      WHERE assessment.ass_class_id IN (SELECT assessment.ass_class_id FROM assessment WHERE assessment.ass_student_id=? AND assessment.ass_sch_id=?)";
+        $this->conn->query($query);
+        $this->conn->bind(1, $studentid, PDO::PARAM_INT); 
+				$this->conn->bind(2, $schoolid, PDO::PARAM_INT);
+        $output = $this->conn->resultset();
 					//echo count($output);
           //ouput table headers below here
 					
 					foreach($output as $row => $key)
 					{
 						echo '<tr>';
-						$s_id = 2;
-						$subjectID = $key['ID'];
-						$sub_name = $key['Subject'];
+						$subjectID = $key['SubjectID'];
+						$sub_name = $key['SubjectName'];
 						$score = $key['ExamScore'];
 						echo '<td>'.$sub_name.' | '.'</td>';
 						$this->print_ca($s_id,$subjectID);
@@ -722,7 +767,57 @@ public function staffProfile($clientid,$staffid)
 	}
 
 
+//Get student name
+function getStudent($searchVar,$schid)
+  {
+        //get active term
+       // $activeSession= $this->getActiveSession($schid);
+        
+        // Try and Catch block
+        try{
+        //CHECK IF THE VARIABLE SUPPLIED IS A STUDENT ID NUMBER AND NOT A STRING OF REG NUMBER
+  		    if(is_numeric($searchVar))
+  		    {
+  			//SELECT STUDENT ID FROM THE STUDENT ADMISSION NUMBER TABLE
+  					$query ="SELECT student_initial.id AS studentID, CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname FROM student_initial INNER JOIN student_admission_no ON student_initial.id=student_admission_no.stud_id WHERE student_admission_no.admission_number=? AND student_admission_no.my_stud_sch_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
+					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                    $myResult= $this->conn->resultset();
+                    //$output ="";
+                    if($this->conn->rowCount() == 0)
+                    {
+                      exit("No such student exist in the school with such number");
+                    }
+                    else{
+              
+                      foreach($myResult as $row => $key)
+                      {
+                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                       //$ID = $key['studentID'];
+                        echo $fullname = $key['Fullname'];
+                        
+                        //$printOutput.="<td><a href=examScores.php?id=".$key['StudentID']." onclick="GetCourseDetails('.$row['ccid'].')">View Examination Scores </a></td>";
+                      }
+                      // $output.=' </tbody></table>';
+                      // echo $output;
+  		      }
+          }
+  		 else
+  		 {
+  	
+        exit("Please provide a numeric data, the last digits of your admission number without the preceding text");
+        
+  		 }
+      }
 
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+}
 
 
 
