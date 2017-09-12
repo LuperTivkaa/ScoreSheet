@@ -14,7 +14,7 @@
 
             <div class="form-group col-md-12">
             <label for="class-name">Class Name:</label>
-                <input type="text" class="form-control" id="class-name" name="class-name" placeholder="E.g JSS1 or Primary 1">
+                <input type="text" class="form-control" id="class-name" name="class-name" placeholder="E.g JSS1A or Primary 1 Gold">
             </div>
 
               
@@ -22,7 +22,7 @@
               <button class="submit btn btn-primary" id="add-new-class">Add New Class</button>
 
               <hr>
-              <div class="row">
+              <!-- <div class="row">
               <div class="col-md-12 mb-3">
               <h5 class="top-header text-xs-center mt-3">Specify Class Arm</h5><small>Select class and enter appropriate description. Click <i class="fa fa-refresh fa-fw reload-class" aria-hidden="true"></i> to load Classes.</small>
               </div>
@@ -44,4 +44,4 @@
               
               </div>
               <button class="submit btn btn-primary" id="assign-desc">Assign Class Description</button>
-            </div>
+            </div> -->
