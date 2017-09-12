@@ -10,8 +10,7 @@ $('.load-url').on('click', function(evt) {
     var url = $(this).attr('href');
     $('#new-content').load(url);
 });
-
-//get birthdays NOT COMPvarE
+//get birthdays NOT Complete
 
 $('.birthdays').on('click', function(evt) {
     evt.preventDefault();
@@ -19,7 +18,7 @@ $('.birthdays').on('click', function(evt) {
     //alert(url);
     $('#new-content').load(url, function() {});
 });
-//end getbirthdays ////NOT COMPvarE
+//end getbirthdays ////NOT Complete
 
 //get all students
 $('.all-students').on('click', function(evt) {
@@ -28,6 +27,7 @@ $('.all-students').on('click', function(evt) {
     getallStudents(url);
 });
 //get all students
+
 function getallStudents(url) {
     //get inserted records from the database
     jQuery.getJSON(url, function(response) {
@@ -134,13 +134,16 @@ $("#new-content").on('click', '.reload', function(e) {
     });
 });
 //end of add load all institutional subjects
+//============================
+//REMOVE THIS SNIPPET. NO LONGER IN USE
 //load all institutional subjects
-$("#new-content").on('click', '.reload-class', function(e) {
-    $.get("allClasses.php", function(data) {
-        $("#class-list").html(data);
-    });
-});
+// $("#new-content").on('click', '.reload-class', function(e) {
+//     $.get("allClasses.php", function(data) {
+//         $("#class-list").html(data);
+//     });
+// });
 //end of add load all institutional subjects
+//==================================================
 
 //load all new students without parents
 $("#new-content").on('click', '.load-new-student', function(e) {
@@ -219,40 +222,42 @@ function newClass(myclass) {
     });
 }
 //END CREATE NEW SCHOOL CLASS
+//=======================================================
+//THIS SECTION OF THE CODE IS NO LONGER IN USE
+//=======================================================
+// //create Class description
+// $("#new-content").on('click', '#assign-desc', function(e) {
+//     e.preventDefault();
+//     $('#assign-desc').prop("disabled", true);
+//     var class_id = $('#class-list option:selected').val();
+//     var description = $('#class-desc option:selected').val();
+//     classDescription(description, class_id);
+// });
 
-//create Class description
-$("#new-content").on('click', '#assign-desc', function(e) {
-    e.preventDefault();
-    $('#assign-desc').prop("disabled", true);
-    var class_id = $('#class-list option:selected').val();
-    var description = $('#class-desc option:selected').val();
-    classDescription(description, class_id);
-});
+// //call back to assign class description
+// function classDescription(description, class_id) {
+//     $.ajax({
+//         url: 'assignClassArm.php',
+//         type: 'POST',
+//         data: { class_descr: description, class_id: class_id },
+//         success: function(response) {
+//             var data = $.trim(response);
+//             if (data === "ok") {
+//                 $('#assign-desc').prop("disabled", false);
+//                 $("#my-info").addClass("info");
+//                 $("#my-info").html("Class arm created successfully");
+//             } else {
+//                 //alert("me")
+//                 $('#assign-desc').prop("disabled", false);
+//                 $("#my-info").addClass("error");
+//                 $("#my-info").html(data);
+//             }
+//         },
+//     })
+// }
+// // End assign block
 
-//call back to assign class description
-function classDescription(description, class_id) {
-    $.ajax({
-        url: 'assignClassArm.php',
-        type: 'POST',
-        data: { class_descr: description, class_id: class_id },
-        success: function(response) {
-            var data = $.trim(response);
-            if (data === "ok") {
-                $('#assign-desc').prop("disabled", false);
-                $("#my-info").addClass("info");
-                $("#my-info").html("Class arm created successfully");
-            } else {
-                //alert("me")
-                $('#assign-desc').prop("disabled", false);
-                $("#my-info").addClass("error");
-                $("#my-info").html(data);
-            }
-        },
-    })
-}
-// End assign block
-
-///end of class escription
+// ///end of class escription
 //=================================================================================
 
 //==================================================================================
@@ -1051,6 +1056,7 @@ function addAdmNum(range) {
         //alert(user+pass+role);
     })
 } //end add new admission numbers
+// Find student on entering of name or ID
 //===============================================================================
 // Staff academic routines
 // =============================================================================
@@ -1060,30 +1066,32 @@ $("#new-content").on('click', '#add-ca', function(e) {
     $('#add-ca').prop("disabled", true);
     var regno = $("#regno").val();
     var scores = $("#scores").val();
-    var studentClass = $("#student-class option:selected").val();
-    var class_Arm = $("#arm option:selected").val();
-    var subject = $("#list-subject option:selected").val();
-    newCa(regno, scores, studentClass, class_Arm, subject);
+    var studentClass = $("#assignmentclass option:selected").val();
+    var ca_number = $("#ca-no option:selected").val();
+    var subject = $("#listsubject option:selected").val();
+    newCa(regno, scores, studentClass, ca_number, subject);
 });
 //call back function to add new continous assessment scores
-function newCa(regno, scores, studentClass, class_Arm, subject) {
+function newCa(regno, scores, studentClass, ca_number, subject) {
     $.ajax({
         url: 'addCa.php',
         type: 'POST',
-        data: { regno: regno, scores: scores, studentClass: studentClass, class_Arm: class_Arm, subject: subject },
+        data: { regno: regno, scores: scores, studentClass: studentClass, ca_number: ca_number, subject: subject },
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
                 $('#add-ca').prop("disabled", false);
                 $("#my-info").addClass("info");
+                $("#regno").val("");
+                $("#scores").val("");
                 $("#my-info").html("Continous assessment added");
             } else {
                 $('#add-ca').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
-    })
+    });
 } //end add ca method
 
 
@@ -1097,28 +1105,49 @@ $("#new-content").on('click', '#add-exam-scores', function(e) {
     $('#add-exam-scores').prop("disabled", true);
     var regno = $("#regno").val();
     var scores = $("#scores").val();
-    var studentClass = $("#student-class option:selected").val();
-    var arm = $("#arm option:selected").val();
-    var subject = $("#list-subject option:selected").val();
-    newExamScores(regno, scores, studentClass, arm, subject);
+    var studentClass = $("#studclass option:selected").val();
+    //var ca_number = $("#ca-no option:selected").val();
+    var subject = $("#listsubject option:selected").val();
+    newExamScores(regno, scores, studentClass, subject);
 });
+
 //call back function to add new continous assessment scores
-function newExamScores(regno, scores, studentClass, arm, subject) {
+function newExamScores(regno, scores, studentClass, subject) {
     $.ajax({
         url: 'addTerminalExam.php',
         type: 'POST',
-        data: { regno: regno, scores: scores, studentClass: studentClass, class_Arm: arm, subject: subject },
+        data: { regno: regno, scores: scores, studentClass: studentClass, subject: subject },
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
                 $('#add-exam-scores').prop("disabled", false);
                 $("#my-info").addClass("info");
+                $("#regno").val("");
+                $("#scores").val("");
                 $("#my-info").html("Examination scores added");
             } else {
                 $('#add-exam-scores').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
-    })
-} //end add ca method
+    });
+} //end add exam method
+
+//load staff subject on selection of class
+//========================
+//REMOVE NO LONGER IN USE OBSOLETE
+
+// $('#new-content').on('change', '#assignmentclass', function() {
+//     var id = $("#assignmentclass option:selected").val();
+//     $.post("staffSubjects.php", { id: id }, function(data) {
+//         $("#listsubject").html(data);
+//     });
+// });
+
+$('#new-content').on('keyup', '#regno', function() {
+    var id = $("#regno").val();
+    $.post("getStudent.php", { id: id }, function(data) {
+        $("#user_details").html(data);
+    });
+});
