@@ -85,7 +85,7 @@ public function execute(){
 }
 //
 
-//function for resultset
+//function for resultset, select multiple records
 public function resultset(){
 
 	$this->execute();
@@ -96,4 +96,38 @@ public function resultset(){
 public function rowCount(){
     return $this->stmt->rowCount();
 }
+
+//function to select single
+public function single(){
+    $this->execute();
+    return $this->stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+//Begin transaction
+public function beginTransaction(){
+    return $this->dbh->beginTransaction();
+}
+
+//End transaction
+public function endTransaction(){
+    return $this->dbh->commit();
+}
+
+//Cancel transaction
+public function cancelTransaction(){
+    return $this->dbh->rollBack();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 }// class closure
