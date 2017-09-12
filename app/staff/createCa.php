@@ -16,34 +16,10 @@ $userid = $_SESSION['user_info'][0];
 
 <!--Row  to hold some sub menu  -->
 <div class="row">
-                       <div class="col-md-7 mt-1">
+                       <div class="col-md-5 mt-1">
                         <div class="row">
-                            <div class="col-4">
-                            <label for="class">Select Class</label>
-                            <select class="custom-select  form-control" id="class">
-                              <?php
-                                $student->loadClass($clientid);
-                              ?>
-                            </select>
-                            </div>
-                            <div class="col-4">
-                            <label for="class-desc">Class Arm</label>
-                            <select class="custom-select  form-control" id="class-desc">
-                            </select>
-                            </div>
 
-                            <div class="col-4">
-                            <label for="list-subject">Subject</label>
-                            <select class="custom-select  form-control" id="list-subject">
-                            </select>
-                            </div>
-
-                        </div>
-                       </div>
-
-                    <div class="col-md-5 mt-1">
-                        <div class="row">
-                            <div class="col-4">
+                          <div class="col-12">
                             <label for="ca-no">CA Number</label>
                             <select class="custom-select  form-control" id="ca-no">
                               <?php
@@ -52,17 +28,30 @@ $userid = $_SESSION['user_info'][0];
                             </select>
                             </div>
 
-                            <div class="col-4">
-                            <label for="arm">Term</label>
-                            <select class="custom-select  form-control" id="arm">
+                        </div>
+                       </div>
+
+                    <div class="col-md-7 mt-1">
+                        <div class="row">
+                            
+
+                        <div class="col-6">
+                            <label for="assignmentclass">Select Class</label>
+                            <select class="custom-select  form-control" id="assignmentclass">
+                              <?php
+                                $student->loadClass($clientid);
+                              ?>
                             </select>
                             </div>
                             
-                            <div class="col-4">
-                            <label for="arm">Session</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <div class="col-6">
+                            <label for="listsubject">Subject</label>
+                            <select class="custom-select  form-control" id="listsubject">
+                              <?php
+                                $student->staffSubject($userid);
+                              ?>
                             </select>
-                            </div>
+                            </div>              
                         </div>  
                     </div>
   </div>
@@ -80,15 +69,15 @@ $userid = $_SESSION['user_info'][0];
         <div class="row">
           
           <div class="col-md-6">
-                <label for="regno">Scores</label>
-                <input type="text" class="form-control" id="scores" name="regno" placeholder="CA Scores">
+                <label for="scores">Scores</label>
+                <input type="text" class="form-control" id="scores" name="scores" placeholder="CA Scores">
             </div>
 
             <div class="col-md-6">
                 <label for="regno">Reg Number</label>
                 <input type="text" class="form-control" id="regno" name="regno" placeholder="Reg Number"> 
             </div>
-
+              <span id="user_details">Display name of student here</span>
               <button class="submit btn btn-primary btn-md mt-3" id="add-ca">Enter Scores</button>
 
         </div>
