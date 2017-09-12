@@ -1343,36 +1343,39 @@ public  function newClass($class,$clientid,$status='Unpublished')
   /*
 method block to assign subject to class
 */
-public  function assignClassArm($class_desc,$class_id)
-  {
-  try{
 
-                            //insert new subjects  taught by staff 
-                            $sql = "INSERT INTO class_arm(
-                            arm_description,class_id)
-                             values (?,?)";
-                            $this->conn->query($sql);
-                            $this->conn->bind(1, $class_desc, PDO::PARAM_STR);
-                            $this->conn->bind(2, $class_id, PDO::PARAM_INT);
-                            $this->conn->execute(); 
-                        if ($this->conn->rowCount() == 1) 
-                        {
-                         //check number of inserted rows
-                        echo "ok";
-                        } 
-                        else
-                        {
-                        echo "Error creating class description";
-                        }  
-      }
+//=============================
+//REMOVE METHOD
+// public  function assignClassArm($class_desc,$class_id)
+//   {
+//   try{
 
-        catch(Exception $e)
-        {
-        //echo error here
-        //this get an error thrown by the system
-        echo "Error:". $e->getMessage();
-         }
-}
+//                             //insert new subjects  taught by staff 
+//                             $sql = "INSERT INTO class_arm(
+//                             arm_description,class_id)
+//                              values (?,?)";
+//                             $this->conn->query($sql);
+//                             $this->conn->bind(1, $class_desc, PDO::PARAM_STR);
+//                             $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+//                             $this->conn->execute(); 
+//                         if ($this->conn->rowCount() == 1) 
+//                         {
+//                          //check number of inserted rows
+//                         echo "ok";
+//                         } 
+//                         else
+//                         {
+//                         echo "Error creating class description";
+//                         }  
+//       }
+
+//         catch(Exception $e)
+//         {
+//         //echo error here
+//         //this get an error thrown by the system
+//         echo "Error:". $e->getMessage();
+//          }
+// }
 // End of method block to assign class arm description
 //===========================================
 
