@@ -26,7 +26,7 @@
                             <ul class="staff-menu">
                             <li><a class="load-url" href="createCa.php"><i class="fa fa-eraser fa-fw" aria-hidden="true"></i> New CA Score</a></li>
                             <li><a class="load-url" href="searchCa.php"><i class="fa fa-bolt fa-fw" aria-hidden="true"></i> Search  CA</a></li>
-                             <li><a class="load-url" href="assessmentSheet.php"><i class="fa fa-tags fa-fw" aria-hidden="true"></i> Assessment Sheet</a></li>
+                             <li><a class="load-url" href="assessmentSheet.php"><i class="fa fa-tags fa-fw" aria-hidden="true"></i> Scores Sheet</a></li>
                              
                             </ul>
                             <hr class="mt-2">                
