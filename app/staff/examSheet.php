@@ -20,21 +20,15 @@ $userid = $_SESSION['user_info'][0];
                          <h5 class="top-header">Examination Sheet</h6>
                         <div class="row">
                             
-                            <div class="col-4">
+                            <div class="col-6">
                             <label for="tag">Subject</label>
                             <select class="custom-select  form-control" id="ca-no">
                             </select>
                             
                             </div>
 
-                            <div class="col-4">
+                            <div class="col-6">
                             <label for="tag">Select Class</label>
-                            <select class="custom-select  form-control" id="arm">
-                            </select>
-                            </div>
-                            
-                            <div class="col-4">
-                                <label for="tag">Class Arm</label>
                             <select class="custom-select  form-control" id="arm">
                             </select>
                             </div>
