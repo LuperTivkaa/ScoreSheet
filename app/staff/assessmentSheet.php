@@ -20,29 +20,28 @@ $userid = $_SESSION['user_info'][0];
                          <h5 class="top-header">Assessment Sheet</h6>
                     <div class="row">
                             
-                            <div class="col-6">
-                            <label for="staffsubject">Subject</label>
-                            <select class="custom-select  form-control" id="staffsubject">
-                            <?php
-                                $student->staffSubject($userid);
-                            ?>
-                            </select>
-                            
-                            </div>
+
 
                             <div class="col-6">
-                            <label for="tag">Select Class</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <label for="my-class">Select Class</label>
+                            <select class="custom-select  form-control" id="my-class">
                             <?php
                                 $student->loadClass($clientid);
                             ?>
                             </select>
                             </div>
-        
 
                             <div class="col-6">
-                            <label for="tag">Session</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <label for="position-subject">Subject</label>
+                            <select class="custom-select  form-control" id="position-subject">
+                            
+                            </select>
+                            
+                            </div>
+
+                            <div class="col-6">
+                            <label for="session">Session</label>
+                            <select class="custom-select  form-control" id="session">
                             <?php
                                 $client->loadSession($clientid);
                             ?>
@@ -50,8 +49,8 @@ $userid = $_SESSION['user_info'][0];
                             </div>
 
                             <div class="col-6">
-                            <label for="tag">Term</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <label for="term">Term</label>
+                            <select class="custom-select  form-control" id="term">
                             <?php
                             $client->loadTerm($clientid);
                                 ?>
@@ -60,7 +59,7 @@ $userid = $_SESSION['user_info'][0];
                             
                         </div>  
                         <div class="col-6">
-                            <button class="btn btn-primary mt-3" type="button">Assessment Sheet</button>
+                            <button class="btn btn-primary mt-3" type="button" id="scoresheet"><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Assessment Sheet</button>
                             </div>
                     </div>
   </div>
