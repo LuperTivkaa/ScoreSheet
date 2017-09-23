@@ -25,9 +25,9 @@ $clientid = $_SESSION['user_info'][0];
             <div class="form-group col-md-4">
                  <label for="student-class">Choose Class</label>
                 <select class="custom-select form-control" id="student-class">
-                <?php 
-                    
-                  ?>
+                    <?php
+                    $student->loadClass($clientid);
+                    ?>
                 </select>
               </div>
 
