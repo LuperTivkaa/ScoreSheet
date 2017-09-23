@@ -355,6 +355,28 @@
                                 color: $info;
                             }
                             
+                            //TABLE STYLES FOR RESULT
+                            .datatable {
+                                border: 1.5px solid $black;
+                                //border-collapse: collapse;
+                                font-family: $datatable;
+                                td {
+                                    border: 1px solid $black;
+                                    text-align: left;
+                                    //padding: 0.2em;
+                                    //font-family: $font-primary;
+                                    font-size: .7em;
+                                    white-space: nowrap;
+                                }
+                                th {
+                                    border: 1px solid $black;
+                                    text-align: left;
+                                    font-size: .8em;
+                                    //font-weight: 20;
+                                }
+                            }
+                            
+                            //END OF TABLE STYLES
                             //=====================
                             //================================================================
                             //MEDIA QUERIES
