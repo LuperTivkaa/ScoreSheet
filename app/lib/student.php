@@ -161,6 +161,36 @@ public function staffSubject($user_id)
    }
   //end staff subjects
 
+  //load subject by class
+public function staffSubjectByClass($user_id,$classid)
+    {
+        try {
+
+            $query = "SELECT subjects.sub_id AS SubjectID, subjects.subject_name AS SubjectName FROM subjects INNER JOIN staff_subject_taught ON subjects.sub_id=staff_subject_taught.subject_id WHERE staff_subject_taught.my_id=? AND staff_subject_taught.class_taught=?";
+             
+                $this->conn->query($query);
+                $this->conn->bind(1, $user_id, PDO::PARAM_INT);
+                $this->conn->bind(2, $classid, PDO::PARAM_INT);
+               // $this->conn->bind(2, $classid, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        { 
+          $ID = $key['SubjectID'];
+          $subjectname = $key['SubjectName'];
+          //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+          //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$subjectname."</option>";       
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to staff subject details";
+        }
+   }
+  //end load subject by class
+
 //load CA Settings
 public function loadCASettings()
     {
