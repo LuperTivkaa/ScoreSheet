@@ -76,20 +76,119 @@ function newExamScores(regno, scores, studentClass, subject) {
     });
 } //end add exam method
 
-//load staff subject on selection of class
-//========================
-//REMOVE NO LONGER IN USE OBSOLETE
+//PROCESS SCORESHEET
 
-// $('#new-content').on('change', '#assignmentclass', function() {
-//     var id = $("#assignmentclass option:selected").val();
-//     $.post("staffSubjects.php", { id: id }, function(data) {
-//         $("#listsubject").html(data);
-//     });
-// });
+//process scoresheet
+$("#new-content").on('click', '#scoresheet', function(e) {
+    e.preventDefault();
+    $('#scoresheet').prop("disabled", true);
+    var subject = $("#position-subject option:selected").val();
+    var myclass = $("#my-class option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
 
+    //alert(subject + myclass + session + term);
+    printScoresheet(subject, myclass, session, term);
+});
+
+//call back function to add new continous assessment scores
+function printScoresheet(subj, myclass, session, term) {
+    $.ajax({
+        url: 'processScoresheet.php',
+        type: 'POST',
+        data: { subj: subj, myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#scoresheet').prop("disabled", false);
+                $("#new-content").html(data);
+            } else {
+                $('#scoresheet').prop("disabled", false);
+                // $("#my-info").addClass("error");
+                $("#new-content").html(data);
+            }
+        },
+    });
+}
+//END SCORESHEE PROCESSING
+//Get student details on providing a registration number
 $('#new-content').on('keyup', '#regno', function() {
     var id = $("#regno").val();
     $.post("getStudent.php", { id: id }, function(data) {
         $("#user_details").html(data);
     });
 });
+
+//LOAD SUBJECT ON SELECTION OF CLASS
+$('#new-content').on('change', '#my-class', function() {
+    var id = $("#my-class option:selected").val();
+    $.post("staffSubjectByClass.php", { id: id }, function(data) {
+        $("#position-subject").html(data);
+    });
+});
+
+//Assign subject position
+$("#new-content").on('click', '#assign-position', function(e) {
+    e.preventDefault();
+    $('#assign-position').text("Processing...").prop("disabled", true);
+    var subject = $("#position-subject option:selected").val();
+    var myclass = $("#my-class option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+
+    subjectPosition(subject, myclass, session, term);
+});
+
+//call back function to add new continous assessment scores
+function subjectPosition(subj, myclass, session, term) {
+    $.ajax({
+        url: 'assignSubjectPosition.php',
+        type: 'POST',
+        data: { subj: subj, myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#assign-position').prop("disabled", false);
+                $("#new-content").html(data);
+            } else {
+                $('#assign-position').text("Assign Subject Position").prop("disabled", false);
+                // $("#my-info").addClass("error");
+                $("#new-content").html(data);
+            }
+        },
+    });
+}
+
+//post result
+$("#new-content").on('click', '#submit-result', function(e) {
+    if (confirm("Be sure that you want to submit your result summary. This action can not be reversed!") == true) {
+        e.preventDefault();
+        $('#submit-result').text("Submitting...").prop("disabled", true);
+        var myclass = $("#myclass option:selected").val();
+        var session = $("#session option:selected").val();
+        var term = $("#term option:selected").val();
+        postResult(myclass, session, term);
+    } else {
+        $('#assign-position').text("Assign Subject Position").prop("disabled", false);
+    }
+});
+
+//call back function to add new continous assessment scores
+function postResult(myclass, session, term) {
+    $.ajax({
+        url: 'submitResultSummary.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#submit-result').prop("disabled", false);
+                $("#my-info").html("Result summary submittted successfully");
+            } else {
+                $('#submit-result').text("Assign Subject Position").prop("disabled", false);
+                //$("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
