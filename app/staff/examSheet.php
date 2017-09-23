@@ -17,41 +17,43 @@ $userid = $_SESSION['user_info'][0];
 <!--Row  to hold some sub menu  -->
 <div class="row">
                     <div class="col-md-12 mt-1">
-                         <h5 class="top-header">Examination Sheet</h6>
+                         <h5 class="top-header">Class EXam Sheet</h6>
                         <div class="row">
-                            
-                            <div class="col-6">
-                            <label for="tag">Subject</label>
-                            <select class="custom-select  form-control" id="ca-no">
-                            </select>
-                            
-                            </div>
 
-                            <div class="col-6">
-                            <label for="tag">Select Class</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <div class="col-12">
+                            <label for="exam-class">Select Class</label>
+                            <select class="custom-select  form-control" id="exam-class">
+                            <?php
+                                $student->loadClass($clientid);
+                              ?>
                             </select>
                             </div>
 
+
                             <div class="col-6">
-                            <label for="tag">Session</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <label for="session">Session</label>
+                            <select class="custom-select  form-control" id="session">
+                                <?php
+                                $client->loadSession($clientid);
+                                ?>
                             </select>
                             </div>
 
                             <div class="col-6">
-                            <label for="tag">Term</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <label for="term">Term</label>
+                            <select class="custom-select  form-control" id="term">
+                                <?php
+                                $client->loadTerm($clientid);
+                                ?>
                             </select>
                             </div>
                             
                         </div>  
                         <div class="col-6">
-                            <button class="btn btn-primary mt-3" type="button">Display Sheet</button>
+                            <button class="btn btn-primary mt-3" type="button" id="Exam-Sheet"><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Exam Summary Sheet</button>
                             </div>
                     </div>
   </div>
-<!--  -->
 <!-- Enter form to create new student here -->
 
 
