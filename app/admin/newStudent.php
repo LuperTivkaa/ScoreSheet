@@ -150,7 +150,7 @@ $clientid = $_SESSION['user_info'][4];
                 <select class="custom-select form-control" id="session" name="session">
                 <?php
                   $client->loadSession($clientid);
-                    ?>
+                ?>
                 </select> 
                 </select> 
               </div>
