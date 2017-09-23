@@ -29,7 +29,7 @@
                              <li><a class="load-url" href="examSheet.php"><i class="fa fa-folder-o fa-fw" aria-hidden="true"></i> Exam Sheet</a></li>
                               <li><a class="load-url" href="processExams.php"><i class="fa fa-sort-numeric-asc fa-fw" aria-hidden="true"></i>Process Scores</a></li>
 
-                             <li><a class="load-url" href=""><i class="fa fa-upload fa-fw" aria-hidden="true"></i> Post Scores</a></li>
+                             <li><a class="load-url" href="postResult.php"><i class="fa fa-upload fa-fw" aria-hidden="true"></i> Post Result</a></li>
                              
                             </ul>
                             <hr class="mt-2">                
