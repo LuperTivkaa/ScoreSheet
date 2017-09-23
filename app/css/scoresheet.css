@@ -275,6 +275,19 @@ a:hover {
 .info {
   color: #5499c7; }
 
+.datatable {
+  border: 1.5px solid #000;
+  font-family: "Jura"; }
+  .datatable td {
+    border: 1px solid #000;
+    text-align: left;
+    font-size: .7em;
+    white-space: nowrap; }
+  .datatable th {
+    border: 1px solid #000;
+    text-align: left;
+    font-size: .8em; }
+
 @media (max-width: 767px) {
   .secondary-col {
     width: 0%;
