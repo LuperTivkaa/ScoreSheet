@@ -18,6 +18,7 @@
                                 <a href="assRoutines.php"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i>Assessment Panel</a>
                                 <a href="examRoutines.php"><i class="fa fa-puzzle-piece fa-fw" aria-hidden="true"></i>Exam Panel</a>
                                  <a href="resultCentre.php"><i class="fa fa-trophy fa-fw" aria-hidden="true"></i>Result Centre</a>
+                                 <a href="enrollment.php"><i class="fa fa-trophy fa-fw" aria-hidden="true"></i>New Enrollment</a>
             
                             </div>
                         </div>
