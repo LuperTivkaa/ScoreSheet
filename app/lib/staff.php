@@ -949,12 +949,12 @@ function studentOverAllAverage($studentid,$classid,$sessionid,$termid,$schid)
     $query = "SELECT FORMAT(GrandTermTotal / (SELECT COUNT( subjects.sub_id )
     FROM subjects INNER JOIN class_subject
     ON subjects.sub_id=class_subject.subject_id 
-    WHERE class_subject.class_id=1 AND class_subject.school_id=2),2 ) AS TotalAverage
+    WHERE class_subject.class_id=? AND class_subject.school_id=?),2 ) AS TotalAverage
     FROM termgrandtotal WHERE 
-    termgrandtotal.student_id=2 
-    AND termgrandtotal.class_id=1
-    AND termgrandtotal.term_id=1 AND termgrandtotal.session_id=7
-    AND termgrandtotal.sch_id=2";
+    termgrandtotal.student_id=? 
+    AND termgrandtotal.class_id=?
+    AND termgrandtotal.term_id=? AND termgrandtotal.session_id=?
+    AND termgrandtotal.sch_id=?";
                     $this->conn->query($query);
                     $this->conn->bind(1, $studentid, PDO::PARAM_INT); 
 			              $this->conn->bind(2, $subjectid, PDO::PARAM_INT);
@@ -969,10 +969,11 @@ function studentOverAllAverage($studentid,$classid,$sessionid,$termid,$schid)
 					          foreach($output as $row => $key)
 					          {
 					          $TotalAv = $key['TotalAverage'];
-					          $arr.= '<td>'.$TotalAv.'</td>';
+					          //$arr.= '<td>'.$TotalAv.'</td>';
+                    $arr = $TotalAv;
 					          }	
 					
-					          return $arr;
+					          echo $arr;
                 }//End of try catch block
                 catch(Exception $e)
                 {
@@ -987,7 +988,7 @@ function grandTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
 		
 		try {
       $query ="SELECT GrandTermTotal AS GrandTotal
-      FROM  termgrandtotals 
+      FROM  termgrandtotal
       WHERE
       student_id=? AND subject_id=? AND 
       class_id=? AND session_id=? AND
@@ -1405,9 +1406,10 @@ function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
             echo "Error:". $e->getMessage();
         }
 	    }
+      //end of scoresheet
 
-    //Examination Summary Sheet
-    function ExaminationSummarySheet($classid,$termid,$sessionid,$schoolid)
+//Examination Summary Sheet
+function ExaminationSummarySheet($classid,$termid,$sessionid,$schoolid)
 	    {
 		  try {
 			
@@ -1428,11 +1430,11 @@ function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
         assessment.ass_class_id=? AND assessment.ass_session_id=?
         AND assessment.ass_term_id=?  AND assessment.ass_sch_id=?";
         $this->conn->query($query);
-        $this->conn->bind(1, $subjectid, PDO::PARAM_INT);
-        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
-				$this->conn->bind(3, $sessionid, PDO::PARAM_INT);
-        $this->conn->bind(4, $termid, PDO::PARAM_INT); 
-				$this->conn->bind(5, $schoolid, PDO::PARAM_INT);
+        //$this->conn->bind(1, $subjectid, PDO::PARAM_INT);
+        $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+				$this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+        $this->conn->bind(3, $termid, PDO::PARAM_INT); 
+				$this->conn->bind(4, $schoolid, PDO::PARAM_INT);
         $output = $this->conn->resultset(); 
 					//echo count($output);
           //ouput table headers below here
@@ -1453,7 +1455,7 @@ function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
 						$printOutput.='<td>'.$studentName.'</td>';
             $printOutput.=$this->grandTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
             $printOutput.=$this->studentOverAllAverage($studentID,$classid,$sessionid,$termid,$schoolid);
-            $printOutput.=$this->subjectAv($subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->getClassPosition($studentID,$classid,$sessionid,$termid,$schoolid);
 						$printOutput.='</tr>';
 					}
           $printOutput.='</table>';
@@ -1466,7 +1468,7 @@ function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
 	    }
       //End examination sheet
 
-//submit result summary
+//end result summary
 
 function submitSummary($classid,$termid,$sessionid,$schoolid)
 	    {
