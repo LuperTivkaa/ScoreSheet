@@ -288,6 +288,91 @@ a:hover {
     text-align: left;
     font-size: .8em; }
 
+.result-content-wrapper {
+  width: 80%;
+  margin: 0 auto; }
+
+.school-profile {
+  border-left: 3px solid deepskyblue;
+  text-align: center;
+  margin-bottom: 15px;
+  margin-top: 10px; }
+  .school-profile p {
+    font-family: "Hind";
+    font-size: .9em;
+    line-height: .9px; }
+  .school-profile h5 {
+    font-family: "Fjalla One";
+    color: #000;
+    font-size: 1.7em; }
+
+.student-profile {
+  border-left: 3px solid deepskyblue;
+  margin-bottom: 15px; }
+
+.item-container {
+  width: 100%; }
+  .item-container h6 {
+    font-family: "Fjalla One";
+    font-size: .7em;
+    color: #000; }
+  .item-container span {
+    font-family: "Quicksand";
+    color: #000;
+    font-size: .6em;
+    font-weight: 400; }
+
+.profile-details {
+  display: inline-block;
+  width: 90%;
+  padding-left: 1em;
+  vertical-align: top; }
+  .profile-details h5 {
+    margin-top: 5px;
+    font-family: "Fjalla One";
+    color: #000;
+    font-size: 1.5em; }
+
+.student-avatar {
+  display: inline-block;
+  width: 10%;
+  padding-right: 1em;
+  margin-right: -5px;
+  vertical-align: top; }
+  .student-avatar h5 {
+    text-align: center; }
+
+.colm {
+  display: inline-block;
+  width: 13%;
+  padding-left: 3px;
+  margin-right: -5px; }
+  .colm span {
+    margin-top: .6px; }
+
+.logo-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1px solid #fff; }
+
+.avatar-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid #fff; }
+
+.result-details {
+  border-left: 3px solid deepskyblue;
+  margin-bottom: 15px; }
+
+.cognitive-marks {
+  margin-bottom: 15px;
+  border-left: 3px solid deepskyblue; }
+
+.comments-section {
+  border-left: 3px solid deepskyblue; }
+
 @media (max-width: 767px) {
   .secondary-col {
     width: 0%;
