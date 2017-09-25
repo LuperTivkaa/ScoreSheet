@@ -378,6 +378,122 @@
                             
                             //END OF TABLE STYLES
                             //=====================
+                            //Result sheet styles
+                            .result-content-wrapper {
+                                @include center-content;
+                            }
+                            
+                            .school-profile {
+                                //border: 2px solid brown;
+                                border-left: 3px solid deepskyblue;
+                                text-align: center;
+                                margin-bottom: 15px;
+                                margin-top: 10px;
+                                p {
+                                    font-family: $result-font2;
+                                    font-size: .9em;
+                                    line-height: .9px;
+                                }
+                                h5 {
+                                    font-family: $font-primary;
+                                    color: $black;
+                                    font-size: 1.7em;
+                                }
+                            }
+                            
+                            .student-profile {
+                                //border: 1px solid black;
+                                border-left: 3px solid deepskyblue;
+                                margin-bottom: 15px;
+                            }
+                            
+                            .item-container {
+                                //border: 1px solid greenyellow;
+                                width: 100%;
+                                h6 {
+                                    font-family: $font-primary;
+                                    font-size: .7em;
+                                    color: $black;
+                                }
+                                span {
+                                    font-family: $result-font1;
+                                    color: $black;
+                                    font-size: .6em;
+                                    font-weight: 400;
+                                }
+                            }
+                            
+                            .profile-details {
+                                display: inline-block;
+                                //border-left: 3px solid deepskyblue;
+                                //border: 3px solid purple;
+                                width: 90%;
+                                padding-left: 1em;
+                                vertical-align: top;
+                                h5 {
+                                    margin-top: 5px;
+                                    font-family: $font-primary;
+                                    color: $black;
+                                    font-size: 1.5em;
+                                }
+                            }
+                            
+                            .student-avatar {
+                                display: inline-block;
+                                //border: 2px solid red;
+                                width: 10%;
+                                padding-right: 1em;
+                                margin-right: -5px;
+                                vertical-align: top;
+                                h5 {
+                                    text-align: center;
+                                }
+                            }
+                            
+                            .colm {
+                                display: inline-block;
+                                width: 13%;
+                                padding-left: 3px;
+                                margin-right: -5px;
+                                span {
+                                    margin-top: .6px;
+                                }
+                            }
+                            
+                            .logo-img {
+                                width: 60px;
+                                height: 60px;
+                                border-radius: 50%;
+                                border: 1px solid $general;
+                                // bottom: -30px;
+                                // left: 100px;
+                                // top: 17px;
+                            }
+                            
+                            .avatar-img {
+                                width: 50px;
+                                height: 50px;
+                                border-radius: 50%;
+                                border: 1px solid $general;
+                                // bottom: -30px;
+                                // left: 100px;
+                                // top: 17px;
+                            }
+                            
+                            .result-details {
+                                border-left: 3px solid deepskyblue;
+                                margin-bottom: 15px;
+                            }
+                            
+                            .cognitive-marks {
+                                margin-bottom: 15px;
+                                border-left: 3px solid deepskyblue;
+                            }
+                            
+                            .comments-section {
+                                border-left: 3px solid deepskyblue;
+                            }
+                            
                             //================================================================
                             //MEDIA QUERIES
                             //================================================================
