@@ -25,12 +25,12 @@ function addSession(session) {
             } else {
                 //alert("me")
                 $('#add-session').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end new session code
 
 
@@ -61,12 +61,12 @@ function addFeeItem(item, amount, amtwrds, term, session) {
             } else {
                 //alert("me")
                 $('#term-fee-items').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end add fee item
 
 
@@ -94,7 +94,7 @@ function addTerm(term) {
             } else {
                 //alert("me")
                 $('#add-term').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
@@ -104,11 +104,11 @@ function addTerm(term) {
 
 //Retrieve all added session and display them on the page
 $('.my-session').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        getAddedSession(url);
-    })
-    //get session function
+    evt.preventDefault();
+    var url = $(this).attr('href');
+    getAddedSession(url);
+});
+//get session function
 function getAddedSession(url) {
     //get inserted records from the database
     jQuery.getJSON(url, function(response) {
@@ -242,7 +242,7 @@ function newStudent(surname, firstname, lastname, religion, nation, state,
             }
         },
         //alert(user+pass+role);
-    })
+    });
 }
 
 
@@ -358,11 +358,11 @@ function assignNewNumber(studid, admno) {
                 $('#assign-admission-no').prop("disabled", false);
                 noAdmissionNumberStud();
                 fetchUnassignedNumbers();
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
-    })
+    });
 }
 
 ////////////////////////////////////////////////////
@@ -397,7 +397,7 @@ function addPrefixSettings(prefix, seperator) {
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end add fee item
 
 
@@ -433,5 +433,132 @@ function addAdmNum(range) {
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end add new admission numbers
+
+//===========================================================================
+/**
+ * The code block is to create staff information such as
+ * Staff profile
+ * staff academic details
+ * staff preview
+ */
+//==============================================================================
+//add new Staff profile
+$("#new-content").on('click', '#new-staff-btn', function(e) {
+    e.preventDefault();
+    $('#new-staff-btn').prop("disabled", true);
+    var surname = $("#surname").val();
+    var firstname = $("#firstname").val();
+    var lastname = $("#lastname").val();
+    var religion = $("#religion").val();
+    var nation = $("#nation").val();
+    var state = $("#state").val();
+    var lg = $("#lg").val();
+    var city = $("#city").val();
+    var contactAdd = $("#contactAdd").val();
+    var permAdd = $("#permAdd").val();
+    var mail = $("#mail").val();
+    var mobile = $("#mobile").val();
+    var sex = $("#sex").val();
+    var dob = $("#datepicker").val();
+    var blood_group = $("#blood-group").val();
+
+    staffProfile(surname, firstname, lastname, religion, nation, state,
+        lg, city, contactAdd, permAdd, mail, mobile, sex, dob,
+        blood_group);
+});
+
+//function to add new staff Profile
+function staffProfile(surname, firstname, lastname, religion, nation, state,
+    lg, city, contactAdd, permAdd, mail, mobile, sex, dob,
+    blood_group) {
+    $.ajax({
+        url: 'addStaffProfile.php',
+        type: 'POST',
+        data: {
+            surname: surname,
+            firstname: firstname,
+            lastname: lastname,
+            religion: religion,
+            nation: nation,
+            state: state,
+            lg: lg,
+            city: city,
+            contactAdd: contactAdd,
+            permAdd: permAdd,
+            mail: mail,
+            mobile: mobile,
+            sex: sex,
+            dob: dob,
+            blood_group: blood_group,
+        },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#new-staff-btn').prop("disabled", false);
+                $("#my-info").addClass("info");
+                var surname = $("#surname").val();
+                $("#firstname").val("");
+                $("#lastname").val("");
+                $("#state").val("");
+                $("#lg").val("");
+                $("#city").val("");
+                $("#contactAdd").val("");
+                $("#permAdd").val("");
+                $("#mail").val("");
+                $("#mobile").val("");
+                $("#datepicker").val("");
+                $("#my-info").html("New Staff profile added successfully");
+            } else {
+                //alert("me")
+                $('#new-staff-btn').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+        //alert(user+pass+role);
+    });
+}
+//End Staff profile
+
+//Staff qualifications
+$("#new-content").on('click', '#new-qualification-btn', function(e) {
+    e.preventDefault();
+    $('#new-qualification-btn').prop("disabled", true);
+    var instname = $("#inst-name").val();
+    var certname = $("#cert-name").val();
+    var yrgrad = $("#yr-grad").val();
+
+    staffQualification(instname, certname, yrgrad);
+});
+
+//function to add new student
+function staffQualification(instname, certname, yrgrad) {
+    $.ajax({
+        url: 'addStaffQualification.php',
+        type: 'POST',
+        data: {
+            instname: instname,
+            certname: certname,
+            yrgrad: yrgrad
+        },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#new-qualification-btn').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#inst-name").val("");
+                $("#cert-name").val("");
+                $("#yr-grad").val("");
+                $("#my-info").html("New record added!");
+            } else {
+                //alert("me")
+                $('#new-qualification-btn').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+        //alert(user+pass+role);
+    });
+}
