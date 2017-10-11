@@ -12,6 +12,7 @@
   padding: 1em 0; }
   .secondary-nav .secondary-nav-content {
     padding: 1.5px 1.5px 1.5px 1.5px;
+    border-left: 3px solid deepskyblue;
     width: 80%;
     margin: 0 auto; }
     .secondary-nav .secondary-nav-content h4 {
@@ -210,7 +211,7 @@ p {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  border: 1px solid #fff;
+  border: 1px solid #278da4;
   bottom: -30px;
   left: 100px;
   top: 17px; }
@@ -230,6 +231,7 @@ card-container {
 
 button {
   border: none;
+  border-radius: 2px 2px 2px 2px;
   outline: 0;
   display: inline-block;
   padding: 8px;
@@ -277,7 +279,8 @@ a:hover {
 
 .datatable {
   border: 1.5px solid #000;
-  font-family: "Jura"; }
+  font-family: "Jura";
+  margin-left: 0px; }
   .datatable td {
     border: 1px solid #000;
     text-align: left;
@@ -373,6 +376,43 @@ a:hover {
 .comments-section {
   border-left: 3px solid deepskyblue; }
 
+.school-header {
+  margin-bottom: 5px;
+  padding-left: 0px; }
+  .school-header li {
+    display: inline-block;
+    margin-right: 5px; }
+    .school-header li h4 {
+      font-family: "Fjalla One";
+      font-size: 1em;
+      margin-left: 0px; }
+
+.school-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #fff; }
+
+.scoresheet-header {
+  padding-left: 0px; }
+  .scoresheet-header li {
+    display: inline-block;
+    margin-right: 6px;
+    border-bottom: 1px solid gray;
+    padding: 3px; }
+    .scoresheet-header li h6 {
+      font-family: "Fjalla One";
+      font-size: .7em;
+      color: #000; }
+    .scoresheet-header li span {
+      font-family: "Quicksand";
+      color: #000;
+      font-size: .6em;
+      font-weight: 400; }
+
+.printAssessment {
+  display: inline-block; }
+
 @media (max-width: 767px) {
   .secondary-col {
     width: 0%;
@@ -446,3 +486,47 @@ a:hover {
   vertical-align: top;
   padding-left: 2px;
   padding-top: 1em 0; }
+
+/* The Modal (background) */
+.modal-div {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: black;
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */ }
+
+/* Modal Content/Box */
+.modal-content-div {
+  background-color: #fefefe;
+  margin: 2% auto;
+  /* 15% from the top and centered */
+  padding: 4px;
+  border: 1px solid #888;
+  width: 80%;
+  /* Could be more or less, depending on screen size */ }
+
+/* The Close Button */
+.closex {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold; }
+
+.closex:hover,
+.closex:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer; }
