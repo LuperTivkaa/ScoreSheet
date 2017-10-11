@@ -584,8 +584,8 @@ $('.dropbtn').on('click', function(evt) {
 // Close the dropdown menu if the user clicks outside of it
 window.onclick = function(event) {
     if (!event.target.matches('.dropbtn')) {
-
-        var dropdowns = document.getElementsByClassName("dropdown-content");
+        //var dropdowns = document.getElementsByClassName("dropdown-content");
+        var dropdowns = $('.dropdown-content');
         var i;
         for (i = 0; i < dropdowns.length; i++) {
             var openDropdown = dropdowns[i];
@@ -619,6 +619,193 @@ function loadmore() {
         }
     });
 }
+
+//modal setup test
+// $('#new-content').on('click', 'examModal', function(evt) {
+//     evt.preventDefault();
+//     var modal_id = $(this).attr('data-target');
+//     console.log(modal_id);
+//     $(modal_id).on('show.bs.modal', function(event) {
+//         //var button = $(event.relatedTarget) // Button that triggered the modal
+//         //var recipient = button.data('whatever') // Extract info from data-* attributes
+//         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+//         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+//         //var modal = $(this)
+//         // modal.find('.modal-title').text('New message to ' + recipient)
+//         //modal.find('.modal-body input').val(recipient)
+//     });
+
+
+// })
+
+//Edit exam  modal js
+$('#new-content').on('click', '#newbtn', function(e) {
+    e.preventDefault();
+    // var myclass = $(this).data('classid');
+    // var session = $(this).data('sessionid');
+    // var subject = $(this).data('subjectid');
+    // var term = $(this).data('term');
+    var recordid = $(this).data('recordid');
+    var scores = $(this).data('scores');
+
+    $('#edit-scores').val(scores);
+    $('#record-id').val(recordid);
+
+    var modalid = $('#myModal');
+    modalid.css('display', 'block');
+});
+
+
+$('.closex').on('click', function(evt) {
+    evt.preventDefault();
+    var modalid = $('#myModal');
+    modalid.css('display', 'none');
+});
+
+// $(window).on('click', function(event) {
+//     event.preventDefault();
+//     var modalid = $('#myModal');
+//     if ($(this) == modalid) {
+//     modalid.css('display', 'none');
+//     }
+// });
+// var span = document.getElementsByClassName("close")[0];
+// // When the user clicks on <span> (x), close the modal
+// span.onclick = function() {
+//     modal.style.display = "none";
+// }
+
+//EXAM EDIT ROUTINES
+
+//LOAD SUBJECT BASED ON SELECTION OF CLASS
+
+$('#edit-class').on('change', function() {
+    var id = $("#edit-class option:selected").val();
+    $.post("staffSubjectByClass.php", { id: id }, function(data) {
+        $("#edit-subject").html(data);
+    });
+});
+//END LOAD SUBJECT BASED ON CLASS
+
+//edit exams scores
+$("#edit-exam").on('click', function(e) {
+    if (confirm("Do you really want to edit?") == true) {
+        e.preventDefault();
+        $('#edit-exam').text("Editing...").prop("disabled", true);
+        var myclass = $("#edit-class option:selected").val();
+        var subject = $("#edit-subject option:selected").val();
+        var scores = $("#edit-scores").val();
+        var recordid = $("#record-id").val();
+        editExamScores(myclass, subject, scores, recordid);
+    } else {
+        $('#edit-exam').text("Edit Scores").prop("disabled", false);
+    }
+});
+
+//call back function to add new continous assessment scores
+function editExamScores(myclass, subject, scores, recordid) {
+    $.ajax({
+        url: 'editExamScores.php',
+        type: 'POST',
+        data: { myclass: myclass, subject: subject, scores: scores, examid: recordid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#edit-exam').text("Edit Scores").prop("disabled", false);
+                var modalid = $('#myModal');
+                modalid.css('display', 'none');
+                $("#my-info").addClass("info");
+                //call a reload function here
+                reloadSubjectScores(myclass, subject);
+                $("#my-info").html("Exam scores edited successfully");
+            } else {
+                $('#edit-exam').text("Edit Scores").prop("disabled", false);
+                var modal = $('#myModal');
+                modal.css('display', 'none');
+                reloadSubjectScores(myclass, subject);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End function to edit exam scores
+
+//Function to reload subject scores
+function reloadSubjectScores(myclass, subject) {
+    $.ajax({
+        url: 'loadSubjectScores.php',
+        type: 'POST',
+        data: { myclass: myclass, subject: subject },
+        success: function(response) {
+            $("#new-content").html(response);
+
+        },
+    });
+
+}
+//end function to reload exam subjects
+
+//EDIT CA FUNCTIONALITY
+
+//edit exams scores
+$("#edit-ca").on('click', function(e) {
+    if (confirm("Do you really want to edit?") == true) {
+        e.preventDefault();
+        $('#edit-ca').text("Editing...").prop("disabled", true);
+        var myclass = $("#edit-class option:selected").val();
+        var subject = $("#edit-subject option:selected").val();
+        var scores = $("#edit-scores").val();
+        var recordid = $("#record-id").val();
+        editca(myclass, subject, scores, recordid);
+    } else {
+        $('#edit-ca').text("Edit Scores").prop("disabled", false);
+    }
+});
+
+//call back function to add new continous assessment scores
+function editca(myclass, subject, scores, recordid) {
+    $.ajax({
+        url: 'editCaScores.php',
+        type: 'POST',
+        data: { myclass: myclass, subject: subject, scores: scores, caid: recordid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#edit-ca').text("Edit Scores").prop("disabled", false);
+                var modalid = $('#myModal');
+                modalid.css('display', 'none');
+                $("#my-info").addClass("info");
+                //call a reload function here
+                reloadCaScores(myclass, subject);
+                $("#my-info").html("Assessment scores edited successfully");
+            } else {
+                $('#edit-ca').text("Edit Scores").prop("disabled", false);
+                var modal = $('#myModal');
+                modal.css('display', 'none');
+                reloadCaScores(myclass, subject);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//funtion to reload CA scores after edit
+function reloadCaScores(myclass, subject) {
+    $.ajax({
+        url: 'reloadCaScores.php',
+        type: 'POST',
+        data: { myclass: myclass, subject: subject },
+        success: function(response) {
+            $("#new-content").html(response);
+
+        },
+    });
+
+}
+
+
+// end CA Scores after edit
 //add Session code
 $("#new-content").on('click', '#add-session', function(e) {
     e.preventDefault();
@@ -646,12 +833,12 @@ function addSession(session) {
             } else {
                 //alert("me")
                 $('#add-session').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end new session code
 
 
@@ -682,12 +869,12 @@ function addFeeItem(item, amount, amtwrds, term, session) {
             } else {
                 //alert("me")
                 $('#term-fee-items').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end add fee item
 
 
@@ -715,7 +902,7 @@ function addTerm(term) {
             } else {
                 //alert("me")
                 $('#add-term').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
@@ -725,11 +912,11 @@ function addTerm(term) {
 
 //Retrieve all added session and display them on the page
 $('.my-session').on('click', function(evt) {
-        evt.preventDefault();
-        var url = $(this).attr('href');
-        getAddedSession(url);
-    })
-    //get session function
+    evt.preventDefault();
+    var url = $(this).attr('href');
+    getAddedSession(url);
+});
+//get session function
 function getAddedSession(url) {
     //get inserted records from the database
     jQuery.getJSON(url, function(response) {
@@ -863,7 +1050,7 @@ function newStudent(surname, firstname, lastname, religion, nation, state,
             }
         },
         //alert(user+pass+role);
-    })
+    });
 }
 
 
@@ -979,11 +1166,11 @@ function assignNewNumber(studid, admno) {
                 $('#assign-admission-no').prop("disabled", false);
                 noAdmissionNumberStud();
                 fetchUnassignedNumbers();
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
-    })
+    });
 }
 
 ////////////////////////////////////////////////////
@@ -1018,7 +1205,7 @@ function addPrefixSettings(prefix, seperator) {
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end add fee item
 
 
@@ -1054,8 +1241,135 @@ function addAdmNum(range) {
             }
         },
         //alert(user+pass+role);
-    })
+    });
 } //end add new admission numbers
+
+//===========================================================================
+/**
+ * The code block is to create staff information such as
+ * Staff profile
+ * staff academic details
+ * staff preview
+ */
+//==============================================================================
+//add new Staff profile
+$("#new-content").on('click', '#new-staff-btn', function(e) {
+    e.preventDefault();
+    $('#new-staff-btn').prop("disabled", true);
+    var surname = $("#surname").val();
+    var firstname = $("#firstname").val();
+    var lastname = $("#lastname").val();
+    var religion = $("#religion").val();
+    var nation = $("#nation").val();
+    var state = $("#state").val();
+    var lg = $("#lg").val();
+    var city = $("#city").val();
+    var contactAdd = $("#contactAdd").val();
+    var permAdd = $("#permAdd").val();
+    var mail = $("#mail").val();
+    var mobile = $("#mobile").val();
+    var sex = $("#sex").val();
+    var dob = $("#datepicker").val();
+    var blood_group = $("#blood-group").val();
+
+    staffProfile(surname, firstname, lastname, religion, nation, state,
+        lg, city, contactAdd, permAdd, mail, mobile, sex, dob,
+        blood_group);
+});
+
+//function to add new staff Profile
+function staffProfile(surname, firstname, lastname, religion, nation, state,
+    lg, city, contactAdd, permAdd, mail, mobile, sex, dob,
+    blood_group) {
+    $.ajax({
+        url: 'addStaffProfile.php',
+        type: 'POST',
+        data: {
+            surname: surname,
+            firstname: firstname,
+            lastname: lastname,
+            religion: religion,
+            nation: nation,
+            state: state,
+            lg: lg,
+            city: city,
+            contactAdd: contactAdd,
+            permAdd: permAdd,
+            mail: mail,
+            mobile: mobile,
+            sex: sex,
+            dob: dob,
+            blood_group: blood_group,
+        },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#new-staff-btn').prop("disabled", false);
+                $("#my-info").addClass("info");
+                var surname = $("#surname").val();
+                $("#firstname").val("");
+                $("#lastname").val("");
+                $("#state").val("");
+                $("#lg").val("");
+                $("#city").val("");
+                $("#contactAdd").val("");
+                $("#permAdd").val("");
+                $("#mail").val("");
+                $("#mobile").val("");
+                $("#datepicker").val("");
+                $("#my-info").html("New Staff profile added successfully");
+            } else {
+                //alert("me")
+                $('#new-staff-btn').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+        //alert(user+pass+role);
+    });
+}
+//End Staff profile
+
+//Staff qualifications
+$("#new-content").on('click', '#new-qualification-btn', function(e) {
+    e.preventDefault();
+    $('#new-qualification-btn').prop("disabled", true);
+    var instname = $("#inst-name").val();
+    var certname = $("#cert-name").val();
+    var yrgrad = $("#yr-grad").val();
+
+    staffQualification(instname, certname, yrgrad);
+});
+
+//function to add new student
+function staffQualification(instname, certname, yrgrad) {
+    $.ajax({
+        url: 'addStaffQualification.php',
+        type: 'POST',
+        data: {
+            instname: instname,
+            certname: certname,
+            yrgrad: yrgrad
+        },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#new-qualification-btn').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#inst-name").val("");
+                $("#cert-name").val("");
+                $("#yr-grad").val("");
+                $("#my-info").html("New record added!");
+            } else {
+                //alert("me")
+                $('#new-qualification-btn').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+        //alert(user+pass+role);
+    });
+}
 // Find student on entering of name or ID
 //===============================================================================
 // Staff academic routines
@@ -1105,9 +1419,9 @@ $("#new-content").on('click', '#add-exam-scores', function(e) {
     $('#add-exam-scores').prop("disabled", true);
     var regno = $("#regno").val();
     var scores = $("#scores").val();
-    var studentClass = $("#studclass option:selected").val();
+    var studentClass = $("#my-class option:selected").val();
     //var ca_number = $("#ca-no option:selected").val();
-    var subject = $("#listsubject option:selected").val();
+    var subject = $("#position-subject option:selected").val();
     newExamScores(regno, scores, studentClass, subject);
 });
 
@@ -1222,12 +1536,12 @@ $("#new-content").on('click', '#submit-result', function(e) {
     if (confirm("Be sure that you want to submit your result summary. This action can not be reversed!") == true) {
         e.preventDefault();
         $('#submit-result').text("Submitting...").prop("disabled", true);
-        var myclass = $("#myclass option:selected").val();
+        var myclass = $("#my-class option:selected").val();
         var session = $("#session option:selected").val();
         var term = $("#term option:selected").val();
         postResult(myclass, session, term);
     } else {
-        $('#assign-position').text("Assign Subject Position").prop("disabled", false);
+        $('#submit-result').text("Submit Result").prop("disabled", false);
     }
 });
 
@@ -1240,13 +1554,233 @@ function postResult(myclass, session, term) {
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
-                $('#submit-result').prop("disabled", false);
+                $('#submit-result').text("Submit Result").prop("disabled", false);
+                $("#my-info").addClass("info");
                 $("#my-info").html("Result summary submittted successfully");
             } else {
-                $('#submit-result').text("Assign Subject Position").prop("disabled", false);
-                //$("#my-info").addClass("error");
+                $('#submit-result').text("Submit Result").prop("disabled", false);
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
     });
+}
+//End post result
+
+//End assign class position
+$("#new-content").on('click', '#class-position', function(e) {
+    if (confirm("Be sure that you want to submit your result summary. This action can not be reversed!") == true) {
+        e.preventDefault();
+        $('#class-position').text("Assigning...").prop("disabled", true);
+        var myclass = $("#my-class option:selected").val();
+        var session = $("#session option:selected").val();
+        var term = $("#term option:selected").val();
+        classPositionAssign(myclass, session, term);
+    } else {
+        $('#class-position').text("Submit Result").prop("disabled", false);
+    }
+});
+
+//call back function to add new continous assessment scores
+function classPositionAssign(myclass, session, term) {
+    $.ajax({
+        url: 'assignClassPosition.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#class-position').text("Assign Class Position").prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Class position assigned successfully");
+            } else {
+                $('#class-position').text("Assign Class Position").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End assign class position
+
+//print continous assessment links open link in a new tab
+$("#new-content").on('click', '#print-link', function(e) {
+    e.preventDefault();
+
+    var a = $(this).attr("href");
+    //alert(a);
+    window.open(a, '_blank');
+});
+
+//search exams
+$("#new-content").on('click', '#simple-search', function(e) {
+    e.preventDefault();
+    $('#simple-search').prop("disabled", true);
+    var searchItem = $("#basic-search-item").val();
+    examSimpleSearch(searchItem);
+});
+//exam basic search call back
+function examSimpleSearch(searchItem) {
+    $.ajax({
+            url: 'examBasicSearch.php',
+            type: 'POST',
+            data: { item: searchItem },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#simple-search').prop("disabled", false);
+            //$('#new-content').html(''); // blank before load.
+            $('#new-content').html(data); // load here
+            //$('#modal-loader').hide(); // hide loader  
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+//end basic search
+
+
+//Advanced  exam search
+$("#new-content").on('click', '#advanced-search', function(e) {
+    e.preventDefault();
+    $('#advanced-search').prop("disabled", true);
+    //var regno = $("#reg-number").val();
+    var myclass = $("#my-class option:selected").val();
+    var subject = $("#position-subject option:selected").val();
+    var session = $("#exam-session option:selected").val();
+    var term = $("#exam-term option:selected").val();
+    examAdvancedSearch(myclass, subject, session, term);
+});
+//Adavanced exam search call back
+function examAdvancedSearch(myclass, subject, session, term) {
+    $.ajax({
+            url: 'examAdvancedSearch.php',
+            type: 'POST',
+            data: { myclass: myclass, subject: subject, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#advanced-search').prop("disabled", false);
+            //$('#new-content').html(''); // blank before load.
+            $('#new-content').html(data); // load here
+            //$('#modal-loader').hide(); // hide loader  
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+//remove
+//Testing bootstrap modal popup remove
+$("#new-content").on('click', '#test', function(e) {
+    e.preventDefault();
+    var modal_id = $(this).attr('data-target');
+    console.log(modal_id);
+    //alert('mmmmmmm');
+    modal_id.modal('show');
+    //modal_id.on('show.bs.modal', function(event) {
+    //var button = $(event.relatedTarget) // Button that triggered the modal
+    //var recipient = button.data('whatever') // Extract info from data-* attributes
+    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+    //var modal = $(this)
+    // modal.find('.modal-title').text('New message to ' + recipient)
+    //modal.find('.modal-body input').val(recipient)
+    //});
+});
+//
+//SEARCH CA FUNCTIONALITY
+//search ca
+$("#new-content").on('click', '#ca-basic-search', function(e) {
+    e.preventDefault();
+    $('#ca-basic-search').prop("disabled", true);
+    var searchItem = $("#stud-no").val();
+    caSimpleSearch(searchItem);
+});
+//exam basic search call back
+function caSimpleSearch(searchItem) {
+    $.ajax({
+            url: 'CaBasicSearch.php',
+            type: 'POST',
+            data: { item: searchItem },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#ca-basic-search').prop("disabled", false);
+            //$('#new-content').html(''); // blank before load.
+            $('#new-content').html(data); // load here
+            //$('#modal-loader').hide(); // hide loader  
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+//End Basic Search
+
+//Advanced CA Search
+$("#new-content").on('click', '#advanced-search-ca', function(e) {
+    e.preventDefault();
+    $('#advanced-search-ca').prop("disabled", true);
+    //var regno = $("#reg-number").val();
+    var myclass = $("#my-class option:selected").val();
+    var subject = $("#position-subject option:selected").val();
+    var session = $("#ca-session option:selected").val();
+    var term = $("#ca-term option:selected").val();
+    //alert(myclass + subject + session + term);
+    caAdvancedSearch(myclass, subject, session, term);
+});
+//Adavanced exam search call back
+function caAdvancedSearch(myclass, subject, session, term) {
+    $.ajax({
+            url: 'caAdvancedSearch.php',
+            type: 'POST',
+            data: { myclass: myclass, subject: subject, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#advanced-search-ca').prop("disabled", false);
+            //$('#new-content').html(''); // blank before load.
+            $('#new-content').html(data); // load here
+            //$('#modal-loader').hide(); // hide loader  
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+
+//Function to handle students traits
+
+$("#new-content").on('click', '#fetch-result', function(e) {
+    e.preventDefault();
+    $('#fetch-result').text("Fetching...").prop("disabled", true);
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+    //alert(myclass + subject + session + term);
+    traitsRecords(studentclass, session, term);
+});
+
+function traitsRecords(studentclass, subject, session, term) {
+    $.ajax({
+            url: 'fetchTraits.php',
+            type: 'POST',
+            data: { myclass: myclass, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#fetch-result').text("Show Result").prop("disabled", false);
+            $('#new-content').html(data); // load here 
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
 }
