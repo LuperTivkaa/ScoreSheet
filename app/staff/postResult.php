@@ -21,7 +21,7 @@ $userid = $_SESSION['user_info'][0];
                         <div class="row">
 
                             <div class="col-12">
-                            <label for="myclass">Select Class</label>
+                            <label for="my-class">Select Class</label>
                             <select class="custom-select  form-control" id="my-class">
                               <?php
                                 $student->loadClass($clientid);
