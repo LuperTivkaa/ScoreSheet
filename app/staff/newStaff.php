@@ -12,10 +12,12 @@ require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
 use ScoreSheet\student;
+use ScoreSheet\staff;
 //use \PDO;
 $dbConnection = new dbConnection();
 $student = new student($dbConnection);
 $client = new client($dbConnection);
+$staff = new staff($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 ?>
 
@@ -81,13 +83,13 @@ $clientid = $_SESSION['user_info'][4];
               </div>
 
               <div class="form-group col-md-5">
-                 <label for="address1">Contact Address:</label>
-                <textarea class="custom-textarea form-control" id="address1" name="address1" rows="1"></textarea> 
+                 <label for="contactAdd">Contact Address:</label>
+                <textarea class="custom-textarea form-control" id="contactAdd" name="permaDD" rows="1"></textarea> 
               </div>
               
             <div class="form-group col-md-5">
-                 <label for="address2">Permanent Home Address:</label>
-                <textarea class="custom-textarea form-control" id="address2" name="address2" rows="1"></textarea> 
+                 <label for="permAdd">Permanent Home Address:</label>
+                <textarea class="custom-textarea form-control" id="permAdd" name="permAdd" rows="1"></textarea> 
               </div>
 
               <div class="form-group col-md-4">
@@ -128,7 +130,7 @@ $clientid = $_SESSION['user_info'][4];
                       <option>O-</option>                          
                     </select> 
               </div>
-            <button class="submit btn btn-primary mb-3"  id="new-student-btn">Create New Student</button>
+            <button class="submit btn btn-primary mb-3"  id="new-staff-btn">Create New Staff</button>
               </div>                           
 
   
