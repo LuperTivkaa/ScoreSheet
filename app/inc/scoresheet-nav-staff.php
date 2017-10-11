@@ -24,14 +24,14 @@
                         </div>
                     </li>
                     <li>
-                    <li>
+                    <!-- <li>
                         <div class="dropdown">
                             <a href="" class="dropbtn"><i class="fa fa-files-o fa-fw" aria-hidden="true"></i>Result <i class="fa fa-caret-down dropbtn" aria-hidden="true"></i></a>
                             <div id="myDropdown" class="dropdown-content">
                                 <a href="my-staff.php"><i class="fa fa-th fa-fw" aria-hidden="true"></i>Result Processing</a>
                             </div>
                         </div>
-                    </li>
+                    </li> -->
                     <li>
                         <div class="dropdown">
                             <a href="#" class="dropbtn"><i class="fa fa-wrench fa-fw" aria-hidden="true"></i> Settings <i class="fa fa-caret-down dropbtn" aria-hidden="true"></i></a>
