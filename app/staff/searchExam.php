@@ -22,12 +22,12 @@ $userid = $_SESSION['user_info'][0];
 
                             <div class="col-12">
                                 <div class="input-group">
-                                <input type="text" class="form-control" id="tag" name="tag" placeholder="Search for CA...">
+                                <input type="text" class="form-control" id="basic-search-item" name="basic-search-item" placeholder="Search Exam">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-primary" type="button">Search Exams...</button>
+                                    <button class="btn btn-primary" type="button" id="simple-search">Search Exams</button>
                                 </span>
                                 </div>
-                                <small id="emailHelp" class="form-text text-muted">You can search by ID or Surname.</small>
+                                <small id="search-term" class="form-text text-muted">You can search by ID.</small>
                             </div>
 
                         </div>
@@ -37,43 +37,45 @@ $userid = $_SESSION['user_info'][0];
                          <h5 class="top-header">Exams Advanced Search</h5>
                         <div class="row">
                             
-                            <div class="col-4">
-                            <label for="tag">Select Subject</label>
-                            <select class="custom-select  form-control" id="ca-no">
-                            </select>
-                            
-                            </div>
-
-                            <div class="col-4">
-                            <label for="tag">Select Class</label>
-                            <select class="custom-select  form-control" id="arm">
-                            </select>
-                            </div>
-                            
-                            <div class="col-4">
-                                <label for="tag">Class Arm</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <div class="col-6">
+                            <label for="my-class">Select Class</label>
+                            <select class="custom-select  form-control" id="my-class">
+                                <?php
+                                $student->loadClass($clientid);
+                            ?>
                             </select>
                             </div>
 
-                            <div class="col-4">
-                            <label for="tag">Session</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <div class="col-6">
+                            <label for="position-subject">Select Subject</label>
+                            <select class="custom-select  form-control" id="position-subject">
                             </select>
                             </div>
 
-                            <div class="col-4">
-                            <label for="tag">Term</label>
-                            <select class="custom-select  form-control" id="arm">
+                            <div class="col-6">
+                            <label for="exam-session">Session</label>
+                            <select class="custom-select  form-control" id="exam-session">
+                                <?php
+                                $client->loadSession($clientid);
+                                ?>
                             </select>
                             </div>
 
-                            <div class="col-4">
-                            <label for="tag">Search Tag</label>
-                            <input type="text" class="form-control" id="tag" name="tag" placeholder="Search for CA...">
+                            <div class="col-6">
+                            <label for="exam-term">Term</label>
+                            <select class="custom-select  form-control" id="exam-term">
+                                <?php
+                            $client->loadTerm($clientid);
+                                ?>
+                            </select>
                             </div>
+
+                            <!-- <div class="col-4">
+                            <label for="reg-number">Search Tag</label>
+                            <input type="text" class="form-control" id="reg-number" placeholder="Reg Number">
+                            </div> -->
                             <div class="col-4">
-                            <button class="btn btn-primary mt-3" type="button">Search CA!</button>
+                            <button class="btn btn-primary mt-3" type="button" id="advanced-search">Search Exam</button>
                             </div>
                         </div>  
                     </div>
