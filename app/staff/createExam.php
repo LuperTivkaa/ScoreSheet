@@ -26,8 +26,8 @@ $userid = $_SESSION['user_info'][0];
                             
 
                         <div class="col-6">
-                            <label for="studclass">Select Class</label>
-                            <select class="custom-select  form-control" id="studclass">
+                            <label for="my-class">Select Class</label>
+                            <select class="custom-select  form-control" id="my-class">
                               <?php
                                 $student->loadClass($clientid);
                               ?>
@@ -35,11 +35,8 @@ $userid = $_SESSION['user_info'][0];
                             </div>
                             
                             <div class="col-6">
-                            <label for="listsubject">Subject</label>
-                            <select class="custom-select  form-control" id="listsubject">
-                            <?php
-                                $student->staffSubject($userid);
-                            ?>
+                            <label for="position-subject">Subject</label>
+                            <select class="custom-select  form-control" id="position-subject">
                             </select>
                             </div>              
                         </div>  
