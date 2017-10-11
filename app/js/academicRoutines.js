@@ -47,9 +47,9 @@ $("#new-content").on('click', '#add-exam-scores', function(e) {
     $('#add-exam-scores').prop("disabled", true);
     var regno = $("#regno").val();
     var scores = $("#scores").val();
-    var studentClass = $("#studclass option:selected").val();
+    var studentClass = $("#my-class option:selected").val();
     //var ca_number = $("#ca-no option:selected").val();
-    var subject = $("#listsubject option:selected").val();
+    var subject = $("#position-subject option:selected").val();
     newExamScores(regno, scores, studentClass, subject);
 });
 
@@ -164,12 +164,12 @@ $("#new-content").on('click', '#submit-result', function(e) {
     if (confirm("Be sure that you want to submit your result summary. This action can not be reversed!") == true) {
         e.preventDefault();
         $('#submit-result').text("Submitting...").prop("disabled", true);
-        var myclass = $("#myclass option:selected").val();
+        var myclass = $("#my-class option:selected").val();
         var session = $("#session option:selected").val();
         var term = $("#term option:selected").val();
         postResult(myclass, session, term);
     } else {
-        $('#assign-position').text("Assign Subject Position").prop("disabled", false);
+        $('#submit-result').text("Submit Result").prop("disabled", false);
     }
 });
 
@@ -182,13 +182,233 @@ function postResult(myclass, session, term) {
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
-                $('#submit-result').prop("disabled", false);
+                $('#submit-result').text("Submit Result").prop("disabled", false);
+                $("#my-info").addClass("info");
                 $("#my-info").html("Result summary submittted successfully");
             } else {
-                $('#submit-result').text("Assign Subject Position").prop("disabled", false);
-                //$("#my-info").addClass("error");
+                $('#submit-result').text("Submit Result").prop("disabled", false);
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
     });
+}
+//End post result
+
+//End assign class position
+$("#new-content").on('click', '#class-position', function(e) {
+    if (confirm("Be sure that you want to submit your result summary. This action can not be reversed!") == true) {
+        e.preventDefault();
+        $('#class-position').text("Assigning...").prop("disabled", true);
+        var myclass = $("#my-class option:selected").val();
+        var session = $("#session option:selected").val();
+        var term = $("#term option:selected").val();
+        classPositionAssign(myclass, session, term);
+    } else {
+        $('#class-position').text("Submit Result").prop("disabled", false);
+    }
+});
+
+//call back function to add new continous assessment scores
+function classPositionAssign(myclass, session, term) {
+    $.ajax({
+        url: 'assignClassPosition.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#class-position').text("Assign Class Position").prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Class position assigned successfully");
+            } else {
+                $('#class-position').text("Assign Class Position").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End assign class position
+
+//print continous assessment links open link in a new tab
+$("#new-content").on('click', '#print-link', function(e) {
+    e.preventDefault();
+
+    var a = $(this).attr("href");
+    //alert(a);
+    window.open(a, '_blank');
+});
+
+//search exams
+$("#new-content").on('click', '#simple-search', function(e) {
+    e.preventDefault();
+    $('#simple-search').prop("disabled", true);
+    var searchItem = $("#basic-search-item").val();
+    examSimpleSearch(searchItem);
+});
+//exam basic search call back
+function examSimpleSearch(searchItem) {
+    $.ajax({
+            url: 'examBasicSearch.php',
+            type: 'POST',
+            data: { item: searchItem },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#simple-search').prop("disabled", false);
+            //$('#new-content').html(''); // blank before load.
+            $('#new-content').html(data); // load here
+            //$('#modal-loader').hide(); // hide loader  
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+//end basic search
+
+
+//Advanced  exam search
+$("#new-content").on('click', '#advanced-search', function(e) {
+    e.preventDefault();
+    $('#advanced-search').prop("disabled", true);
+    //var regno = $("#reg-number").val();
+    var myclass = $("#my-class option:selected").val();
+    var subject = $("#position-subject option:selected").val();
+    var session = $("#exam-session option:selected").val();
+    var term = $("#exam-term option:selected").val();
+    examAdvancedSearch(myclass, subject, session, term);
+});
+//Adavanced exam search call back
+function examAdvancedSearch(myclass, subject, session, term) {
+    $.ajax({
+            url: 'examAdvancedSearch.php',
+            type: 'POST',
+            data: { myclass: myclass, subject: subject, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#advanced-search').prop("disabled", false);
+            //$('#new-content').html(''); // blank before load.
+            $('#new-content').html(data); // load here
+            //$('#modal-loader').hide(); // hide loader  
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+//remove
+//Testing bootstrap modal popup remove
+$("#new-content").on('click', '#test', function(e) {
+    e.preventDefault();
+    var modal_id = $(this).attr('data-target');
+    console.log(modal_id);
+    //alert('mmmmmmm');
+    modal_id.modal('show');
+    //modal_id.on('show.bs.modal', function(event) {
+    //var button = $(event.relatedTarget) // Button that triggered the modal
+    //var recipient = button.data('whatever') // Extract info from data-* attributes
+    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+    //var modal = $(this)
+    // modal.find('.modal-title').text('New message to ' + recipient)
+    //modal.find('.modal-body input').val(recipient)
+    //});
+});
+//
+//SEARCH CA FUNCTIONALITY
+//search ca
+$("#new-content").on('click', '#ca-basic-search', function(e) {
+    e.preventDefault();
+    $('#ca-basic-search').prop("disabled", true);
+    var searchItem = $("#stud-no").val();
+    caSimpleSearch(searchItem);
+});
+//exam basic search call back
+function caSimpleSearch(searchItem) {
+    $.ajax({
+            url: 'CaBasicSearch.php',
+            type: 'POST',
+            data: { item: searchItem },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#ca-basic-search').prop("disabled", false);
+            //$('#new-content').html(''); // blank before load.
+            $('#new-content').html(data); // load here
+            //$('#modal-loader').hide(); // hide loader  
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+//End Basic Search
+
+//Advanced CA Search
+$("#new-content").on('click', '#advanced-search-ca', function(e) {
+    e.preventDefault();
+    $('#advanced-search-ca').prop("disabled", true);
+    //var regno = $("#reg-number").val();
+    var myclass = $("#my-class option:selected").val();
+    var subject = $("#position-subject option:selected").val();
+    var session = $("#ca-session option:selected").val();
+    var term = $("#ca-term option:selected").val();
+    //alert(myclass + subject + session + term);
+    caAdvancedSearch(myclass, subject, session, term);
+});
+//Adavanced exam search call back
+function caAdvancedSearch(myclass, subject, session, term) {
+    $.ajax({
+            url: 'caAdvancedSearch.php',
+            type: 'POST',
+            data: { myclass: myclass, subject: subject, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#advanced-search-ca').prop("disabled", false);
+            //$('#new-content').html(''); // blank before load.
+            $('#new-content').html(data); // load here
+            //$('#modal-loader').hide(); // hide loader  
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+
+//Function to handle students traits
+
+$("#new-content").on('click', '#fetch-result', function(e) {
+    e.preventDefault();
+    $('#fetch-result').text("Fetching...").prop("disabled", true);
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+    //alert(myclass + subject + session + term);
+    traitsRecords(studentclass, session, term);
+});
+
+function traitsRecords(studentclass, subject, session, term) {
+    $.ajax({
+            url: 'fetchTraits.php',
+            type: 'POST',
+            data: { myclass: myclass, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#fetch-result').text("Show Result").prop("disabled", false);
+            $('#new-content').html(data); // load here 
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
 }
