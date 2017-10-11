@@ -204,10 +204,6 @@ public function __construct(dbConnection $db)
     $this->conn = $db;
     }
 
-//Test function
- public function TestStudent(){
-        echo " This is all my student in the client class extended by student class";
-    }
     //load class arm
 public function loadClassArm($class_id)
     {
@@ -237,7 +233,7 @@ public function loadClassArm($class_id)
    }
    //end load class arm function
     //get all fees
-    public function allFeeItems($clientid)
+public function allFeeItems($clientid)
         {
         try {
                 $query ="SELECT fee_items.id AS ID,fee_items.item_name AS name, 
@@ -269,7 +265,7 @@ public function loadClassArm($class_id)
                    $output.= '<td>'.$itemamount.'</td>';
                    $output.='<td>'.$term.'</td>';
                    $output.= '<td>'.$session.'</td>';
-                   $output.='<td><button onclick="editFee('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>
+                    $output.='<td><button onclick="editFee('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>
 Edit</button></td>';
                    $output.='</tr>';
                    //$output .= "<option value=".$ID.">".$category."</option>";
@@ -810,15 +806,32 @@ public function schProfile($id)
 public function schHeader($id)
         {
         try {
-                $query ="SELECT institutional_signup.institution_name,             
-                institutional_signup.inst_logo FROM institutional_signup 
+                $query ="SELECT institutional_signup.institution_name AS SchoolName,             
+                institutional_signup.inst_logo AS Logo FROM institutional_signup 
                 WHERE client_id=?";
                     $this->conn->query($query);
                     $this->conn->bind(1, $id, PDO::PARAM_INT); 
-                    $output = array();
                     $myResult = $this->conn->resultset();
-                    $output=$myResult;
-                    return $output;
+                    $printOutPut = " ";
+                    if($myResult)
+                    {
+                        foreach($myResult as $row => $key)
+                        {
+                            $schoolname = $key['SchoolName'];
+                            $logo = $key['Logo'];
+                            $logoPrint = '<li><img src="'.$logo.'" alt="School Logo" class="school-avatar"></li>';    
+                        }
+                                if(empty($schoolname)){
+                                    $schoolname = "ScoreSheet";
+                                } elseif(empty($logo)){
+                                    $logoPrint = '<li><img src="../images/profile-icon.png" alt="School Logo" class="school-avatar"></>';
+                                }
+                                $printOutPut.='<ul class="school-header">';
+                                $printOutPut.=$logoPrint;
+                                $printOutPut.='<li><h4>'.$schoolname.'</h4></li>';
+                                $printOutPut.='</ul>';
+                    }
+                    echo $printOutPut;
             }// End of try catch block
          catch(Exception $e)
             {
@@ -1140,9 +1153,6 @@ public  function newAcademicSession($session,$clientid,$status="Inactive")
   {
      
   try{
-
-
-
           //insert new session
                             $sqlStmt = "INSERT INTO session(session,sess_inst_id,active_status) 
                             values (?,?,?)";
@@ -1196,7 +1206,7 @@ public function allSessions($clientid)
                    $output.= '<tr>';
                    $output.='<td>'.$session.'</td>';
                    $output.= '<td>'.$status.'</td>';
-                     $output.='<td><button onclick="toggleActivate('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-toggle-on fa-fw" aria-hidden="true"></i>
+                   $output.='<td><button onclick="toggleActivate('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-toggle-on fa-fw" aria-hidden="true"></i>
 Activate/Deactivate</button></td>';
                     $output.='<td><button onclick="editSession('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>Edit</button></td>';
                    $output.='</tr>';
