@@ -12,7 +12,7 @@ public $conn;
 //METHOD TO GET THE ID OF A STUDENT BASED ON ASSIGNED REGISTRATION NUMBER
 function getStudentId($regnumber,$schid)
   {
-  //always use try and catch block to write code
+    //always use try and catch block to write code
   try
     {
         //SELECT THE ID OF THE STUDENT/PUPIL FROM THE student_admission_no TABLE
@@ -50,7 +50,7 @@ function getStudentId($regnumber,$schid)
         //this get an error thrown by the system
         echo "Error:". $e->getMessage();
         }
-}
+ }
 
 //METHOD TO GET ACTIVE SESSION
 function getActiveSession($schid,$status='Active')
@@ -320,6 +320,7 @@ function addTerminalExam($score,$subj,$class,$staffid,$schid,$stud_no,$date)
         echo "Error:". $e->getMessage();
          }
   }
+  //END ADD TERMINAL EXAM
 
 
   //STUDENT SEARCH METHOD
@@ -330,19 +331,22 @@ function addTerminalExam($score,$subj,$class,$staffid,$schid,$stud_no,$date)
   */
 function searchStudent($searchVar,$schid)
   {
-        //get active term
-       // $activeSession= $this->getActiveSession($schid);
-        
-        // Try and Catch block
+       
         try{
         //CHECK IF THE VARIABLE SUPPLIED IS A STUDENT ID NUMBER AND NOT A STRING OF REG NUMBER
   		    if(is_numeric($searchVar))
   		    {
   			//SELECT STUDENT ID FROM THE STUDENT ADMISSION NUMBER TABLE
-  					$query ="SELECT student_initial.id AS studentID, CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID FROM student_initial WHERE student_initial.id=? AND student_initial.stud_sch_id=?";
+  					// $query ="SELECT student_initial.id AS studentID, CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID FROM student_initial WHERE student_initial.id=? AND student_initial.stud_sch_id=?";
+            //         $this->conn->query($query);
+            //         $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
+					  //         $this->conn->bind(2, $schid, PDO::PARAM_INT);
+            $query ="SELECT admission_number.id AS AdmissionNumID,  CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname,student_admission_no.stud_id AS StudentID FROM student_initial INNER JOIN student_admission_no ON student_initial.id=student_admission_no.stud_id INNER JOIN admission_number ON admission_number.id=student_admission_no.admission_number 
+            WHERE admission_number.serial_number=? AND admission_number.adm_sch_id=?";
                     $this->conn->query($query);
                     $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
 					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                    $myResult= $this->conn->resultset();
                     $myResult= $this->conn->resultset();
                     $output ="";
                     if($this->conn->rowCount() == 0)
@@ -356,7 +360,7 @@ function searchStudent($searchVar,$schid)
                       foreach($myResult as $row => $key)
                       {
                         //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
-                       $ID = $key['studentID'];
+                       $ID = $key['StudentID'];
                         $fullname = $key['Fullname'];
                         $output.= '<tr>';
                         $output.='<td>'.$ci.'</td>';
@@ -418,29 +422,32 @@ function searchStudent($searchVar,$schid)
         //this get an error thrown by the system
         echo "Error:". $e->getMessage();
          }
-}
+   }
 
 
 // Search CA method
 function searchCa($searchVar,$schid)
   {
-        $activeSession= getActiveSession($schid);
+  
         // Try and Catch block
    try
     {
     //CHECK IF THE VARIABLE SUPPLIED IS A STUDENT ID NUMBER AND NOT THE FULL REG NUMBER
   		if(is_numeric($searchVar))
   		{
-
-  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject
+          $activeSession = $this->getActiveSession($schid);
+          $studentID = $this->getStudentId($searchVar,$schid);
+  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject,assessment.id AS caRecordid,assessment.ca_score AS CaScores,ca_settings.ca_title AS caTitle
              FROM assessment 
-             INNER JOIN class_arm ON assessment.ass_class_id=class_arm.class_id 
+             INNER JOIN student_initial ON assessment.ass_student_id=student_initial.id
+             INNER JOIN class ON assessment.ass_class_id=class.id 
              INNER JOIN session ON  assessment.ass_session_id=session.id 
              INNER JOIN sch_term ON assessment.ass_term_id=sch_term.term_id 
              INNER JOIN subjects ON assessment.ass_subject_id=subjects.sub_id
-             WHERE ass_student_id =?  && ass_sch_id=? && ass_session_id=?";
+             INNER JOIN ca_settings ON assessment.ca_no_id=ca_settings.ca_id
+             WHERE ass_student_id =?  && ass_sch_id=? && ass_session_id=? ORDER BY Subject,caTitle";
                     $this->conn->query($query);
-                    $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
+                    $this->conn->bind(1, $studentID, PDO::PARAM_INT);
 					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
                     $this->conn->bind(3, $activeSession, PDO::PARAM_INT);
                     $myResult= $this->conn->resultset();
@@ -452,41 +459,87 @@ function searchCa($searchVar,$schid)
                         }
                         else{
                         $printOutput = " ";
-                        $printOutput.= "<table   width=634>";
-                        $printOutput.="<tr><th>S/NO</th><th>STUDENT FULL NAME</th><th>DETAIL ASSESSMENT</th><th>DETAIL TERMINAL EXAMINATION</th></tr>";
+                        $printOutput.= '<table  class="table table-striped table-responsive">';
+                        $printOutput.='<tr><th>No</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Session</th>
+                        <th>Term</th>
+                        <th>Subject</th>
+                        <th>CA Title</th>
+                        <th>CA Scores</th>
+                        <th>Action</th></tr>';
+                        $ci=1;
                         $ci=1;
                         foreach($myResult as $row => $key)
                         {
-                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
-                        $printOutput.="tr>";
-                        $printOutput.="<td>".$ci."</td>";
-                        $printOutput.='<td><button onclick="caDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm"> Assessment Details</button></td>';
-                        $printOutput.='<td><button onclick="examDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm">Exam Details</button></td>"; 
-                        $printOutput.="</tr>'; 
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['Fullname'].'</td>';
+                        $printOutput.='<td>'.$key['ClassName'].'</td>';
+                        $printOutput.='<td>'.$key['Session'].'</td>';
+                        $printOutput.='<td>'.$key['Term'].'</td>';
+                        $printOutput.='<td>'.$key['Subject'].'</td>';
+                        $printOutput.='<td>'.$key['caTitle'].'</td>';
+                        $printOutput.='<td>'.$key['CaScores'].'</td>';
+                        $printOutput.='<td><button type="button"  data-recordid="'.$key['caRecordid'].'" data-scores="'.$key['CaScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
+                        $printOutput.='</tr>'; 
                         $ci++;
-                        //$printOutput.="<td><a href=examScores.php?id=".$key['StudentID']." onclick="GetCourseDetails('.$row['ccid'].')">View Examination Scores </a></td>";
                         }
-                    $printOutput.= "</table>";
-                    return $printOutput;
+                      $printOutput.= "</table>";
+                      echo $printOutput;
   		            }
-              }   
-  	
-  		      elseif(is_string($searchVar))
+              }
+               else
   		        {
-                    $activeSession= getActiveSession($schid);
-  		 	            //SELECT ID FROM THE STUDENT INITIAL TABLE
-           					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject
-                    FROM assessment 
-                    INNER JOIN class_arm ON assessment.ass_class_id=class_arm.class_id 
-                    INNER JOIN session ON  assessment.ass_session_id=session.id 
-                    INNER JOIN sch_term ON assessment.ass_term_id=sch_term.term_id 
-                    INNER JOIN subjects ON assessment.ass_subject_id=subjects.sub_id
-                    WHERE ass_student_id =? && exam_session_id=? && ass_sch_id=? && ass_session_id=?";
-                    $this->conn->query($query);
-                    $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
-					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
-                    $this->conn->bind(3, $activeSession, PDO::PARAM_INT);
-                    $myResult= $this->conn->resultset();
+                  exit("Can not find search record, something went wrong!");
+  		        }   
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+     }
+    //End Simple CA Search
+
+
+  //Advanced CA Search
+
+function advancedCaSearch($class,$subject,$session,$term,$schid)
+  {
+  
+  // Try and Catch block
+   try
+    {
+    //CHECK IF THE VARIABLE SUPPLIED IS A STUDENT ID NUMBER AND NOT THE FULL REG NUMBER
+  		// if(is_numeric($searchVar))
+  		// {
+         // $activeSession = $this->getActiveSession($schid);
+          //$studentID = $this->getStudentId($searchVar,$schid);
+  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject,assessment.id AS caRecordid,assessment.ca_score AS CaScores,ca_settings.ca_title AS caTitle
+             FROM assessment 
+             INNER JOIN student_initial ON assessment.ass_student_id=student_initial.id
+             INNER JOIN class ON assessment.ass_class_id=class.id 
+             INNER JOIN session ON  assessment.ass_session_id=session.id 
+             INNER JOIN sch_term ON assessment.ass_term_id=sch_term.term_id 
+             INNER JOIN subjects ON assessment.ass_subject_id=subjects.sub_id
+             INNER JOIN ca_settings ON assessment.ca_no_id=ca_settings.ca_id
+             WHERE 
+             ass_sch_id=? 
+             && ass_session_id=? 
+             && ass_class_id=? 
+             && ass_term_id=?
+             && ass_subject_id=? ORDER BY Fullname,Subject,caTitle";
+             $this->conn->query($query);
+             //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					   $this->conn->bind(1, $schid, PDO::PARAM_INT);
+             $this->conn->bind(2, $session, PDO::PARAM_INT);
+             $this->conn->bind(3, $class, PDO::PARAM_INT);
+					   $this->conn->bind(4, $term, PDO::PARAM_INT);
+             $this->conn->bind(5, $subject, PDO::PARAM_INT);     
+             $myResult= $this->conn->resultset();
 
                         //loop through the result
                        if($this->conn->rowCount() == 0)
@@ -495,25 +548,40 @@ function searchCa($searchVar,$schid)
                         }
                         else{
                         $printOutput = " ";
-                        $printOutput.= "<table   width=634>";
-                        $printOutput.="<tr><th>S/NO</th><th>STUDENT FULL NAME</th><th>DETAIL ASSESSMENT</th><th>DETAIL TERMINAL EXAMINATION</th></tr>";
+                        $printOutput.= '<table  class="table table-striped table-responsive">';
+                        $printOutput.='<tr><th>No</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Session</th>
+                        <th>Term</th>
+                        <th>Subject</th>
+                        <th>CA Title</th>
+                        <th>CA Scores</th>
+                        <th>Action</th></tr>';
                         $ci=1;
                         foreach($myResult as $row => $key)
                         {
-                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DISPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
-                        $printOutput.="tr>";
-                        $printOutput.="<td>".$ci."</td>";
-                        $printOutput.='<td><button onclick="caDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm"> Assessment Details</button></td>';
-                        $printOutput.='<td><button onclick="examDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm">Exam Details</button></td>"; 
-                        $printOutput.="</tr>'; 
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['Fullname'].'</td>';
+                        $printOutput.='<td>'.$key['ClassName'].'</td>';
+                        $printOutput.='<td>'.$key['Session'].'</td>';
+                        $printOutput.='<td>'.$key['Term'].'</td>';
+                        $printOutput.='<td>'.$key['Subject'].'</td>';
+                        $printOutput.='<td>'.$key['caTitle'].'</td>';
+                        $printOutput.='<td>'.$key['CaScores'].'</td>';
+                        $printOutput.='<td><button type="button"  data-recordid="'.$key['caRecordid'].'" data-scores="'.$key['CaScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
+                        $printOutput.='</tr>'; 
                         $ci++;
-                        //$printOutput.="<td><a href=examScores.php?id=".$key['StudentID']." onclick="GetCourseDetails('.$row['ccid'].')">View Examination Scores </a></td>";
                         }
-                    $printOutput.= "</table>";
-                    return $printOutput;
+                      $printOutput.= "</table>";
+                      echo $printOutput;
   		            }
-
-  		 }
+              // }
+              //  else
+  		        // {
+              //     exit("Can not find search record, something went wrong!");
+  		        // }   
     }
         catch(Exception $e)
         {
@@ -522,28 +590,31 @@ function searchCa($searchVar,$schid)
         echo "Error:". $e->getMessage();
          }
     }
+  //End advanced CA search 
   
+
+
   //Search Examination reecord
-  
-function searchExams($searchVar,$schid)
+function basicExamSearch($searchVar,$schid)
   {
-        $activeSession= getActiveSession($schid);
         // Try and Catch block
    try
     {
     //CHECK IF THE VARIABLE SUPPLIED IS A STUDENT ID NUMBER AND NOT THE FULL REG NUMBER
   		if(is_numeric($searchVar))
   		{
-
-  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject
+        $activeSession = $this->getActiveSession($schid);
+          $studentID = $this->getStudentId($searchVar,$schid);
+  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject,terminal_exam.exam_score AS ExamScores,terminal_exam.id AS ExamRecordID
              FROM terminal_exam 
-             INNER JOIN class ON terminal_exam.exam_class_arm_id=class_arm.class_id 
+             INNER JOIN student_initial ON terminal_exam.exam_stud_id=student_initial.id
+             INNER JOIN class ON terminal_exam.exam_class_arm_id=class.id 
              INNER JOIN session ON  terminal_exam.exam_session_id=session.id 
              INNER JOIN sch_term ON terminal_exam.exam_term_id=sch_term.term_id 
              INNER JOIN subjects ON terminal_exam.exam_subj_id=subjects.sub_id
              WHERE exam_stud_id =? && exam_sch_id=? && exam_session_id=?";
                     $this->conn->query($query);
-                    $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
+                    $this->conn->bind(1, $studentID, PDO::PARAM_INT);
 					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
                     $this->conn->bind(3, $activeSession, PDO::PARAM_INT);
                     $myResult= $this->conn->resultset();
@@ -555,68 +626,39 @@ function searchExams($searchVar,$schid)
                         }
                         else{
                         $printOutput = " ";
-                        $printOutput.= "<table   width=634>";
-                        $printOutput.="<tr><th>S/NO</th><th>STUDENT FULL NAME</th><th>DETAIL ASSESSMENT</th><th>DETAIL TERMINAL EXAMINATION</th></tr>";
+                        $printOutput.= '<table  class="table table-striped table-responsive">';
+                        $printOutput.='<tr><th>No</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Session</th>
+                        <th>Term</th>
+                        <th>Subject</th>
+                        <th>Exam Scores</th>
+                        <th>Action</th></tr>';
                         $ci=1;
                         foreach($myResult as $row => $key)
                         {
-                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
-                        $printOutput.="tr>";
-                        $printOutput.="<td>".$ci."</td>";
-                        $printOutput.='<td><button onclick="caDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm"> Assessment Details</button></td>';
-                        $printOutput.='<td><button onclick="examDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm">Exam Details</button></td>"; 
-                        $printOutput.="</tr>'; 
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['Fullname'].'</td>';
+                        $printOutput.='<td>'.$key['ClassName'].'</td>';
+                        $printOutput.='<td>'.$key['Session'].'</td>';
+                        $printOutput.='<td>'.$key['Term'].'</td>';
+                        $printOutput.='<td>'.$key['Subject'].'</td>';
+                        $printOutput.='<td>'.$key['ExamScores'].'</td>';
+                        $printOutput.='<td><button type="button"  data-recordid="'.$key['ExamRecordID'].'" data-scores="'.$key['ExamScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
+                        $printOutput.='</tr>'; 
                         $ci++;
-                        //$printOutput.="<td><a href=examScores.php?id=".$key['StudentID']." onclick="GetCourseDetails('.$row['ccid'].')">View Examination Scores </a></td>";
                         }
-                    $printOutput.= "</table>";
-                    return $printOutput;
+                      $printOutput.= "</table>";
+                      echo $printOutput;
   		            }
               }   
   	
-  		      elseif(is_string($searchVar))
+  		      else
   		        {
-                    $activeSession= getActiveSession($schid);
-  		 	            //SELECT ID FROM THE STUDENT INITIAL TABLE
-           				$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject
-                  FROM terminal_exam 
-                  INNER JOIN class ON terminal_exam.exam_class_arm_id=class_arm.class_id 
-                  INNER JOIN session ON  terminal_exam.exam_session_id=session.id 
-                  INNER JOIN sch_term ON terminal_exam.exam_term_id=sch_term.term_id 
-                  INNER JOIN subjects ON terminal_exam.exam_subj_id=subjects.sub_id
-                  WHERE exam_stud_id =? && exam_sch_id=? && exam_session_id=?";
-                    $this->conn->query($query);
-                    $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
-					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
-                    $this->conn->bind(3, $activeSession, PDO::PARAM_INT);
-                    $myResult= $this->conn->resultset();
-
-                        //loop through the result
-                       if($this->conn->rowCount() == 0)
-                        {
-                        exit("No such record exist please!");
-                        }
-                        else{
-                        $printOutput = " ";
-                        $printOutput.= "<table   width=634>";
-                        $printOutput.="<tr><th>S/NO</th><th>STUDENT FULL NAME</th><th>DETAIL ASSESSMENT</th><th>DETAIL TERMINAL EXAMINATION</th></tr>";
-                        $ci=1;
-                        foreach($myResult as $row => $key)
-                        {
-                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DISPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
-                        $printOutput.="tr>";
-                        $printOutput.="<td>".$ci."</td>";
-                        $printOutput.='<td><button onclick="caDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm"> Assessment Details</button></td>';
-                        $printOutput.='<td><button onclick="examDetails('.$key['StudentID'].')" class="btn btn-warning btn-sm">Exam Details</button></td>"; 
-                        $printOutput.="</tr>'; 
-                        $ci++;
-                        //$printOutput.="<td><a href=examScores.php?id=".$key['StudentID']." onclick="GetCourseDetails('.$row['ccid'].')">View Examination Scores </a></td>";
-                        }
-                    $printOutput.= "</table>";
-                    return $printOutput;
-  		            }
-
-  		 }
+                  exit("Can not find search record, something went wrong!");
+  		        }
     }
         catch(Exception $e)
         {
@@ -626,6 +668,91 @@ function searchExams($searchVar,$schid)
          }
     }
 
+//Advanced exam search method
+//Remove regno variable or argument
+function advancedExamSearch($class,$subject,$session,$term,$schid)
+  {
+        // Try and Catch block
+   try
+    {
+    //CHECK IF THE VARIABLE SUPPLIED IS A STUDENT ID NUMBER AND NOT THE FULL REG NUMBER
+  		// if(is_numeric($searchVar))
+  		// {
+        //$activeSession = $this->getActiveSession($schid);
+          //$studentID = $this->getStudentId($searchVar,$schid);
+  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject,terminal_exam.exam_score AS ExamScores,terminal_exam.id AS ExamRecordID
+             FROM terminal_exam 
+             INNER JOIN student_initial ON terminal_exam.exam_stud_id=student_initial.id
+             INNER JOIN class ON terminal_exam.exam_class_arm_id=class.id 
+             INNER JOIN session ON  terminal_exam.exam_session_id=session.id 
+             INNER JOIN sch_term ON terminal_exam.exam_term_id=sch_term.term_id 
+             INNER JOIN subjects ON terminal_exam.exam_subj_id=subjects.sub_id
+             WHERE 
+             exam_sch_id=? 
+             && exam_session_id=? 
+             && exam_class_arm_id=? 
+             && exam_term_id=?
+             && exam_subj_id=?";
+                    $this->conn->query($query);
+                    //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					          $this->conn->bind(1, $schid, PDO::PARAM_INT);
+                    $this->conn->bind(2, $session, PDO::PARAM_INT);
+                    $this->conn->bind(3, $class, PDO::PARAM_INT);
+					          $this->conn->bind(4, $term, PDO::PARAM_INT);
+                    $this->conn->bind(5, $subject, PDO::PARAM_INT);
+                    $myResult= $this->conn->resultset();
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        exit("No such record exist please!");
+                        }
+                        else{
+                        $printOutput = " ";
+                        $printOutput.= '<table  class="table table-striped table-responsive">';
+                        $printOutput.='<tr><th>No</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Session</th>
+                        <th>Term</th>
+                        <th>Subject</th>
+                        <th>Exam Scores</th>
+                        <th>Action</th></tr>';
+                        $ci=1;
+                        foreach($myResult as $row => $key)
+                        {
+                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['Fullname'].'</td>';
+                        $printOutput.='<td>'.$key['ClassName'].'</td>';
+                        $printOutput.='<td>'.$key['Session'].'</td>';
+                        $printOutput.='<td>'.$key['Term'].'</td>';
+                        $printOutput.='<td>'.$key['Subject'].'</td>';
+                        $printOutput.='<td>'.$key['ExamScores'].'</td>';
+                        $printOutput.='<td><button type="button" data-classid="'.$class.'" data-sessionid="'.$session.'"data-subjectid="'.$subject.'" data-term="'.$term.'" data-recordid="'.$key['ExamRecordID'].'" data-scores="'.$key['ExamScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
+                        $printOutput.='</tr>'; 
+                        $ci++;
+                        }
+                      $printOutput.= "</table>";
+                      echo $printOutput;
+  		            }
+            //   }   
+  	
+  		      // else
+  		      //   {
+            //       exit("Can not find search record, something went wrong!");
+  		      //   }
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+
+//End advanced exam search
 //Staff profile method
 public function staffProfile($clientid,$staffid)
         {
@@ -663,7 +790,7 @@ public function staffProfile($clientid,$staffid)
       }
       */
   //Select DISTINCT SUBJECTs OFFERED BY THE Student based on class
-	function distinctSubjects($studentid,$schoolid)
+function distinctSubjects($studentid,$schoolid)
 	  {
 		
 		try {
@@ -714,7 +841,7 @@ function ordinalSuffix($num) {
 //End Method to add ordinal Suffix to a numeric number
 
 //print ca method
-	function print_ca($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
+function print_ca($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
 	  {
 		
 		try {
@@ -754,7 +881,7 @@ function ordinalSuffix($num) {
         }
 	  }
 
-//Terminal Exam
+//Terminal Exam Scores
 function subject_ScoresTotal($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
 	  {
 		try {
@@ -792,8 +919,7 @@ function subject_ScoresTotal($studentid,$subjectid,$classid,$sessionid,$termid,$
 //End of Terminal Exam
 //Subject Average
 function subjectAv($subjectid,$classid,$sessionid,$termid,$schid)
-	  {
-		
+	  {		
 		try {
       $query ="SELECT averagepersubject.SubjectAverageByTerm AS SubjectAv
       FROM  averagepersubject 
@@ -900,7 +1026,7 @@ function getClassPosition($studentID,$classid,$sessionid,$termid,$schid)
 
 //end Method to get class position
 
-//subject totals
+//subject totals scores
 function subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
 	  {
 		
@@ -919,16 +1045,15 @@ function subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
       $this->conn->bind(5, $termid, PDO::PARAM_INT); 
 			$this->conn->bind(6, $schid, PDO::PARAM_INT);
       $output = $this->conn->resultset();
-			//echo count($output);
-			$arr="";
+			//$arr="";
 					
 					foreach($output as $row => $key)
 					{
 					$subjectTotal = $key['SubjectTotal'];
-					$arr.= '<td>'.$subjectTotal.'</td>';
+					//$arr.= '<td>'.$subjectTotal.'</td>';
 					}	
-					//$arr.='</tr><br>';
-					return $arr;	
+					//return $arr;
+          return $subjectTotal;	
         }//End of try catch block
          catch(Exception $e)
         {
@@ -988,7 +1113,7 @@ function grandTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
 		
 		try {
       $query ="SELECT GrandTermTotal AS GrandTotal
-      FROM  termgrandtotal
+      FROM  termgrandtotals 
       WHERE
       student_id=? AND subject_id=? AND 
       class_id=? AND session_id=? AND
@@ -1138,6 +1263,7 @@ function grandTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
           <TH>Subject Position</th>
           <TH>Grade</th>
           <TH>Comment</th>
+          <TH>Sign</th>
           </tr>";
 					foreach($output as $row => $key)
 					{
@@ -1145,7 +1271,14 @@ function grandTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
 						$sub_name = $key['SubjectName'];
 						$printOutput.='<tr>';
 						$printOutput.='<td>'.$sub_name.'</td>';
-						$printOutput.= $this->print_ca($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+						$printOutput.=$this->print_ca($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->caTotals($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->subject_ScoresTotal($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.='<td>'.$this->subjectTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid).'</td>';
+            $printOutput.=$this->subjectAv($subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->getSubjectPosition($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->gradingScores($this->subjectTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid));
+            $printOutput.=$this->staffSign($classid,$subjectID,$schoolid);
 						$printOutput.='</tr><br>';
 					}
           echo $printOutput;
@@ -1159,7 +1292,7 @@ function grandTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
 
 
 //Get student name and display in a span tag
-//When typing key up in a student registration field when adding CA and  EXAM
+//When typing  in a student registration field when adding CA and  EXAM
 function getStudent($searchVar,$schid)
   {
         //get active term
@@ -1177,7 +1310,6 @@ function getStudent($searchVar,$schid)
                     $this->conn->bind(1, $searchVar, PDO::PARAM_INT);
 					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
                     $myResult= $this->conn->resultset();
-                    //$output ="";
                     if($this->conn->rowCount() == 0)
                     {
                       exit("No such student exist in the school with such number");
@@ -1187,18 +1319,14 @@ function getStudent($searchVar,$schid)
                       foreach($myResult as $row => $key)
                       {
                         //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
-                       //$ID = $key['studentID'];
                         echo $fullname = $key['Fullname'];
                         
-                        //$printOutput.="<td><a href=examScores.php?id=".$key['StudentID']." onclick="GetCourseDetails('.$row['ccid'].')">View Examination Scores </a></td>";
                       }
-                      // $output.=' </tbody></table>';
-                      // echo $output;
   		      }
           }
   		 else
   		 {
-        exit("Please provide a numeric data, the last digits of your admission number without the preceding text");
+        exit("Please provide a numeric data, the last digits of your admission number without the preceding seperator");
         
   		 }
       }
@@ -1340,6 +1468,7 @@ function subjectPosition($subjectid,$termid,$sessionid,$classid,$schid)
     } 
 // End subject position method
 
+//Scoresheet method
 function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
 	    {
 		 try {
@@ -1367,9 +1496,13 @@ function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
         $this->conn->bind(4, $termid, PDO::PARAM_INT); 
 				$this->conn->bind(5, $schoolid, PDO::PARAM_INT);
         $output = $this->conn->resultset(); 
-					//echo count($output);
+        $printOutput = " ";
+        echo '<p class="printAssessment">
+        <a href="classAssessmentSheetPrint.php?subjectid='.$subjectid.'&class='.$classid.'&session='.$sessionid.'&term='.$termid.'&schoolid='.$schoolid.'" target="_blank" id="print-link"><i class="fa fa-print" aria-hidden="true"></i> Print Sheet</a>
+        <hr></p>';
+        $printOutput.=$this->scoreSheetHeaderInformation($subjectid,$classid,$termid,$sessionid,$schoolid);
           //ouput table headers below here
-					$printOutput = " ";
+					//$printOutput = " ";
           $printOutput.= "<table class='datatable'>";
           $printOutput.="<tr>
           <th>Student Name</th>
@@ -1381,25 +1514,31 @@ function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
           <TH>Term Total 100%</th>
           <TH>Class AVerage</th>
           <TH>Subject Position</th>
+          <TH>Grade</th>
+          <TH>Comment</th>
+          <th>Sign</th>
           </tr>";
 					foreach($output as $row => $key)
 					{
             $studentID = $key['studentID'];
 						$studentName = $key['Fullname'];
             $subjectID = $key['SubjectID'];
+            $terminalSUbjectTotals= $this->subjectTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
 						$printOutput.='<tr>';
 						$printOutput.='<td>'.$studentName.'</td>';
-  
 						$printOutput.=$this->print_ca($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
             $printOutput.=$this->caTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
             $printOutput.=$this->subject_ScoresTotal($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
-            $printOutput.=$this->subjectTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.='<td>'.$terminalSUbjectTotals.'</td>';
             $printOutput.=$this->subjectAv($subjectID,$classid,$sessionid,$termid,$schoolid);
             $printOutput.=$this->getSubjectPosition($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->gradingScores($terminalSUbjectTotals);
+            $printOutput.='<td>'.$this->staffSign($classid,$subjectID,$schoolid).'</td>';
 						$printOutput.='</tr>';
 					}
           $printOutput.='</table>';
           echo $printOutput;
+
         }//End of try catch block
          catch(Exception $e)
         {
@@ -1407,6 +1546,61 @@ function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
         }
 	    }
       //end of scoresheet
+
+    //ScoreSheet Header Information
+
+function scoreSheetHeaderInformation($subjectid,$classid,$termid,$sessionid,$schoolid)
+	    {
+		 try {
+			
+        $query ="SELECT DISTINCT subjects.subject_name AS subjectName,
+        subjects.sub_id AS SubjectID,
+        class.class_name AS ClassName,
+        session.session AS SessionName,
+        sch_term.term AS TermName
+	      FROM student_initial INNER JOIN assessment ON student_initial.id=assessment.ass_student_id
+        INNER JOIN subjects ON assessment.ass_subject_id=subjects.sub_id
+        INNER JOIN class ON class.id=assessment.ass_class_id
+        INNER JOIN session ON session.id=assessment.ass_session_id
+        INNER JOIN sch_term ON sch_term.term_id=assessment.ass_term_id 
+	      WHERE assessment.ass_subject_id=? AND 
+        assessment.ass_class_id=? AND assessment.ass_session_id=?
+        AND assessment.ass_term_id=?  AND assessment.ass_sch_id=?";
+        $this->conn->query($query);
+        $this->conn->bind(1, $subjectid, PDO::PARAM_INT);
+        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+				$this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+        $this->conn->bind(4, $termid, PDO::PARAM_INT); 
+				$this->conn->bind(5, $schoolid, PDO::PARAM_INT);
+        $output = $this->conn->resultset(); 
+					
+          //ouput table headers below here
+					$printOutput = " ";
+					foreach($output as $row => $key)
+					{
+            $subjectName = $key['subjectName'];
+						$ClassName = $key['ClassName'];
+            $sessionName = $key['SessionName'];
+            $termName = $key['TermName'];
+					}
+
+        $printOutput.='<div class="student-profile">
+        <h5>Class Assessment Sheet</h5>
+        <ul class="scoresheet-header">';
+              $printOutput.='<li><h6>Class</h6><span>'.$ClassName.'</span></li>';
+              $printOutput.='<li><h6>Subject</h6><span>'.$subjectName.'</span></li>';
+              $printOutput.='<li><h6>Term</h6><span>'.$termName.'</span></li>';
+              $printOutput.='<li><h6>Session</h6><span>'.$sessionName.'</span></li>';
+              $printOutput.='<li><h6>Subject Teacher</h6><span>'.$this->staffSign($classid,$subjectid,$schoolid).'</span></li></ul></div>';
+          echo $printOutput;
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+
+    //End scoresheet Header Information
 
 //Examination Summary Sheet
 function ExaminationSummarySheet($classid,$termid,$sessionid,$schoolid)
@@ -1468,8 +1662,7 @@ function ExaminationSummarySheet($classid,$termid,$sessionid,$schoolid)
 	    }
       //End examination sheet
 
-//end result summary
-
+//submit result summary
 function submitSummary($classid,$termid,$sessionid,$schoolid)
 	    {
 		  try {
@@ -1617,7 +1810,7 @@ function classPosition($termid,$sessionid,$classid,$schid)
                                 }
                                 else
                                 {
-                                exit("Position 2 update failed!");
+                                exit("Position update failed!");
                                 }
                         }
 
@@ -1635,7 +1828,545 @@ function classPosition($termid,$sessionid,$classid,$schid)
       }
     }
 
-//End method to assign position
+//End method to assign class position
+
+//Grading and comment method
+function gradingScores($num)
+  {
+    $printOutput =" ";
+    //Grades
+    $a = "A";
+    $b = "B";
+    $c = "C";
+    $d = "D";
+    $e = "E";
+    //Rating
+    $good = "Good";
+    $poor = "Poor";
+    $fair ="Fair";
+    $vgood = "Very Good";
+    $excellent = "Excellent";
+    $notdefined = " - ";
+    $norating = "No Rating";
+    switch(TRUE)
+    {
+      case($num <= 39):
+      $printOutput.='<td>'.$e.'</td>';
+      $printOutput.= '<td>'.$poor.'</td>';
+      return $printOutput;
+      break;
+
+      case($num >= 40 && $num <=54):
+      $printOutput.='<td>'.$d.'</td>';
+      $printOutput.= '<td>'.$fair.'</td>';
+      return $printOutput;
+      break;
+
+      case($num >= 55 && $num <=64):
+      $printOutput.='<td>'.$c.'</td>';
+      $printOutput.= '<td>'.$good.'</td>';
+      return $printOutput;
+      break;
+
+      case($num >= 65 && $num <=74):
+      $printOutput.='<td>'.$b.'</td>';
+      $printOutput.= '<td>'.$vgood.'</td>';
+      return $printOutput;
+      break;
+
+      case($num >= 75 && $num <=100):
+      $printOutput.='<td>'.$a.'</td>';
+      $printOutput.= '<td>'.$excellent.'</td>';
+      return $printOutput;
+      break;
+
+      default:
+      $printOutput.='<td>'.$notdefined.'</td>';
+      $printOutput.= '<td>'.$norating.'</td>';
+      return $printOutput;
+      break;
+
+    }
+  }
+
+//Staff card profile
+
+
+//Method to print school Profile
+function schoolProfileHeader($clientid)
+	    {
+		 try {
+			
+        $query ="SELECT institutional_signup.institution_name AS SchoolName,
+         institutional_signup.inst_add AS Address, 
+        CONCAT(nationality.nationality, ' - ', states.state_name) AS CountryState,
+        institutional_signup.inst_mobile AS Mobile, 
+        institutional_signup.inst_logo AS Logo
+	    FROM institutional_signup 
+        INNER JOIN nationality ON institutional_signup.country_id=nationality.id
+        INNER JOIN states ON institutional_signup.state_id=states.id
+	    WHERE institutional_signup.client_id=?";
+        $this->conn->query($query);
+        $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+        $output = $this->conn->resultset(); 
+					//echo count($output);
+          //ouput table headers below here
+					$printOutput = " ";
+					foreach($output as $row => $key)
+					{
+                    $schoolName = $key['SchoolName'];
+                    $Address = $key['Address'];
+                    $countryState = $key['CountryState'];
+                    $Mobile = $key['Mobile'];
+                    $Logo = $key['Logo'];
+					}
+                    if($Logo)
+                    {
+                    $printOutput.='<h5><img src="'.$Logo.'" alt="School Logo" class="logo-img"></h5>';
+                    $printOutput.='<h5>'.$schoolName.'</h5>';
+                    $printOutput.='<p>'.$countryState.'</p>';
+                    $printOutput.='<p>'.$Mobile.'</p>';
+                    }
+                    else
+                    {
+                    $printOutput.='<h5><img src="../images/avatar.jpg" alt="School Logo" class="logo-img"></h5>';
+                    $printOutput.='<h5>'.$schoolName.'</h5>';
+                    $printOutput.='<p>'.$countryState.'</p>';
+                    $printOutput.='<p>'.$Mobile.'</p>';
+                    }
+          echo $printOutput;
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+        //End school profile method
+//Staff subject sign
+function staffSign($classid,$subjectid,$schid)
+	  {		
+		try {
+      $query ="SELECT CONCAT(staff_profile.surname, ', ', 
+      IFNULL(LEFT(UPPER(staff_profile.middle_name),1), ''), 
+      '.', IFNULL(LEFT(UPPER(staff_profile.lastName),1), '') ) AS Fullname
+    FROM staff_profile INNER JOIN staff_subject_taught ON 
+    staff_profile.user_id=staff_subject_taught.my_id INNER JOIN subjects 
+    ON staff_subject_taught.subject_id=subjects.sub_id
+    WHERE staff_subject_taught.class_taught=? AND staff_subject_taught.subject_id=? AND staff_subject_taught.sch_identity=?"; 
+      $this->conn->query($query); 
+			$this->conn->bind(1, $classid, PDO::PARAM_INT);
+      $this->conn->bind(2, $subjectid, PDO::PARAM_INT); 
+			$this->conn->bind(3, $schid, PDO::PARAM_INT);
+      $output = $this->conn->resultset();
+			//echo count($output);
+			$arr="";
+					
+					foreach($output as $row => $key)
+					{
+					$fullname = $key['Fullname'];
+					//$arr.= '<td>'.$fullname.'</td>';
+          $arr = $fullname;
+					}	
+					//$arr.='</tr><br>';
+					return $arr;	
+          }//End of try catch block
+         catch(Exception $e)
+          {
+            echo "Error:". $e->getMessage();
+          }
+	  }
+//End staff subject sign
+
+//Staff profile card method used on the staff profile page
+public function staffProfileCard($clientid,$userid)
+        {
+        try {
+                $query ="SELECT CONCAT(staff_profile.surname, ', ', staff_profile.middle_name, ' ', staff_profile.lastname) AS Fullname, staff_profile.date_of_birth AS Dob, staff_profile.user_img AS Image,staff_profile.gender AS Sex,users.email AS Email,institutional_responsibilities.responsibility_name AS Role FROM staff_profile INNER JOIN users ON staff_profile.user_id=users.id INNER JOIN institutional_responsibilities ON institutional_responsibilities.id=users.role 
+                WHERE staff_profile.my_school_id=? AND staff_profile.user_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+                    $this->conn->bind(2, $userid, PDO::PARAM_INT); 
+                    $myResult = $this->conn->resultset();
+                    $printOutput = " ";
+                    if($myResult)
+                    {
+                        foreach($myResult as $row => $key)
+                        {
+                            $fullname = $key['Fullname'];
+                            $Dob = $key['Dob'];
+                            $image = $key['Image'];
+                            $sex = $key['Sex'];
+                            $email = $key['Email'];
+                            $role = $key['Role'];
+                            $logoPrint = '<img src="'.$image.'" alt="Staff Avatar" class="bg-image">';    
+                        }
+                                if(empty($fullname)){
+                                    $fullname = "ScoreSheet";
+                                } elseif(empty($image)){
+                                    $logoPrint = '<img src="../images/profile-icon.png" alt="Staff Avatar" class="bg-image"></>';
+                                }
+                                $printOutput.='<div class="card"><div class="img-div">
+                                    <img src="../images/bg.jpg" alt="background image" style="width:100%">';
+                                    $printOutput.=$logoPrint.'</div>';
+                                    $printOutput.='<div class="card-container">
+                                        <span class="image-upload">
+                                        <label for="image-file">
+                                        <i class="fa fa-camera fa-fw" aria-hidden="true"></i>
+                                        </label>
+                                        <input type="file" name="image-file" class="form-control" id="image-file">
+                                        </span>';
+                                        $printOutput.='<h1>'.$fullname.'</h1>';
+                                        $printOutput.='<p class="title">'.$role.'</p>';
+                                    $printOutput.='</div></div>';
+                    }
+                    echo $printOutput;
+            }// End of try catch block
+         catch(Exception $e)
+            {
+            echo ("Error: Unable to fetch sstaff Profile");
+            }
+        }
+
+
+//EDIT EXAMS  SCORES
+function editTerminalExam($score,$subj,$class,$staffid,$recordid,$schid)
+  {
+      // always use try and catch block to write code
+      $termid = $this->getActiveTerm($schid);
+      $sessionid = $this->getActiveSession($schid);
+      //$student_id = $this->getStudentId($stud_no,$schid);
+
+        try {
+
+          					//EDIT EXAM RECORD
+                            $sqlStmt = "UPDATE terminal_exam SET exam_score=?,exam_subj_id=?,
+                            exam_class_arm_id=?,tutor_id=? WHERE terminal_exam.id=? AND exam_sch_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $score, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $subj, PDO::PARAM_INT,100);
+                            //$this->conn->bind(3, $termid, PDO::PARAM_INT,100);
+                            //$this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $class, PDO::PARAM_INT);
+                            $this->conn->bind(4, $staffid, PDO::PARAM_INT);
+                            $this->conn->bind(5, $recordid, PDO::PARAM_INT);
+                            $this->conn->bind(6, $schid, PDO::PARAM_INT);
+                            //$this->conn->bind(8, $student_id, PDO::PARAM_INT);
+                            //$this->conn->bind(9, $date, PDO::PARAM_STR);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// SCORES EDITED
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error edting exam scores";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+  }
+
+//END EDIT EXAM
+
+//Reload exam record after edit
+function reloadExam($class,$subject,$schid)
+  {
+        // Try and Catch block
+   try
+    {
+           $termid = $this->getActiveTerm($schid);
+           $sessionid = $this->getActiveSession($schid);
+  			$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject,terminal_exam.exam_score AS ExamScores,terminal_exam.id AS ExamRecordID
+             FROM terminal_exam 
+             INNER JOIN student_initial ON terminal_exam.exam_stud_id=student_initial.id
+             INNER JOIN class ON terminal_exam.exam_class_arm_id=class.id 
+             INNER JOIN session ON  terminal_exam.exam_session_id=session.id 
+             INNER JOIN sch_term ON terminal_exam.exam_term_id=sch_term.term_id 
+             INNER JOIN subjects ON terminal_exam.exam_subj_id=subjects.sub_id
+             WHERE 
+             exam_sch_id=? 
+             && exam_session_id=? 
+             && exam_class_arm_id=? 
+             && exam_term_id=?
+             && exam_subj_id=?";
+          $this->conn->query($query);
+          //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					$this->conn->bind(1, $schid, PDO::PARAM_INT);
+          $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+          $this->conn->bind(3, $class, PDO::PARAM_INT);
+					$this->conn->bind(4, $termid, PDO::PARAM_INT);
+          $this->conn->bind(5, $subject, PDO::PARAM_INT);
+          $myResult= $this->conn->resultset();
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        exit("No such record exist please!");
+                        }
+                        else{
+                        $printOutput = " ";
+                        $printOutput.= '<table  class="table table-striped table-responsive">';
+                        $printOutput.='<tr><th>No</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Session</th>
+                        <th>Term</th>
+                        <th>Subject</th>
+                        <th>Exam Scores</th>
+                        <th>Action</th></tr>';
+                        $ci=1;
+                        foreach($myResult as $row => $key)
+                        {
+                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['Fullname'].'</td>';
+                        $printOutput.='<td>'.$key['ClassName'].'</td>';
+                        $printOutput.='<td>'.$key['Session'].'</td>';
+                        $printOutput.='<td>'.$key['Term'].'</td>';
+                        $printOutput.='<td>'.$key['Subject'].'</td>';
+                        $printOutput.='<td>'.$key['ExamScores'].'</td>';
+                        $printOutput.='<td><button type="button" data-classid="'.$class.'" data-sessionid="'.$sessionid.'"data-subjectid="'.$subject.'" data-term="'.$termid.'" data-examrecordid="'.$key['ExamRecordID'].'" data-scores="'.$key['ExamScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
+                        $printOutput.='</tr>'; 
+                        $ci++;
+                        }
+                      $printOutput.= "</table>";
+                      echo $printOutput;
+  		            }
+            //   }   
+  	
+  		      // else
+  		      //   {
+            //       exit("Can not find search record, something went wrong!");
+  		      //   }
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//End reload exam after edit
+
+//Reload CA Records after edit
+function reloadCa($class,$subject,$schid)
+  {
+        // Try and Catch block
+   try
+    {
+           $termid = $this->getActiveTerm($schid);
+           $sessionid = $this->getActiveSession($schid);
+  			$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject,assessment.id AS caRecordid,assessment.ca_score AS CaScores,ca_settings.ca_title AS caTitle
+             FROM assessment 
+             INNER JOIN student_initial ON assessment.ass_student_id=student_initial.id
+             INNER JOIN class ON assessment.ass_class_id=class.id 
+             INNER JOIN session ON  assessment.ass_session_id=session.id 
+             INNER JOIN sch_term ON assessment.ass_term_id=sch_term.term_id 
+             INNER JOIN subjects ON assessment.ass_subject_id=subjects.sub_id
+             INNER JOIN ca_settings ON assessment.ca_no_id=ca_settings.ca_id
+             WHERE 
+             ass_sch_id=? 
+             && ass_session_id=? 
+             && ass_class_id=? 
+             && ass_term_id=?
+             && ass_subject_id=? ORDER BY Fullname,Subject,caTitle";
+             $this->conn->query($query);
+             //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					   $this->conn->bind(1, $schid, PDO::PARAM_INT);
+             $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+             $this->conn->bind(3, $class, PDO::PARAM_INT);
+					   $this->conn->bind(4, $termid, PDO::PARAM_INT);
+             $this->conn->bind(5, $subject, PDO::PARAM_INT);
+          $myResult= $this->conn->resultset();
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        exit("No such record exist please!");
+                        }
+                        else{
+                         $printOutput = " ";
+                        $printOutput.= '<table  class="table table-striped table-responsive">';
+                        $printOutput.='<tr><th>No</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Session</th>
+                        <th>Term</th>
+                        <th>Subject</th>
+                        <th>CA Title</th>
+                        <th>CA Scores</th>
+                        <th>Action</th></tr>';
+                        $ci=1;
+                        foreach($myResult as $row => $key)
+                        {
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['Fullname'].'</td>';
+                        $printOutput.='<td>'.$key['ClassName'].'</td>';
+                        $printOutput.='<td>'.$key['Session'].'</td>';
+                        $printOutput.='<td>'.$key['Term'].'</td>';
+                        $printOutput.='<td>'.$key['Subject'].'</td>';
+                        $printOutput.='<td>'.$key['caTitle'].'</td>';
+                        $printOutput.='<td>'.$key['CaScores'].'</td>';
+                        $printOutput.='<td><button type="button"  data-CAid="'.$key['caRecordid'].'" data-scores="'.$key['CaScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
+                        $printOutput.='</tr>'; 
+                        $ci++;
+                        }
+                      $printOutput.= "</table>";
+                      echo $printOutput;
+  		            }
+            //   }   
+  	
+  		      // else
+  		      //   {
+            //       exit("Can not find search record, something went wrong!");
+  		      //   }
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//End reload exam after edit
+//End reload CA Records after edit
+
+//EDIT CA 
+function editCa($score,$subj,$class,$staffid,$recordid,$schid)
+  {
+      // always use try and catch block to write code
+      $termid = $this->getActiveTerm($schid);
+      $sessionid = $this->getActiveSession($schid);
+      //$student_id = $this->getStudentId($stud_no,$schid);
+
+        try {
+
+          					//EDIT EXAM RECORD
+                            $sqlStmt = "UPDATE assessment SET ca_score=?,ass_subject_id=?,
+                            ass_class_id=?,ass_added_by=? WHERE id=? AND ass_sch_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $score, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $subj, PDO::PARAM_INT,100);
+                            //$this->conn->bind(3, $termid, PDO::PARAM_INT,100);
+                            //$this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $class, PDO::PARAM_INT);
+                            $this->conn->bind(4, $staffid, PDO::PARAM_INT);
+                            $this->conn->bind(5, $recordid, PDO::PARAM_INT);
+                            $this->conn->bind(6, $schid, PDO::PARAM_INT);
+                            //$this->conn->bind(8, $student_id, PDO::PARAM_INT);
+                            //$this->conn->bind(9, $date, PDO::PARAM_STR);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// SCORES EDITED
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error edting assessment scores";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+
+//function to fetch students and display them for adding traits
+function traits($classid,$schoolid)
+	    {
+		 try {
+      $termid = $this->getActiveTerm($schid);
+      $sessionid = $this->getActiveSession($schid);
+        $query ="SELECT DISTINCT 
+        CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname,
+        student_initial.id AS StudentID,
+        classpositionals.id AS RecordID,
+        classpositionals.termgrandtotal AS CumulativeScores,
+        classpositionals.termposition AS Position,
+        class.class_name AS ClassName,
+        session.session AS SessionName,
+        sch_term.term AS TermName
+	      FROM student_initial INNER JOIN classpositionals ON student_initial.id=classpositionals.student_id
+        INNER JOIN class ON class.id=classpositionals.class_id
+        INNER JOIN session ON session.id=classpositionals.session_id
+        INNER JOIN sch_term ON sch_term.term_id=classpositionals.term_id 
+	      WHERE classpositionals.class_id=? AND 
+        classpositionals.term_id=? AND classpositionals.session_id=?
+        AND classpositionals.school_id=?";
+        $this->conn->query($query);
+        $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+				$this->conn->bind(2, $termid, PDO::PARAM_INT);
+        $this->conn->bind(3, $sessionid, PDO::PARAM_INT); 
+				$this->conn->bind(4, $schoolid, PDO::PARAM_INT);
+        $output = $this->conn->resultset(); 
+        if($this->conn->rowCount() >= 1)
+            {
+          $printOutput = " ";
+        
+          $printOutput.= "<table class='datatable'>";
+          $printOutput.="<tr>
+          <th>S/NO</th>
+          <th>Student Name</th>
+          <TH>Class</th>
+          <TH>Term</th>
+          <TH>Session</th>
+          <TH>Cumulative Scores</th>
+          <TH>Position</th>
+          <TH>Action</th>
+          </tr>";
+				  $ci=1;
+          foreach($myResult as $row => $key)
+          {
+          $printOutput.='<tr>';
+          $printOutput.='<td>'.$ci.'</td>';
+          $printOutput.='<td>'.$key['Fullname'].'</td>';
+          $printOutput.='<td>'.$key['ClassName'].'</td>';
+          $printOutput.='<td>'.$key['TermName'].'</td>';
+          $printOutput.='<td>'.$key['SessionName'].'</td>';
+          $printOutput.='<td>'.$key['CumulativeScores'].'</td>';
+          $printOutput.='<td>'.$key['Position'].'</td>';
+          $printOutput.='<td><button type="button"  data-recordid="'.$key['RecordID'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Affetive Domain</button></td>';
+          $printOutput.='</tr>'; 
+          $ci++;
+          }
+          $printOutput.= "</table>";
+          echo $printOutput;
+            }
+            else{
+              exit("No result found yet!");
+            }
+
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+//End traits
+
+
+
+
+
+
+
+
+
 
 
 
