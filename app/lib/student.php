@@ -649,12 +649,109 @@ public  function addPrefixSettings($name,$seperator,$sch_id,$addedby,$added_date
         //this get an error thrown by the system
         echo "Error:". $e->getMessage();
          }
+      }
+      //end new student parent
+
+//Method to add staff profile
+public  function newStaffProfile($surname,$firstname,$lastname,
+$religion,$country,$state,$lga,$city,$contact_add1,$perm_add2,$user_id,$sch_id,$email,$mobile,$sex,
+$dateOfBirth,$bloodGroup,$date_created)
+    {
+    // always use try and catch block to write code
+      try{
+      $sqlStmt = "SELECT user_id FROM  staff_profile WHERE user_id=?";
+      $this->conn->query($sqlStmt);
+      $this->conn->bind(1, $user_id, PDO::PARAM_INT);
+      $this->conn->resultset();
+        if($this->conn->rowCount()>=1)
+        {
+          exit("You have already added your personal profile.!");
+        }
+        else{
+          
+          //Enter user information
+                            $sqlStmt = "INSERT INTO staff_profile (surname,middle_name,lastname,gender,date_of_birth,mobile,
+                            address_line1,address_line2,user_id,my_school_id,dateAdded,country,state,lga,city,email,bloodgroup,religion)
+                             values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $this->surname, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $this->firstname, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $this->lastname, PDO::PARAM_STR,100);
+                            $this->conn->bind(4, $this->sex, PDO::PARAM_STR,100);
+                            $this->conn->bind(5, $this->dateOfBirth, PDO::PARAM_STR,100);
+                            $this->conn->bind(6, $this->mobile, PDO::PARAM_STR);
+                            $this->conn->bind(7, $contact_add1, PDO::PARAM_STR,100);
+                            $this->conn->bind(8, $perm_add2, PDO::PARAM_STR);
+                            $this->conn->bind(9, $user_id, PDO::PARAM_INT);
+                            $this->conn->bind(10, $sch_id, PDO::PARAM_INT);
+                            $this->conn->bind(11, $date_created, PDO::PARAM_STR);
+                            $this->conn->bind(12, $this->country, PDO::PARAM_INT);
+                            $this->conn->bind(13, $this->state, PDO::PARAM_INT);
+                            $this->conn->bind(14, $this->lga, PDO::PARAM_INT);
+                            $this->conn->bind(15, $this->city, PDO::PARAM_INT);
+                            $this->conn->bind(16, $this->email, PDO::PARAM_STR);      
+                            $this->conn->bind(17, $this->bloodGroup, PDO::PARAM_STR,100);
+                            $this->conn->bind(18, $this->religion, PDO::PARAM_INT);
+                            $this->conn->execute(); 
+
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         //check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Error creating your profile";
+                        }
+        }
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+  }
+  //End method to add staff profile
+
+//Method to add qualification
+public  function staffQualification($instname,$certificate,$yrgrad,$user_id,$sch_id)
+    {
+    // always use try and catch block to write code
+     
+    try{
+
+    //
+                    $sqlStmt = "INSERT INTO staff_qaulification(sch_attended,year_graduated,cert_obtained,staff_user_id,sch_id)
+                             values (?,?,?,?,?)";
+                    $this->conn->query($sqlStmt);
+                    $this->conn->bind(1, $instname, PDO::PARAM_STR);
+                    $this->conn->bind(2, $yrgrad, PDO::PARAM_STR);
+                    $this->conn->bind(3, $certificate, PDO::PARAM_STR);
+                    $this->conn->bind(4, $user_id, PDO::PARAM_STR);
+                    $this->conn->bind(5, $sch_id, PDO::PARAM_STR);
+                    $this->conn->execute();
+                    //can not fetch result after executing insert query, it will throw general error
+                   // $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >=1)
+                    {
+                      echo "ok";
+                    }
+                    else{
+
+                        echo "Error creating parent";
+                        }
+                   
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
     }
-    //end new student parent
-
-
-
-
 
 
 
