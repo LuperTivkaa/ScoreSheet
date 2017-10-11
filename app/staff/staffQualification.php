@@ -44,7 +44,7 @@ $clientid = $_SESSION['user_info'][4];
                 <input type="text" class="form-control" id="yr-grad" name="yr-grad" placeholder="Year of Graduation"> 
             </div>
 
-            <button class="submit btn btn-primary mb-3"  id="new-student-btn">Create New Student</button>
+            <button class="submit btn btn-primary mb-3"  id="new-qualification-btn">Add Details</button>
               </div>
                                                      
               <!-- <button class="submit btn btn-primary mb-3"  id="new-student-btn">Create New Student</button> -->
