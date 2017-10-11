@@ -3,80 +3,28 @@ namespace ScoreSheet;
 use \PDO;
 class printRoutines extends \ScoreSheet\staff{
 
-    //Method to print school Profile
-    function schoolProfileHeader($clientid)
-	    {
-		 try {
-			
-        $query ="SELECT institutional_signup.institution_name AS SchoolName,
-         institutional_signup.inst_add AS Address, 
-        CONCAT(nationality.nationality, ' - ', states.state_name) AS CountryState,
-        institutional_signup.inst_mobile AS Mobile, 
-        institutional_signup.inst_logo AS Logo
-	    FROM institutional_signup 
-        INNER JOIN nationality ON institutional_signup.country_id=nationality.id
-        INNER JOIN states ON institutional_signup.state_id=states.id
-	    WHERE institutional_signup.client_id=?";
-        $this->conn->query($query);
-        $this->conn->bind(1, $clientid, PDO::PARAM_INT);
-        $output = $this->conn->resultset(); 
-					//echo count($output);
-          //ouput table headers below here
-					$printOutput = " ";
-					foreach($output as $row => $key)
-					{
-                    $schoolName = $key['SchoolName'];
-                    $Address = $key['Address'];
-                    $countryState = $key['CountryState'];
-                    $Mobile = $key['Mobile'];
-                    $Logo = $key['Logo'];
-					}
-                    if($Logo)
-                    {
-                    $printOutput.='<h5><img src="'.$Logo.'" alt="School Logo" class="logo-img"></h5>';
-                    $printOutput.='<h5>'.$schoolName.'</h5>';
-                    $printOutput.='<p>'.$countryState.'</p>';
-                    $printOutput.='<p>'.$Mobile.'</p>';
-                    }
-                    else
-                    {
-                    $printOutput.='<h5><img src="../images/avatar.jpg" alt="School Logo" class="logo-img"></h5>';
-                    $printOutput.='<h5>'.$schoolName.'</h5>';
-                    $printOutput.='<p>'.$countryState.'</p>';
-                    $printOutput.='<p>'.$Mobile.'</p>';
-                    }
-          echo $printOutput;
-        }//End of try catch block
-         catch(Exception $e)
-        {
-            echo "Error:". $e->getMessage();
-        }
-	    }
-        //End school profile method
-
-//Method to get user details and scores details
+//Method to get student user details and scores details For Result Sheet
 function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
 	    {
-		 try {
-			
+		try {     	
         $query ="SELECT CONCAT(student_initial.surname, ', ', LOWER(student_initial.firstName), '  ',LOWER(student_initial.lastName) ) AS Fullname,
         class.class_name AS ClassName, 
         sch_term.term AS Term,
         session.session AS session, (SELECT COUNT( classpositionals.student_id )
-    FROM classpositionals WHERE classpositionals.class_id=1 
+        FROM classpositionals WHERE classpositionals.class_id=1 
         AND classpositionals.session_id=7
         AND classpositionals.term_id=1
         AND classpositionals.school_id=2) AS studentCount,
         (SELECT FORMAT(GrandTermTotal / (SELECT COUNT( subjects.sub_id )
-    FROM subjects INNER JOIN class_subject
-    ON subjects.sub_id=class_subject.subject_id 
-    WHERE class_subject.class_id=1 AND class_subject.school_id=2),2 ) 
-    FROM termgrandtotal WHERE 
-    termgrandtotal.student_id=2 
-    AND termgrandtotal.class_id=1
-    AND termgrandtotal.term_id=1 
-    AND termgrandtotal.session_id=7
-    AND termgrandtotal.sch_id=2) AS Average,
+        FROM subjects INNER JOIN class_subject
+        ON subjects.sub_id=class_subject.subject_id 
+        WHERE class_subject.class_id=1 AND class_subject.school_id=2),2 ) 
+        FROM termgrandtotal WHERE 
+        termgrandtotal.student_id=2 
+        AND termgrandtotal.class_id=1
+        AND termgrandtotal.term_id=1 
+        AND termgrandtotal.session_id=7
+        AND termgrandtotal.sch_id=2) AS Average,
         classpositionals.termgrandtotal AS Total,
         classpositionals.termposition AS TermPosition
 	    FROM student_initial 
@@ -143,6 +91,78 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
         //End userScoresDetails
 
 
+//Assessment Sheet Prinout
+function printScoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
+	    {
+		 try {
+			
+        $query ="SELECT DISTINCT 
+        CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname,
+        student_initial.id AS studentID,
+        subjects.subject_name AS subjectName,
+        subjects.sub_id AS SubjectID,
+        class.class_name AS ClassName,
+        session.session AS SessionName,
+        sch_term.term AS TermName
+	      FROM student_initial INNER JOIN assessment ON student_initial.id=assessment.ass_student_id
+        INNER JOIN subjects ON assessment.ass_subject_id=subjects.sub_id
+        INNER JOIN class ON class.id=assessment.ass_class_id
+        INNER JOIN session ON session.id=assessment.ass_session_id
+        INNER JOIN sch_term ON sch_term.term_id=assessment.ass_term_id 
+	      WHERE assessment.ass_subject_id=? AND 
+        assessment.ass_class_id=? AND assessment.ass_session_id=?
+        AND assessment.ass_term_id=?  AND assessment.ass_sch_id=?";
+        $this->conn->query($query);
+        $this->conn->bind(1, $subjectid, PDO::PARAM_INT);
+        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+		$this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+        $this->conn->bind(4, $termid, PDO::PARAM_INT); 
+		$this->conn->bind(5, $schoolid, PDO::PARAM_INT);
+        $output = $this->conn->resultset(); 
+		$this->scoreSheetHeaderInformation($subjectid,$classid,$termid,$sessionid,$schoolid);
+        //ouput table headers below here
+					$printOutput = " ";
+          $printOutput.= "<table class='datatable'>";
+          $printOutput.="<tr>
+          <th>Student Name</th>
+          <th>1st CA 10%</th>
+          <th>2nd CA 10%</th>
+          <TH>3rd CA 10%</th>
+          <TH>CA Total 30%</th>
+          <TH>Term Exams 70%</th>
+          <TH>Term Total 100%</th>
+          <TH>Class AVerage</th>
+          <TH>Subject Position</th>
+          <TH>Grade</th>
+          <TH>Comment</th>
+          <th>Sign</th>
+          </tr>";
+					foreach($output as $row => $key)
+					{
+            $studentID = $key['studentID'];
+			$studentName = $key['Fullname'];
+            $subjectID = $key['SubjectID'];
+            $terminalSUbjectTotals= $this->subjectTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
+			$printOutput.='<tr>';
+			$printOutput.='<td>'.$studentName.'</td>';
+			$printOutput.=$this->print_ca($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->caTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->subject_ScoresTotal($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.='<td>'.$terminalSUbjectTotals.'</td>';
+            $printOutput.=$this->subjectAv($subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->getSubjectPosition($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->gradingScores($terminalSUbjectTotals);
+            $printOutput.='<td>'.$this->staffSign($classid,$subjectID,$schoolid).'</td>';
+						$printOutput.='</tr>';
+					}
+          $printOutput.='</table>';
+          echo $printOutput;
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
         
 
 
