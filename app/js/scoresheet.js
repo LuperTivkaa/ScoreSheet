@@ -561,6 +561,40 @@ function studentGeneralSearch(searchvar) {
         },
     });
 }
+
+//create class teacher functionality
+
+$("#new-content").on('click', '#class-teacher', function(e) {
+    e.preventDefault();
+    $('#class-teacher').text("Assigning....").prop("disabled", true);
+    var staff = $("#staff option:selected").val();
+    var myclass = $("#class option:selected").val();
+    //var jsURL = $('#input').attr('value');
+    createClass(staff, myclass);
+});
+
+//function to assign class teacher call back
+function createClass(staff, myclass) {
+    $.ajax({
+        url: 'addClassTeacher.php',
+        type: 'POST',
+        data: { staff: staff, myclass: myclass },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#class-teacher').text("Assign Class Teacher").prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Staff assigned class successfully...");
+            } else {
+                $('#class-teacher').text("Assign Class Teacher").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+//end create class teacher functionality
 /* When the user clicks on the button,
 toggle between hiding and showing the dropdown content */
 //=============================
@@ -641,16 +675,14 @@ function loadmore() {
 //Edit exam  modal js
 $('#new-content').on('click', '#newbtn', function(e) {
     e.preventDefault();
-    // var myclass = $(this).data('classid');
-    // var session = $(this).data('sessionid');
-    // var subject = $(this).data('subjectid');
-    // var term = $(this).data('term');
+
     var recordid = $(this).data('recordid');
     var scores = $(this).data('scores');
 
     $('#edit-scores').val(scores);
     $('#record-id').val(recordid);
-
+    $('#modal-list').empty();
+    $('#modal-error').empty();
     var modalid = $('#myModal');
     modalid.css('display', 'block');
 });
@@ -742,7 +774,6 @@ function reloadSubjectScores(myclass, subject) {
 
         },
     });
-
 }
 //end function to reload exam subjects
 
@@ -798,14 +829,977 @@ function reloadCaScores(myclass, subject) {
         data: { myclass: myclass, subject: subject },
         success: function(response) {
             $("#new-content").html(response);
-
         },
     });
 
 }
-
-
 // end CA Scores after edit
+
+//Functioanlity for traits modal
+//Show affective traits div on button click
+$('#mydefault').on('click', function(e) {
+    e.preventDefault();
+    var affective = $('.affective-domain-div');
+    var mycomments = $('.comments-div');
+    mycomments.hide();
+    $('#modal-list').empty();
+    $('#modal_error').empty();
+    affective.show();
+    $(this).removeClass("custom-btn").addClass("active-trait");
+    $('#nondefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#studcomments').removeClass('custom-btn active-trait').addClass('custom-btn');
+    var psychomotor = $('.psychomotor-domain-div');
+    psychomotor.hide();
+
+});
+//Show comments div on button click
+$('#studcomments').on('click', function(e) {
+    e.preventDefault();
+    //$('#comment-id').val("");
+    var affective = $('.affective-domain-div');
+    var psychomotor = $('.psychomotor-domain-div');
+    var mycomments = $('.comments-div');
+    $('#modal-list').empty();
+    $('#modal_error').empty();
+    $('#comment-id').val("");
+    $('#nondefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#mydefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    psychomotor.hide();
+    affective.hide();
+    mycomments.show();
+    $(this).removeClass("custom-btn").addClass("active-trait");
+
+});
+
+//Show psychomotor div on button click
+$('#nondefault').on('click', function(e) {
+    e.preventDefault();
+    var affective = $('.affective-domain-div');
+    var mycomments = $('.comments-div');
+    mycomments.hide();
+    affective.hide();
+    var psychomotor = $('.psychomotor-domain-div');
+    $('#modal-list').empty();
+    $('#modal_error').empty();
+    psychomotor.show();
+    $(this).removeClass("custom-btn").addClass("active-trait");
+    $('#mydefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#studcomments').removeClass('custom-btn active-trait').addClass('custom-btn');
+
+});
+
+//Add traits functionality 
+//Handle affective domain
+$("#add-affective-domain").on('click', function(e) {
+    e.preventDefault();
+    $('#add-affective-domain').text("Adding your selection please wait...").prop("disabled", true);
+    var domain = $("#affective-domain option:selected").val();
+    var grading = $("#affective-grading option:selected").val();
+    var studentid = $("#record-id").val();
+    addAffectiveDomain(domain, grading, studentid);
+
+});
+
+//call back function to add new affective domain
+function addAffectiveDomain(mydomain, grading, studentid) {
+    $.ajax({
+        url: 'addAffectiveDomain.php',
+        type: 'POST',
+        data: { mydomain: mydomain, grading: grading, studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#add-affective-domain').text("Affective Domain").prop("disabled", false);
+                //call a reload function here
+                loadAffectiveTraits(studentid);
+                $("#modal_error").removeClass("error").empty();
+            } else {
+                $('#add-affective-domain').text("Affective Domain").prop("disabled", false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+//end functionality to handle affective domain
+
+//functionality to handle psychomotor skills
+$("#add-psycho-skills").on('click', function(e) {
+    e.preventDefault();
+    $('#add-psycho-skills').text("Adding your selection please wait...").prop("disabled", true);
+    var domain = $("#psycho-skills option:selected").val();
+    var grading = $("#psycho-grading option:selected").val();
+    var studentid = $("#record-id").val();
+    addPsychomotorSkills(domain, grading, studentid);
+
+});
+
+//call back function to add new psychomotor skills
+function addPsychomotorSkills(mydomain, grading, studentid) {
+    $.ajax({
+        url: 'addPsychomotorSkills.php',
+        type: 'POST',
+        data: { mydomain: mydomain, grading: grading, studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#add-psycho-skills').text("Psychomotor Skills").prop("disabled", false);
+                //call a reload function here
+                reloadPsychoSkills(studentid);
+            } else {
+                $('#add-psycho-skills').text("Psychomotor Skills").prop("disabled", false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+//RELOAD AFFECTIVE DOMAIN TRAITS ADDED
+function loadAffectiveTraits(studentid) {
+    $.ajax({
+        url: 'reloadAffectiveTraits.php',
+        type: 'POST',
+        data: { studentid: studentid },
+        success: function(response) {
+            $("#modal-list").html(response);
+        },
+    });
+}
+//END RELOAD AFFAECTIVE DOMAIN
+
+//RELOAD PSYCHOMOTOR DOMAIN SKILLS
+function reloadPsychoSkills(studentid) {
+    $.ajax({
+        url: 'reloadPsychomotorSkills.php',
+        type: 'POST',
+        data: { studentid: studentid },
+        success: function(response) {
+            $("#modal-list").html(response);
+        },
+    });
+}
+//END RELOAD PSYCHOMOTOR SKILLS
+
+//REMOVE AFFECTIVE DOMAIN
+$("#modal-list").on('click', '#remove-trait', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to rmove item. This action can not be reversed!") == true) {
+        $('#remove-trait').prop("disabled", true);
+        var id = $(this).data('id');
+        var examid = $("#record-id").val();
+        alert(examid);
+        deleteAffectiveSkills(id, examid);
+    } else {
+        $('#remove-trait').prop("disabled", false);
+    }
+
+});
+//call back for delete affective skilss
+function deleteAffectiveSkills(id, recordid) {
+    $.ajax({
+        url: 'deleteAffectiveSkills.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                loadAffectiveTraits(recordid);
+            } else {
+                $('#remove-trait').prop("disabled", false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+
+//Remove psychomotor skills
+$("#modal-list").on('click', '#remove-psycho-trait', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to rmove item. This action can not be reversed!") == true) {
+        $('#remove-psycho-trait').prop("disabled", true);
+        var id = $(this).data('id');
+        var examid = $("#record-id").val();
+        alert(examid);
+        deletePsychoSkills(id, examid);
+    } else {
+        $('#remove-psycho-trait').prop("disabled", false);
+    }
+
+});
+//call back for delete affective skilss
+function deletePsychoSkills(id, recordid) {
+    $.ajax({
+        url: 'deletePsychomotorSkills.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                reloadPsychoSkills(recordid);
+            } else {
+                $('#remove-psycho-trait').prop("disabled", false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+
+//Count characters in a comment text area
+$('#comment-id').keyup(function() {
+    var maxLength = 50;
+    var textlen = maxLength - $(this).val().length;
+    if (textlen >= 0) {
+        $('#textRemaining').text(textlen);
+        $('#add-comments').prop("disabled", false);
+    } else {
+        $('#textRemaining').text(textlen);
+        $('#add-comments').prop("disabled", true);
+    }
+});
+
+//Add Admin Comments
+//ADD STAFF COMMENTS
+$("#admin-comments").on('click', function(e) {
+    e.preventDefault();
+    $('#admin-comments').text('Adding Comment...').prop("disabled", true);
+    //var id = $(this).data('id');
+    var studentid = $("#record-id").val();
+    var staffcomment = $("#comment-id").val();
+    //alert(examrecordid + staffcomment);
+    adminComment(studentid, staffcomment);
+});
+//call back for delete affective skilss
+function adminComment(studentid, staffcomment) {
+    $.ajax({
+        url: 'addAdminComment.php',
+        type: 'POST',
+        data: { studentid: studentid, staffcomment: staffcomment },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                //reloadPsychoSkills(recordid);
+                $('#admin-comments').text('Add Comment').prop("disabled", false);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Comments added");
+            } else {
+                $('#admin-comments').text('Add Comment').prop("disabled", false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+
+//Add Admin comments
+
+//ADD STAFF COMMENTS
+$("#add-comments").on('click', function(e) {
+    e.preventDefault();
+    $('#add-comments').text('Adding Comment...').prop("disabled", true);
+    //var id = $(this).data('id');
+    var studentid = $("#record-id").val();
+    var staffcomment = $("#comment-id").val();
+    //alert(examrecordid + staffcomment);
+    staffComment(studentid, staffcomment);
+});
+//call back for delete affective skilss
+function staffComment(studentid, staffcomment) {
+    $.ajax({
+        url: 'addStaffComment.php',
+        type: 'POST',
+        data: { studentid: studentid, staffcomment: staffcomment },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                //reloadPsychoSkills(recordid);
+                $('#add-comments').text('Add Comment').prop("disabled", false);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Comments added");
+            } else {
+                $('#add-comments').text('Add Comment').prop("disabled", false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+
+//Show comments summary
+$("#new-content").on('click', '#comments-summary', function(e) {
+    e.preventDefault();
+    $('#comments-summary').text('Please wait...').prop("disabled", true);
+    //var id = $(this).data('id');
+    var myclass = $("#s-class option:selected").val();
+    var session = $("#s-session option:selected").val();
+    var term = $("#s-term option:selected").val();
+    //alert(myclass + session + term);
+
+    summaryComments(myclass, session, term);
+});
+//call back for delete affective skilss
+function summaryComments(myclass, session, term) {
+    $.ajax({
+        url: 'commentSummary.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                //reloadPsychoSkills(recordid);
+                $('#comments-summary').text('Show Result Comment').prop("disabled", false);
+                //$("#modal_error").addClass("info");
+                //$("#modal_error").text("Comments added");
+                $("#new-content").html(data);
+            } else {
+                //$('#add-comments').text('Add Comment').prop("disabled", true);
+                $('#comments-summary').text('Show Result Comment').prop("disabled", false);
+                //$("#modal_error").addClass("error");
+                $("#new-content").html(data);
+            }
+        },
+    });
+}
+//Publish Result functionality
+/**
+ * This function is to publish result
+ * Admin can only see result when published by the class teacher
+ */
+//Show comments summary
+$("#new-content").on('click', '#publish-result', function(e) {
+    e.preventDefault();
+    $('#publish-result').text('Publishing...').prop("disabled", true);
+    //var id = $(this).data('id');
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+    alert(myclass + session + term);
+
+    publishResult(myclass, session, term);
+});
+//call back for delete affective skilss
+function publishResult(myclass, session, term) {
+    $.ajax({
+        url: 'finalResultPublish.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                //reloadPsychoSkills(recordid);
+                $('#publish-result').text('Publish Result').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").text("Result Published");
+            } else {
+                //$('#add-comments').text('Add Comment').prop("disabled", true);
+                $('#publish-result').text('Publish Result').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+
+//Display result for approval
+$("#new-content").on('click', '#result-approval', function(e) {
+    e.preventDefault();
+    $('#result-approval').text('Please wait...').prop("disabled", true);
+    //var id = $(this).data('id');
+    var myclass = $("#s-class option:selected").val();
+    var session = $("#s-session option:selected").val();
+    var term = $("#s-term option:selected").val();
+    //alert(myclass + session + term);
+
+    summaryComments(myclass, session, term);
+});
+//call back for delete affective skilss
+function summaryComments(myclass, session, term) {
+    $.ajax({
+        url: 'displayFinalComments.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                //reloadPsychoSkills(recordid);
+                $('#result-approval').text('Result Approval').prop("disabled", false);
+                //$("#modal_error").addClass("info");
+                //$("#modal_error").text("Comments added");
+                $("#new-content").html(data);
+            } else {
+                //$('#add-comments').text('Add Comment').prop("disabled", true);
+                $('#result-approval').text('Result Approval').prop("disabled", false);
+                //$("#modal_error").addClass("error");
+                $("#new-content").html(data);
+            }
+        },
+    });
+}
+//end display result for approval
+
+//Code to approve result by admin
+$("#new-content").on('click', '#approve', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+    //var approveID = $(this).attr('id');
+    // var Approval = $(this).text('Undo Approval');
+    // var changedClass = $(this).removeClass('not-approvedBtn').addClass('approvedBtn');
+    //var approveClass = $(this).attr('class');
+    var studentid = $(this).data('recordid');
+
+    $(this).text('Please wait...');
+
+    adminApproveResult(studentid, mybutton);
+});
+//call back for approving result
+function adminApproveResult(studentid, mybutton) {
+    $.ajax({
+        url: 'adminApproveResult.php',
+        type: 'POST',
+        data: { studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'disapprove');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Undo Approval');
+                mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
+            } else {
+                mybutton.text('Approve');
+                $("#info").addClass("error");
+                $("#info").html(data);
+            }
+        },
+    });
+}
+//End code to approve
+
+//Code to disapprove result
+
+$("#new-content").on('click', '#disapprove', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+
+    var studentid = $(this).data('recordid');
+    $(this).text('Please wait...');
+    adminDisapproveResult(studentid, mybutton);
+});
+//call back for disapproving result
+function adminDisapproveResult(studentid, mybutton) {
+    $.ajax({
+        url: 'adminUnapproveResult.php',
+        type: 'POST',
+        data: { studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'approve');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Approve');
+                mybutton.removeClass('approvedBtn').addClass('not-approvedBtn');
+            } else {
+
+                mybutton.text('Undo Approval');
+                $("#info").addClass("error");
+                $("#info").html(data);
+            }
+        },
+    });
+}
+//end code to disapprove result
+
+/**
+ * The code block below active and deactivate Sch_terms
+ */
+
+//Code to activate sch term
+$("#new-content").on('click', '#activate', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+
+    var termid = $(this).data('recordid');
+
+    $(this).text('Please wait...');
+
+    activateTerm(termid, mybutton);
+});
+//call back for activating term
+function activateTerm(termid, mybutton) {
+    $.ajax({
+        url: 'activateTerm.php',
+        type: 'POST',
+        data: { termid: termid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'deactivate');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Deactivate');
+                mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
+            } else {
+                mybutton.text('Activate');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End code to activate sch term
+
+//Code to deactivate term
+$("#new-content").on('click', '#deactivate', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+
+    var termid = $(this).data('recordid');
+    $(this).text('Please wait...');
+    deactivateTerm(termid, mybutton);
+});
+//call back for disapproving result
+function deactivateTerm(termid, mybutton) {
+    $.ajax({
+        url: 'deactivateTerm.php',
+        type: 'POST',
+        data: { termid: termid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'activate');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Activate');
+                mybutton.removeClass('approvedBtn').addClass('not-approvedBtn');
+            } else {
+
+                mybutton.text('Deactivate');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+//end code to deactivate term
+
+/**
+ * The code block below activate/deactivate sessions
+ * 
+ */
+
+//Code to activate sessions
+$("#new-content").on('click', '#on', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+
+    var sessionid = $(this).data('recordid');
+
+    $(this).text('Please wait...');
+
+    activateSess(sessionid, mybutton);
+});
+//call back for activating sessions
+function activateSess(sessionid, mybutton) {
+    $.ajax({
+        url: 'activateSession.php',
+        type: 'POST',
+        data: { sessionid: sessionid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'off');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Deactivate');
+                mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
+            } else {
+                mybutton.text('Activate');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End code to activate sch session
+
+/**
+ * Code block below is to activate or deactivate admission number settings
+ */
+
+//Activate admission settings
+$("#new-content").on('click', '#prefixOn', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+
+    var settingid = $(this).data('recordid');
+
+    $(this).text('Please wait...');
+
+    activateAdmissionSetting(settingid, mybutton);
+});
+//call back for admission settings
+function activateAdmissionSetting(settingid, mybutton) {
+    $.ajax({
+        url: 'activateAdmNoSettings.php',
+        type: 'POST',
+        data: { settingid: settingid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'prefixOff');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Deactivate');
+                mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
+            } else {
+                mybutton.text('Activate');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End code to activate admission setting
+
+//Code to deactivate setting
+$("#new-content").on('click', '#prefixOff', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+
+    var settingid = $(this).data('recordid');
+    $(this).text('Please wait...');
+    deactivateSetting(settingid, mybutton);
+});
+//call back for deactivating setting
+function deactivateSetting(settingid, mybutton) {
+    $.ajax({
+        url: 'deactivateAdmNoSettings.php',
+        type: 'POST',
+        data: { settingid: settingid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'prefixOn');
+                mybutton.text('Activate');
+                mybutton.removeClass('approvedBtn').addClass('not-approvedBtn');
+            } else {
+
+                mybutton.text('Deactivate');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End activate admission settings
+
+
+
+//Code to deactivate session
+$("#new-content").on('click', '#off', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+
+    var sessionid = $(this).data('recordid');
+    $(this).text('Please wait...');
+    deactivateSess(sessionid, mybutton);
+});
+//call back for deactivating session
+function deactivateSess(sessionid, mybutton) {
+    $.ajax({
+        url: 'deactivateSession.php',
+        type: 'POST',
+        data: { sessionid: sessionid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'on');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Activate');
+                mybutton.removeClass('approvedBtn').addClass('not-approvedBtn');
+            } else {
+
+                mybutton.text('Deactivate');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//
+
+/**
+ * CODE TO SHOW ACADEMIC SETTINGS MANAGEMENT  AND MODAL
+ */
+//Edit exam  modal js
+$('#new-content').on('click', '#editModal', function(e) {
+    e.preventDefault();
+
+    var recordid = $(this).data('recordid');
+    var editValue = $(this).data('value');
+    //alert(editValue + recordid);
+
+    $('#item-value').val(editValue);
+    $('#record-id').val(recordid);
+
+    $('#modal-list').empty();
+    $('#modal-error').empty();
+    var modalid = $('#myModal');
+    modalid.css('display', 'block');
+});
+//Show edit term div
+$('#new-content').on('click', '.term-div', function(e) {
+    //show term editable div on button click
+
+    var itemvalue = $('#item-value').val();
+
+    $('#editterm').val(itemvalue);
+    $('.term-div').show();
+    $('.session-div').hide();
+    $('.subject-div').hide();
+    $('.class-div').hide();
+    $('.prefix-div').hide();
+});
+//Show session-div
+$('#new-content').on('click', '.session-div', function(e) {
+    var itemvalue = $('#item-value').val();
+    $('#editsession').val(itemvalue);
+    $('.session-div').show();
+    $('.term-div').hide();
+    $('.subject-div').hide();
+    $('.class-div').hide();
+    $('.prefix-div').hide();
+});
+//Show subject-div
+$('#new-content').on('click', '.subject-div', function(e) {
+    var itemvalue = $('#item-value').val();
+    $('#editsubject').val(itemvalue);
+    $('.subject-div').show();
+    $('.term-div').hide();
+    $('.session-div').hide();
+    $('.class-div').hide();
+    $('.prefix-div').hide();
+});
+//Show class-div
+$('#new-content').on('click', '.class-div', function(e) {
+    var itemvalue = $('#item-value').val();
+    $('#editclass').val(itemvalue);
+    $('.class-div').show();
+    $('.term-div').hide();
+    $('.session-div').hide();
+    $('.subject-div').hide();
+    $('.prefix-div').hide();
+});
+
+//Show Prefix Settings
+$('#new-content').on('click', '.prefix-div', function(e) {
+    var itemvalue = $('#item-value').val();
+    $('#editprefix').val(itemvalue);
+    $('.prefix-div').show();
+    $('.class-div').hide();
+    $('.term-div').hide();
+    $('.session-div').hide();
+    $('.subject-div').hide();
+});
+
+/**
+ * Code block to handle edit functionalities for academic management settings
+ */
+
+//Funtion to handle edit term
+$("#new-content").on('click', '#edit-term', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+    var termid = $('#record-id').val();
+    var term = $('#editterm').val();
+
+    //var termid = $(this).data('recordid');
+    $('#edit-term').text('Updating...').prop('disable', true);
+    editSchTerm(termid, term);
+});
+//call back for editing term
+function editSchTerm(termid, term) {
+    $.ajax({
+        url: 'editSchTerm.php',
+        type: 'POST',
+        data: { termid: termid, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#edit-term').text('Update Term').prop('disable', false);
+                $('#editterm').val("");
+                $("#my_info").addClass("info");
+                $("#my_info").html(data);
+            } else {
+                $('#edit-term').text('Update Term').prop('disable', false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+//End function call back to edit term
+
+
+//Function to edit subject
+$("#new-content").on('click', '#edit-subject', function(e) {
+    e.preventDefault();
+    var subjectid = $('#record-id').val();
+    var subject = $('#editsubject').val();
+
+    //var termid = $(this).data('recordid');
+    $('#edit-subject').text('Updating...').prop('disable', true);
+    editSchSubject(subjectid, subject);
+});
+//call back for edit subject
+function editSchSubject(subjectid, subject) {
+    $.ajax({
+        url: 'editSchSubject.php',
+        type: 'POST',
+        data: { subjectid: subjectid, subject: subject },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#edit-subject').text('Update Subject').prop('disable', false);
+                $('#editsubject').val("");
+                $("#my_info").addClass("info");
+                $("#my_info").html(data);
+            } else {
+                $('#edit-subject').text('Update Term').prop('disable', false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+//end subject to edit subject
+
+//Function to edit sessions
+
+$("#new-content").on('click', '#edit-session', function(e) {
+    e.preventDefault();
+    var sessionid = $('#record-id').val();
+    var session = $('#editsession').val();
+
+    //var termid = $(this).data('recordid');
+    $('#edit-session').text('Updating...').prop('disable', true);
+    editSchSession(sessionid, session);
+});
+//call back for edit subject
+function editSchSubject(sessionid, session) {
+    $.ajax({
+        url: 'editSchSession.php',
+        type: 'POST',
+        data: { sessionid: sessionid, session: session },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#edit-session').text('Update Session').prop('disable', false);
+                $('#editsession').val("");
+                $("#my_info").addClass("info");
+                $("#my_info").html(data);
+            } else {
+                $('#edit-session').text('Update Session').prop('disable', false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+//end function to edit sessions
+
+
+//Function to edit classes
+$("#new-content").on('click', '#edit-class', function(e) {
+    e.preventDefault();
+    var classid = $('#record-id').val();
+    var schclass = $('#editclass').val();
+
+    //var termid = $(this).data('recordid');
+    $('#edit-class').text('Updating...').prop('disable', true);
+    editSchClass(classid, schclass);
+});
+//call back for edit class
+function editSchSubject(classid, schclass) {
+    $.ajax({
+        url: 'editSchSubject.php',
+        type: 'POST',
+        data: { classid: classid, schclass: schclass },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#edit-class').text('Update Class').prop('disable', false);
+                $('#editclass').val("");
+                $("#my_info").addClass("info");
+                $("#my_info").html(data);
+            } else {
+                $('#edit-class').text('Update Class').prop('disable', false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+//end function to edit classes
+
+//Function to edit prefix settings
+$("#new-content").on('click', '#edit-prefix', function(e) {
+    e.preventDefault();
+    var prefixid = $('#record-id').val();
+    var prefix = $('#editprefix').val();
+
+    //var termid = $(this).data('recordid');
+    $('#edit-prefix').text('Updating...').prop('disable', true);
+    editSchPrefix(prefixid, prefix);
+});
+//call back for edit prefix
+function editSchPrefix(prefixid, prefix) {
+    $.ajax({
+        url: 'editSchSubject.php',
+        type: 'POST',
+        data: { prefixid: prefixid, prefix: prefix },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#edit-prefix').text('Update Prefix').prop('disable', false);
+                $('#editprefix').val("");
+                $("#my_info").addClass("info");
+                $("#my_info").html(data);
+            } else {
+                $('#edit-class').text('Update Class').prop('disable', false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+
+
+
+
+//End function to edit prefix settings
 //add Session code
 $("#new-content").on('click', '#add-session', function(e) {
     e.preventDefault();
@@ -1756,22 +2750,21 @@ function caAdvancedSearch(myclass, subject, session, term) {
 }
 
 //Function to handle students traits
-
 $("#new-content").on('click', '#fetch-result', function(e) {
     e.preventDefault();
     $('#fetch-result').text("Fetching...").prop("disabled", true);
     var myclass = $("#studentclass option:selected").val();
     var session = $("#session option:selected").val();
     var term = $("#term option:selected").val();
-    //alert(myclass + subject + session + term);
-    traitsRecords(studentclass, session, term);
+    //alert(myclass + session + term);
+    traitsRecords(myclass, session, term);
 });
 
-function traitsRecords(studentclass, subject, session, term) {
+function traitsRecords(studentclass, session, term) {
     $.ajax({
             url: 'fetchTraits.php',
             type: 'POST',
-            data: { myclass: myclass, session: session, term: term },
+            data: { studentclass: studentclass, session: session, term: term },
             dataType: 'html'
         })
         .done(function(data) {
@@ -1784,3 +2777,34 @@ function traitsRecords(studentclass, subject, session, term) {
             //$('#modal-loader').hide();
         });
 }
+
+//fetch published results for admin comments
+$("#new-content").on('click', '#published-result', function(e) {
+    e.preventDefault();
+    $('#fetch-result').text("Fetching...").prop("disabled", true);
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+    //alert(myclass + session + term);
+    publishedReslt(myclass, session, term);
+});
+
+function publishedReslt(studentclass, session, term) {
+    $.ajax({
+            url: 'publishedResult.php',
+            type: 'POST',
+            data: { studentclass: studentclass, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#published-result').text("Show Result").prop("disabled", false);
+            $('#new-content').html(data); // load here 
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+
+//End published results for admin comments
