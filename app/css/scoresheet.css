@@ -278,18 +278,29 @@ a:hover {
   color: #5499c7; }
 
 .datatable {
-  border: 1.5px solid #000;
+  border: 0.5px solid #e5e7e9;
   font-family: "Jura";
   margin-left: 0px; }
   .datatable td {
-    border: 1px solid #000;
+    border: 1px solid #e5e7e9;
     text-align: left;
     font-size: .7em;
     white-space: nowrap; }
   .datatable th {
-    border: 1px solid #000;
+    border: 0.5px solid #e5e7e9;
     text-align: left;
     font-size: .8em; }
+
+.transparent-table {
+  font-family: "Jura";
+  margin-left: 0px; }
+  .transparent-table td {
+    text-align: left;
+    font-size: .6em;
+    white-space: nowrap; }
+  .transparent-table th {
+    text-align: left;
+    font-size: .7em; }
 
 .result-content-wrapper {
   width: 80%;
@@ -342,8 +353,6 @@ a:hover {
   padding-right: 1em;
   margin-right: -5px;
   vertical-align: top; }
-  .student-avatar h5 {
-    text-align: center; }
 
 .colm {
   display: inline-block;
@@ -364,6 +373,17 @@ a:hover {
   height: 50px;
   border-radius: 50%;
   border: 1px solid #fff; }
+
+.avatar-h5 {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  text-align: center;
+  background-color: chocolate;
+  color: #fff;
+  text-align: center;
+  padding: 3px; }
 
 .result-details {
   border-left: 3px solid deepskyblue;
@@ -412,6 +432,88 @@ a:hover {
 
 .printAssessment {
   display: inline-block; }
+
+.psychomotor-domain-div {
+  display: none; }
+
+.comments-div {
+  display: none; }
+
+.active-trait {
+  background-color: #fff;
+  color: #000;
+  padding: 7px;
+  text-align: left;
+  text-decoration: none;
+  font-size: 12px;
+  border: 2px solid #48c9b0;
+  border-radius: 4px;
+  width: 85px;
+  margin-right: -5px; }
+  .active-trait button {
+    display: inline-block; }
+
+.custom-btn {
+  background-color: #fff;
+  /* white*/
+  color: #000;
+  padding: 7px;
+  text-align: left;
+  text-decoration: none;
+  font-size: 12px;
+  border: 2px solid #e5e7e9;
+  border-radius: 4px;
+  width: 85px;
+  margin-right: -5px; }
+  .custom-btn button {
+    display: inline-block; }
+
+.not-approvedBtn {
+  background-color: #cd6155;
+  color: #fff;
+  padding: 7px;
+  text-align: left;
+  text-decoration: none;
+  font-size: 12px;
+  border-radius: 5px; }
+
+.approvedBtn {
+  background-color: #76d7c4;
+  color: #fff;
+  padding: 7px;
+  text-align: left;
+  text-decoration: none;
+  font-size: 12px;
+  border-radius: 5px; }
+
+.display {
+  display: inline-block; }
+
+.highlight {
+  border-bottom: 3px solid #48c9b0;
+  margin-bottom: 2px;
+  display: inline-block; }
+
+.traits-display {
+  padding-left: 2px;
+  margin-bottom: 12px; }
+  .traits-display li {
+    display: inline-block;
+    padding: 0px;
+    margin-right: 5px; }
+    .traits-display li p {
+      font-size: 11px;
+      color: #000;
+      margin-bottom: 3px;
+      border-bottom: 1.5px solid deepskyblue; }
+    .traits-display li span {
+      display: inline-block;
+      font-size: 9px;
+      color: #96a1ac;
+      margin-top: 3px; }
+
+.hide-me {
+  display: none; }
 
 @media (max-width: 767px) {
   .secondary-col {
@@ -516,7 +618,8 @@ a:hover {
   padding: 4px;
   border: 1px solid #888;
   width: 80%;
-  /* Could be more or less, depending on screen size */ }
+  /* Could be more or less, depending on screen size */
+  border-radius: 6px; }
 
 /* The Close Button */
 .closex {
