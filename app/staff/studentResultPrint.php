@@ -36,9 +36,10 @@ $staffid = $_SESSION['user_info'][0];
     </div>
     <!--end school profile div  -->
     <div class="student-profile">
-        <div class="student-avatar">
-            <h5><img src="../images/avatar.jpg" alt="John" class="avatar-img"></h5>
-        </div>
+        <?php
+        $staff->studentAvatar(2,2);
+        ?>
+        
         <!--end avatar  div-->
         <div class="profile-details">
             <?php
@@ -50,12 +51,24 @@ $staffid = $_SESSION['user_info'][0];
 
     <div class="result-details">
         <h5 class="top-header"> Result Summary </h5>
-        <p>This div will contain result displayed in a tabular format</p>
+        <?php
+           // $print->userScoresDetails(3,1,7,1,2);
+            $print->resultDetails(2,1,1,7,2)
+        ?>
     </div>
 
     <div class="cognitive-marks">
-        <h5 class="top-header"> Cognitive & Psychomotor Domain</h5>
-        <p>This div will contain cognitive and psychomotor skills</p>
+        <h5 class="top-header">Affective Domain</h5>
+        <?php
+        $print->resultAffectiveTraits(2,2);
+        ?>
+    </div>
+    
+    <div class="cognitive-marks">
+        <h5 class="top-header">Psychomotor Domain</h5>
+        <?php
+        $print->resultPsychomotorSkills(2,2);
+        ?>
     </div>
 
     <div class="comments-section">
