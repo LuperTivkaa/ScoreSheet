@@ -359,12 +359,12 @@
                             
                             //TABLE STYLES FOR RESULT
                             .datatable {
-                                border: 1.5px solid $black;
+                                border: 0.5px solid #e5e7e9;
                                 //border-collapse: collapse;
                                 font-family: $datatable;
                                 margin-left: 0px;
                                 td {
-                                    border: 1px solid $black;
+                                    border: 1px solid #e5e7e9;
                                     text-align: left;
                                     //padding: 0.2em;
                                     //font-family: $font-primary;
@@ -372,9 +372,30 @@
                                     white-space: nowrap;
                                 }
                                 th {
-                                    border: 1px solid $black;
+                                    border: 0.5px solid #e5e7e9;
                                     text-align: left;
                                     font-size: .8em;
+                                    //font-weight: 20;
+                                }
+                            }
+                            
+                            .transparent-table {
+                                //border: 1.5px solid $black;
+                                //border-collapse: collapse;
+                                font-family: $datatable;
+                                margin-left: 0px;
+                                td {
+                                    //border: 1px solid $black;
+                                    text-align: left;
+                                    //padding: 0.2em;
+                                    //font-family: $font-primary;
+                                    font-size: .6em;
+                                    white-space: nowrap;
+                                }
+                                th {
+                                    //border: 1px solid $black;
+                                    text-align: left;
+                                    font-size: .7em;
                                     //font-weight: 20;
                                 }
                             }
@@ -448,9 +469,6 @@
                                 padding-right: 1em;
                                 margin-right: -5px;
                                 vertical-align: top;
-                                h5 {
-                                    text-align: center;
-                                }
                             }
                             
                             .colm {
@@ -478,6 +496,21 @@
                                 height: 50px;
                                 border-radius: 50%;
                                 border: 1px solid $general;
+                                // bottom: -30px;
+                                // left: 100px;
+                                // top: 17px;
+                            }
+                            
+                            .avatar-h5 {
+                                width: 50px;
+                                height: 50px;
+                                border-radius: 50%;
+                                border: 1px solid $general;
+                                text-align: center;
+                                background-color: chocolate;
+                                color: $general;
+                                text-align: center;
+                                padding: 3px;
                                 // bottom: -30px;
                                 // left: 100px;
                                 // top: 17px;
@@ -543,6 +576,108 @@
                             
                             .printAssessment {
                                 display: inline-block;
+                            }
+                            
+                            //HIDE AND DISPLAY PSYCOMOTOR DOMAIN DIV
+                            .psychomotor-domain-div {
+                                display: none;
+                            }
+                            
+                            .comments-div {
+                                display: none;
+                            }
+                            
+                            .active-trait {
+                                background-color: $general;
+                                color: $black;
+                                padding: 7px;
+                                text-align: left;
+                                text-decoration: none;
+                                font-size: 12px;
+                                border: 2px solid $active-color;
+                                border-radius: 4px;
+                                width: 85px;
+                                margin-right: -5px;
+                                button {
+                                    display: inline-block;
+                                }
+                            }
+                            
+                            .custom-btn {
+                                background-color: $general;
+                                /* white*/
+                                color: $black;
+                                padding: 7px;
+                                text-align: left;
+                                text-decoration: none;
+                                font-size: 12px;
+                                border: 2px solid #e5e7e9;
+                                border-radius: 4px;
+                                width: 85px;
+                                margin-right: -5px;
+                                button {
+                                    display: inline-block;
+                                }
+                            }
+                            
+                            //approve custom button
+                            .not-approvedBtn {
+                                background-color: #cd6155;
+                                color: $general;
+                                padding: 7px;
+                                text-align: left;
+                                text-decoration: none;
+                                font-size: 12px;
+                                border-radius: 5px;
+                            }
+                            
+                            //disapprove custom button
+                            .approvedBtn {
+                                background-color: #76d7c4;
+                                color: $general;
+                                padding: 7px;
+                                text-align: left;
+                                text-decoration: none;
+                                font-size: 12px;
+                                border-radius: 5px;
+                            }
+                            
+                            .display {
+                                display: inline-block;
+                            }
+                            
+                            .highlight {
+                                border-bottom: 3px solid $active-color;
+                                margin-bottom: 2px;
+                                display: inline-block;
+                            }
+                            
+                            .traits-display {
+                                padding-left: 2px;
+                                //border-bottom: 1px solid gray;
+                                margin-bottom: 12px;
+                                li {
+                                    display: inline-block;
+                                    padding: 0px;
+                                    margin-right: 5px;
+                                    p {
+                                        font-size: 11px;
+                                        color: $black;
+                                        margin-bottom: 3px;
+                                        border-bottom: 1.5px solid deepskyblue;
+                                    }
+                                    span {
+                                        display: inline-block;
+                                        font-size: 9px;
+                                        color: #96a1ac;
+                                        margin-top: 3px;
+                                    }
+                                }
+                            }
+                            
+                            //Hide content for manage academic setting  Edits
+                            .hide-me {
+                                display: none;
                             }
                             
                             //================================================================
@@ -675,6 +810,7 @@
                                 border: 1px solid #888;
                                 width: 80%;
                                 /* Could be more or less, depending on screen size */
+                                border-radius: 6px;
                             }
                             /* The Close Button */
                             
