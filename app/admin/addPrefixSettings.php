@@ -18,13 +18,13 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 //$regno = $_SESSION['ID'];
 $prefix = filter_input(INPUT_POST, "prefix", FILTER_SANITIZE_STRING);
-$seperator = filter_input(INPUT_POST, "seperator", FILTER_SANITIZE_STRING);
+//$seperator = filter_input(INPUT_POST, "seperator", FILTER_SANITIZE_STRING);
 
 $student->setSurname($prefix);
 $prefix = $student->getSurname();
 
 
-$student->addPrefixSettings($prefix,$seperator,$clientid,$userid,$dateCreated,$dateCreated);
+$student->addPrefixSettings($prefix,$clientid,$userid,$dateCreated,$dateCreated);
     
 }
 else
