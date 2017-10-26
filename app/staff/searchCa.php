@@ -10,7 +10,6 @@ $student = new student($dbConnection);
 $client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
-$clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
 ?>
 
