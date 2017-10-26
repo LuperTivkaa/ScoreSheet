@@ -384,22 +384,21 @@ function caAdvancedSearch(myclass, subject, session, term) {
 }
 
 //Function to handle students traits
-
 $("#new-content").on('click', '#fetch-result', function(e) {
     e.preventDefault();
     $('#fetch-result').text("Fetching...").prop("disabled", true);
     var myclass = $("#studentclass option:selected").val();
     var session = $("#session option:selected").val();
     var term = $("#term option:selected").val();
-    //alert(myclass + subject + session + term);
-    traitsRecords(studentclass, session, term);
+    //alert(myclass + session + term);
+    traitsRecords(myclass, session, term);
 });
 
-function traitsRecords(studentclass, subject, session, term) {
+function traitsRecords(studentclass, session, term) {
     $.ajax({
             url: 'fetchTraits.php',
             type: 'POST',
-            data: { myclass: myclass, session: session, term: term },
+            data: { studentclass: studentclass, session: session, term: term },
             dataType: 'html'
         })
         .done(function(data) {
@@ -412,3 +411,34 @@ function traitsRecords(studentclass, subject, session, term) {
             //$('#modal-loader').hide();
         });
 }
+
+//fetch published results for admin comments
+$("#new-content").on('click', '#published-result', function(e) {
+    e.preventDefault();
+    $('#fetch-result').text("Fetching...").prop("disabled", true);
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+    //alert(myclass + session + term);
+    publishedReslt(myclass, session, term);
+});
+
+function publishedReslt(studentclass, session, term) {
+    $.ajax({
+            url: 'publishedResult.php',
+            type: 'POST',
+            data: { studentclass: studentclass, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#published-result').text("Show Result").prop("disabled", false);
+            $('#new-content').html(data); // load here 
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+
+//End published results for admin comments
