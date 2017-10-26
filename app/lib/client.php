@@ -204,6 +204,82 @@ public function __construct(dbConnection $db)
     $this->conn = $db;
     }
 
+    
+ //METHOD TO GET ACTIVE SESSION
+function getActiveSession($schid,$status='Active')
+ {
+  //always use try and catch block to write code
+  try{
+        //SELECT THE ID OF THE ACTIVE SESSION BASED ON THE INSTITUTION
+          $sqlStmt = "SELECT id AS SESSION_ID FROM session WHERE sess_inst_id=? AND active_status=?";
+          $this->conn->query($sqlStmt);
+          $this->conn->bind(1, $schid, PDO::PARAM_INT);
+          $this->conn->bind(2, $status, PDO::PARAM_STR);
+          $myResult = $this->conn->resultset();
+              if ($this->conn->rowCount() == 1)
+                {
+                  //loop through the result set
+                  foreach ($myResult as $row => $key)
+					        {
+					            $sessionID = $key['SESSION_ID'];
+					        }
+					        // retrun the ID  OF THE STUDENT
+					        return $sessionID;
+               }
+                        else
+                        {
+                        exit("No active sesion available for your institution, please enable it!");
+                        }
+       }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+}
+//END GET ACTIVE SESSION METHOD
+
+
+//METHOD TO GET THE ACTIVE TERM
+function getActiveTerm($schid,$status='Active')
+ {
+    //always use try and catch block to write code
+  try 
+    {
+        //SELECT THE ID OF THE ACTIVE TERM BASED ON THE INSTITUTION
+          $sqlStmt = "SELECT term_id AS TERM_ID FROM sch_term WHERE term_inst_id=? AND term_status=?";
+          $this->conn->query($sqlStmt);
+          $this->conn->bind(1, $schid, PDO::PARAM_INT);
+          $this->conn->bind(2, $status, PDO::PARAM_STR);
+          $myResult = $this->conn->resultset();
+              if ($this->conn->rowCount() == 1)
+              {
+                 //loop through the result set
+                 foreach ($myResult as $row => $key)
+					        {
+					            $termID = $key['TERM_ID'];
+					        }
+					        // retrun the ID  OF THE STUDENT
+					        return $termID;
+              }
+              else
+              {
+              exit("No active term available for your institution, please enable it!");
+
+              }
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+  }
+//END METHOD TO GET ACTIVE TERM   
+    
     //load class arm
 public function loadClassArm($class_id)
     {
@@ -490,7 +566,7 @@ public function otherStudentList($schid,$status="Active",$no)
                     $this->conn->bind(':start', $no, PDO::PARAM_INT);
                     $output = "";
                     $myResult = $this->conn->resultset();
-                    //echo table headings
+                //echo table headings
                 //$output .='<table class="table">';
                 //$output .='<thead><tr><th>#</th><th>Full //Name</th><th>Sex</th><th>Status</th><th>Action</th></tr></thead><tbody>';
                     if($myResult){
@@ -872,7 +948,32 @@ public function loadInstCategory()
    }
    //end load institutional category
 
+//Load all staff
+public function allStaff($client_id)
+    {
+        try {
+                $query ="SELECT users.id,users.user_name FROM users WHERE  created_By=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $client_id, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['id'];
+            $username = $key['user_name'];
+          $output .= "<option value=".$ID.">".$username."</option>";
+                
+        }
+       echo $output;
+            }// End of try catch block
+         catch(Exception $e)
+            {
+            echo "Error: Unable to get staff details";
+            }
+   }
 
+//End all Staff
 
 //Get All Staff
 public function loadStaff($client_id)
@@ -888,9 +989,6 @@ public function loadStaff($client_id)
             
             $ID = $key['id'];
             $username = $key['user_name'];
-
-       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-      //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
           $output .= "<option value=".$ID.">".$username."</option>";
                 
         }
@@ -1193,24 +1291,30 @@ public function allSessions($clientid)
                     $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
                     $output="";
                     $myResult = $this->conn->resultset();
+                    $output.="<h5 class='top-header mt-2'>All Sessions</h5><br/>";
                     $output .='<table class="table">';
-                    $output .='<thead><tr><th>Session</th><th>Status</th><th>Action</th><th>Edit</th></tr></thead><tbody>';
+                    $output .='<thead>
+                    <tr><th>Session</th><th>Action</th><th>Edit</th>
+                    </tr></thead>
+                    <tbody>';
                     if($myResult){
                     foreach ($myResult as $row => $key) 
                     {
                     $ID = $key['ID'];
                     $session = $key['Session'];
                     $status = $key['Status'];
-                    //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-                    //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+                    //active status
+                        if($key['Status'] =='Active'){
+                        $active_status = '<button type="button"  data-recordid="'.$key['ID'].'" class="approvedBtn" id="off">Deactivate</button>';
+                        }else{
+                        $active_status= '<button type="button"  data-recordid="'.$key['ID'].'" class="not-approvedBtn" id="on">Activate</button>';
+                        }
+                   
                    $output.= '<tr>';
                    $output.='<td>'.$session.'</td>';
-                   $output.= '<td>'.$status.'</td>';
-                   $output.='<td><button onclick="toggleActivate('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-toggle-on fa-fw" aria-hidden="true"></i>
-Activate/Deactivate</button></td>';
-                    $output.='<td><button onclick="editSession('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>Edit</button></td>';
+                   $output.='<td>'.$active_status.'</td>';
+                    $output.='<td><button type="button" data-value="'.$session.'" data-recordid="'.$key['ID'].'" class="btn btn-info btn-sm session-div" id="editModal"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Edit</button></td>';
                    $output.='</tr>';
-                   //$output .= "<option value=".$ID.">".$category."</option>";
                     }
                     $output.=' </tbody></table>';
                     echo $output;
@@ -1225,8 +1329,106 @@ Activate/Deactivate</button></td>';
             echo json_encode("Error: Unable to fetch sessions");
         }
         }
-
         //end get my sessions
+
+//Function to select all classes
+
+//Function to select admission number settings
+public function admissionNumberSettings($clientid)
+        {
+        try {
+
+                $query ="SELECT prefix_id AS ID, prefix_name AS settingName, status AS Status
+                FROM admission_number_prefix
+                WHERE prefix_sch_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+                    $output="";
+                    $myResult = $this->conn->resultset();
+                    $output.="<h5 class='top-header mt-2'>All Sessions</h5><br/>";
+                    $output .='<table class="table">';
+                    $output .='<thead>
+                    <tr><th>Setting</th><th>Action</th><th>Edit</th>
+                    </tr></thead>
+                    <tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
+                    {
+                    $ID = $key['ID'];
+                    $setting = $key['settingName'];
+                    $status = $key['Status'];
+                    //active status
+                        if($key['Status'] =='Active'){
+                        $active_status = '<button type="button"  data-recordid="'.$key['ID'].'" class="approvedBtn" id="prefixOff">Deactivate</button>';
+                        }else{
+                        $active_status= '<button type="button"  data-recordid="'.$key['ID'].'" class="not-approvedBtn" id="prefixOn">Activate</button>';
+                        }
+                   
+                   $output.= '<tr>';
+                   $output.='<td>'.$setting.'</td>';
+                   $output.='<td>'.$active_status.'</td>';
+                    $output.='<td><button type="button" data-value="'.$setting.'" data-recordid="'.$key['ID'].'" class="btn btn-info btn-sm prefix-div" id="editModal"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Edit</button></td>';
+                   $output.='</tr>';
+                    }
+                    $output.=' </tbody></table>';
+                    echo $output;
+                    }
+                    else{
+                        echo "No session found yet!";
+                    }
+                    
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Unable to fetch sessions");
+        }
+        }
+//End function to select admission number settings
+
+
+
+public function allClasses($clientid)
+        {
+        try {
+
+                $query ="SELECT id AS ID, class_name AS ClassName
+                FROM class
+                WHERE my_inst_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+                    $output="";
+                    $myResult = $this->conn->resultset();
+                    $output.="<h5 class='top-header mt-2'>All Classes</h5><br/>";
+                    $output .='<table class="table">';
+                    $output .='<thead>
+                    <tr><th>Class Name</th><th>Edit</th>
+                    </tr></thead>
+                    <tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
+                    {
+                    $ID = $key['ID'];
+                    $class = $key['ClassName'];
+                   $output.= '<tr>';
+                   $output.='<td>'.$class.'</td>';
+                    $output.='<td><button type="button" data-value="'.$class.'" data-recordid="'.$key['ID'].'" class="btn btn-info btn-sm class-div" id="editModal"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Edit</button></td>';
+                   $output.='</tr>';
+                    }
+                    $output.=' </tbody></table>';
+                    echo $output;
+                    }
+                    else{
+                        echo "No Class found yet!";
+                    }
+                    
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Unable to fetch Class");
+        }
+        }
+
+//End function to select all classes
 
         //============================================================
 //add new subject
@@ -1404,21 +1606,28 @@ public function allTerms($clientid)
                     $myResult = $this->conn->resultset();
                     $output.="<h5 class='top-header mt-2'>All Terms</h5><br/>";
                     $output .='<table class="table">';
-                    $output .='<thead><tr><th>Term</th><th>Status</th><th>Action</th><th>Edit</th></tr></thead><tbody>';
+            $output .='<thead>
+            <tr><th>Term</th><th>Action</th><th>Edit</th></tr>
+            </thead>
+            <tbody>';
                     if($myResult){
                     foreach ($myResult as $row => $key) 
                     {
-                    $ID = $key['ID'];
+                         
+                        //approval status
+                        if($key['Status'] =='Active'){
+                        $active_status = '<button type="button"  data-recordid="'.$key['ID'].'" class="approvedBtn" id="deactivate">Deactivate</button>';
+                        }else{
+                        $active_status= '<button type="button"  data-recordid="'.$key['ID'].'" class="not-approvedBtn" id="activate">Activate</button>';
+                        }
+                   // $ID = $key['ID'];
                     $term = $key['Term'];
                     $status = $key['Status'];
-                    //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-                    //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
-                   $output.= '<tr>';
-                   $output.='<td>'.$term.'</td>';
-                   $output.= '<td>'.$status.'</td>';
-                   $output.='<td><button onclick="ActivateTerm('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-toggle-on fa-fw" aria-hidden="true"></i>
-Activate/Deactivate</button></td>';
-                    $output.='<td><button onclick="editTerm('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>Edit</button></td>';
+                   
+                    $output.= '<tr>';
+                    $output.='<td>'.$term.'</td>';
+                    $output.='<td>'.$active_status.'</td>';
+                    $output.='<td><button type="button" data-value="'.$term.'" data-recordid="'.$key['ID'].'" class="btn btn-info btn-sm term-div" id="editModal"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>Edit</button></td>';
                    $output.='</tr>';
                    //$output .= "<option value=".$ID.">".$category."</option>";
                     }
@@ -1432,14 +1641,13 @@ Activate/Deactivate</button></td>';
         }// End of try catch block
          catch(Exception $e)
         {
-            echo json_encode("Error: Unable to fetch academic term");
+            echo ("Error: Unable to fetch academic term");
         }
         }
 //end all terms
 
 
 //display all school subject
-//all terms 
 public function mySubjects($clientid)
         {
         try {
@@ -1459,11 +1667,9 @@ public function mySubjects($clientid)
                     {
                     $ID = $key['ID'];
                     $subj = $key['Subject'];
-                    //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-                    //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
-                   $output.= '<tr>';
-                   $output.='<td>'.$subj.'</td>';
-                    $output.='<td><button onclick="editSubject('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>Edit</button></td>';
+                    $output.= '<tr>';
+                    $output.='<td>'.$subj.'</td>';
+                    $output.='<td><button type="button" data-value="'.$subj.'" data-recordid="'.$key['ID'].'" class="btn btn-info btn-sm subject-div" id="editModal"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>Edit</button></td>';
                    $output.='</tr>';
                    //$output .= "<option value=".$ID.">".$category."</option>";
                     }
@@ -1480,9 +1686,607 @@ public function mySubjects($clientid)
             echo json_encode("Error: Unable to fetch academic term");
         }
         }
-//end all terms
-
 //end display school subject
+
+//Load affective and psychomotor skills
+public function fetchPsychomotor($clientid)
+    {
+        try {
+                $query ="SELECT id,description FROM psychomotor_skills WHERE sch_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $myResult = $this->conn->resultset();
+                   $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['id'];
+            $descr = $key['description'];
+
+       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$descr."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to load sessions";
+        }
+    }
+        //end fetch psychomotor skills
+
+        //fetch affective domain
+public function fetchAffectiveDomain($clientid)
+        {
+        try {
+                $query ="SELECT id,description FROM affective_domain WHERE sch_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $myResult = $this->conn->resultset();
+                   $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['id'];
+            $descr = $key['description'];
+
+       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$descr."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to load sessions";
+        }
+    }
+//end fetch affective domain
+
+
+//fetch skills grading system
+public function fetchGrading()
+        {
+        try {
+                $query ="SELECT id,description FROM rating_system";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $myResult = $this->conn->resultset();
+                   $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['id'];
+            $descr = $key['description'];
+
+          //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$descr."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to load sessions";
+        }
+        }
+
+        //end fetch grading system
+
+//Create class teacher
+public  function addClassTeacher($staff_id,$class_id,$schid,$createdBy,$addedDate)
+  {
+   // always use try and catch block to write code
+  try{
+      //make sure only one staff is assigned as a class teacher
+                    $query ="SELECT id FROM class_teacher WHERE staff_id=? AND class_id=? AND school_id=?";
+                    $this->conn->query($query);
+                     $this->conn->bind(1, $staff_id, PDO::PARAM_INT);
+                    $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                    $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >= 1)
+                    {
+                      exit("This staff has been assigned this class already!");
+                    }
+                    else{
+                            //check for duplicate subject per class
+                            $query ="SELECT class_id FROM class_teacher WHERE class_id=? AND school_id=?";
+                            $this->conn->query($query);
+                            $this->conn->bind(1, $class_id, PDO::PARAM_INT);
+                            $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                                    if ($this->conn->rowCount() >= 1)
+                                    {
+                                        exit("This class has been assigned a class teacher already");
+                                    }
+                                        else{
+                                        //insert new subjects  taught by staff 
+                                        $sqlStmt = "INSERT INTO class_teacher (staff_id,
+                                        class_id,school_id,addedBy,dateAdded)
+                                        values (?,?,?,?,?)";
+                                        $this->conn->query($sqlStmt);
+                                        $this->conn->bind(1, $staff_id, PDO::PARAM_INT);
+                                        $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                                        $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                                        $this->conn->bind(4, $createdBy, PDO::PARAM_INT);  
+                                        $this->conn->bind(5, $addedDate, PDO::PARAM_STR);
+                                        $this->conn->execute(); 
+                                            if ($this->conn->rowCount() == 1) 
+                                            {
+                                            //check number of inserted rows
+                                            echo "ok";
+                                            } 
+                                            else
+                                            {
+                                            echo "Error adding class teacher";
+                                            }
+                                        }
+                                    }     
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//end create class teacher
+
+//Activate Term
+function activateTerm($termid,$schid,$activate="Active")
+  {
+      
+        try {
+
+            //Check for an active term
+                    $query ="SELECT term_id FROM sch_term WHERE term_status=? AND term_inst_id=?";
+                    $this->conn->query($query);
+                     $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                    $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >= 1)
+                    {
+                      exit("Please deactivate the active term firts!");
+                    }
+
+                    else{
+                          $sqlStmt = "UPDATE sch_term SET term_status=? WHERE term_id=? AND term_inst_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                            $this->conn->bind(2, $termid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//result approved
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error activating term";
+                      			}
+                            }
+                }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+//End Activate Term
+
+//Deactivate Term
+function deactivateTerm($termid,$schid,$activate="Inactive")
+  {
+      
+        try {
+
+                          $sqlStmt = "UPDATE sch_term SET term_status=? WHERE term_id=? AND term_inst_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                            $this->conn->bind(2, $termid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//result approved
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error deactivating term";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+//End deactivate term
+
+
+//activate Session
+function activateSession($sessionid,$schid,$activate="Active")
+  {
+      
+        try {
+
+            //Check for an active term
+                    $query ="SELECT id FROM session WHERE active_status=? AND sess_inst_id=?";
+                    $this->conn->query($query);
+                     $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                    $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >= 1)
+                    {
+                      exit("Please deactivate the active session first!");
+                    }
+
+                    else{
+                          $sqlStmt = "UPDATE session SET active_status=? WHERE id=? AND sess_inst_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                            $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//session activated
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error activating session";
+                      			}
+                            }
+                }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+
+//end activate session
+
+//deactivate Sessions
+function deactivateSession($sessionid,$schid,$activate="Inactive")
+  {  
+        try {
+
+                          $sqlStmt = "UPDATE session SET active_status=? WHERE id=? AND sess_inst_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                            $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//deactivate Session
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error deactivating session";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+  //End deactivate session
+
+
+
+  //Activate Admission number Settings
+function activateSetting($settingid,$schid,$activate="Active")
+  {
+      
+        try {
+            //Check for an active term
+                    $query ="SELECT prefix_id FROM admission_number_prefix WHERE status=? AND prefix_sch_id=?";
+                    $this->conn->query($query);
+                     $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                    $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >= 1)
+                    {
+                      exit("Please deactivate the active settings first!");
+                    }
+
+                    else{
+                          $sqlStmt = "UPDATE admission_number_prefix SET status=? WHERE prefix_id=? AND prefix_sch_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                            $this->conn->bind(2, $settingid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//session activated
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error activating setting";
+                      			}
+                            }
+                }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+  //End activate academic number Settings
+
+
+
+//Deactivate academic settings
+
+function deactivateSetting($settingid,$schid,$activate="Inactive")
+  {
+      
+        try {
+            
+                          $sqlStmt = "UPDATE admission_number_prefix SET status=? WHERE prefix_id=? AND prefix_sch_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                            $this->conn->bind(2, $settingid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//session activated
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error deactivating setting";
+                      			}
+                            
+                }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+
+
+//End deactivate academic settings
+
+//=============================================
+//Code block to edit academic settings
+
+//Function to edit school term
+function editSchTerm($termid,$term,$schid)
+  {
+    
+        try {
+
+          					//EDIT school tern
+                            $sqlStmt = "UPDATE sch_term SET term=?
+                            WHERE term_id=? AND term_inst_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $term, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $termid, PDO::PARAM_INT,100);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                           
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// term EDITED
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error editing term";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+  }
+
+  //Method to edit subject
+
+function editSchSubject($subjectid,$subject,$schid)
+  {
+    
+        try {
+
+          					//EDIT school tern
+                            $sqlStmt = "UPDATE subjects SET subject_name=?
+                            WHERE sub_id=? AND my_sch_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $subject, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $subjectid, PDO::PARAM_INT,100);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                           
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// Subject EDITED
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error editing subject";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+  //end method to edit subject
+
+
+//Method to edit sessions
+
+function editSchSession($sessionid,$session,$schid)
+  {
+    
+        try {
+
+          					//EDIT school tern
+                            $sqlStmt = "UPDATE session SET session=?
+                            WHERE id=? AND sess_inst_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $session, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $sessionid, PDO::PARAM_INT,100);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                           
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// session EDITED
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error editing session";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+  }
+//End method to edit sessions
+
+
+//Method to edit class
+function editSchClass($classid,$class,$schid)
+  {
+        try {
+          					//EDIT school tern
+                            $sqlStmt = "UPDATE class SET class_name=?
+                            WHERE id=? AND my_inst_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $term, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $termid, PDO::PARAM_INT,100);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                           
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// Class EDITED
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error editing term";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+  }
+//End method to edit class
+
+//Edit school prefix  settings
+function editSchPrefixSettings($prefixid,$prefix,$schid)
+  {
+    
+        try {
+
+          					//EDIT school tern
+                            $sqlStmt = "UPDATE admission_number_prefix SET prefix_name=?
+                            WHERE prefix_id=? AND prefix_sch_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $prefix, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $prefixid, PDO::PARAM_INT,100);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                           
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// prefix EDITED
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error edting term";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+  }
+//End edit school prefix settings
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
