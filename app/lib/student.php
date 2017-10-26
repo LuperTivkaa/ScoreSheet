@@ -618,17 +618,16 @@ public  function addPrefixSettings($name,$seperator,$sch_id,$addedby,$added_date
                 }
                   else{
                      //INSERT PREFIX SETTINGS
-                            $sqlStmt = "INSERT INTO admission_number_prefix (prefix_name,prefix_seperator,prefix_sch_id,prefix_addedby,prefix_added_date,prefix_edited_date,
+                            $sqlStmt = "INSERT INTO admission_number_prefix(prefix_name,prefix_sch_id,prefix_addedby,prefix_added_date,prefix_edited_date,
                             status)
-                             values (?,?,?,?,?,?,?)";
+                             values (?,?,?,?,?,?)";
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $name, PDO::PARAM_STR,100);
-                            $this->conn->bind(2, $seperator, PDO::PARAM_STR,100);
-                            $this->conn->bind(3, $sch_id, PDO::PARAM_STR,100);
-                            $this->conn->bind(4, $addedby, PDO::PARAM_INT); 
-                            $this->conn->bind(5, $added_date, PDO::PARAM_STR);
-                            $this->conn->bind(6, $edited_date, PDO::PARAM_STR,100);
-                            $this->conn->bind(7, $status, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $sch_id, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $addedby, PDO::PARAM_INT); 
+                            $this->conn->bind(4, $added_date, PDO::PARAM_STR);
+                            $this->conn->bind(5, $edited_date, PDO::PARAM_STR,100);
+                            $this->conn->bind(6, $status, PDO::PARAM_STR,100);
                             $this->conn->execute(); 
 
                             if ($this->conn->rowCount() == 1) 
