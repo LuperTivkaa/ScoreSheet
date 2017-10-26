@@ -21,6 +21,7 @@
                             <ul>
                             <li><a class="load-url" href="newStaff.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i>New Staff</a></li>
                             <li><a class="load-url" href="createStaffSubjects.php"><i class="fa fa-clone fa-fw" aria-hidden="true"></i>Assign Subject(s)</a></li>
+                            <li><a class="load-url" href="classTeacher.php"><i class="fa fa-briefcase" aria-hidden="true"></i>Assign Class Teacher</a></li>
                             <li><a class="my-staff" href="male.php"><i class="fa fa-male fa-fw" aria-hidden="true"></i>Staff</a></li>
                             <li><a class="my-staff" href="female.php"><i class="fa fa-female fa-fw" aria-hidden="true"></i> Staff</a></li>
                             </ul>   
