@@ -11,20 +11,20 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
         class.class_name AS ClassName, 
         sch_term.term AS Term,
         session.session AS session, (SELECT COUNT( classpositionals.student_id )
-        FROM classpositionals WHERE classpositionals.class_id=1 
-        AND classpositionals.session_id=7
-        AND classpositionals.term_id=1
-        AND classpositionals.school_id=2) AS studentCount,
+        FROM classpositionals WHERE classpositionals.class_id=? 
+        AND classpositionals.session_id=?
+        AND classpositionals.term_id=?
+        AND classpositionals.school_id=?) AS studentCount,
         (SELECT FORMAT(GrandTermTotal / (SELECT COUNT( subjects.sub_id )
         FROM subjects INNER JOIN class_subject
         ON subjects.sub_id=class_subject.subject_id 
-        WHERE class_subject.class_id=1 AND class_subject.school_id=2),2 ) 
+        WHERE class_subject.class_id=? AND class_subject.school_id=?),2 ) 
         FROM termgrandtotal WHERE 
-        termgrandtotal.student_id=2 
-        AND termgrandtotal.class_id=1
-        AND termgrandtotal.term_id=1 
-        AND termgrandtotal.session_id=7
-        AND termgrandtotal.sch_id=2) AS Average,
+        termgrandtotal.student_id=? 
+        AND termgrandtotal.class_id=?
+        AND termgrandtotal.term_id=? 
+        AND termgrandtotal.session_id=?
+        AND termgrandtotal.sch_id=?) AS Average,
         classpositionals.termgrandtotal AS Total,
         classpositionals.termposition AS TermPosition
 	    FROM student_initial 
@@ -32,11 +32,11 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
         INNER JOIN class ON class.id=classpositionals.class_id
         INNER JOIN sch_term ON classpositionals.term_id=sch_term.term_id
         INNER JOIN session ON session.id=classpositionals.session_id
-	    WHERE classpositionals.student_id=2 
-        AND classpositionals.class_id=1 
-        AND classpositionals.session_id=7
-        AND classpositionals.term_id=1
-        AND classpositionals.school_id=2";
+	    WHERE classpositionals.student_id=? 
+        AND classpositionals.class_id=? 
+        AND classpositionals.session_id=?
+        AND classpositionals.term_id=?
+        AND classpositionals.school_id=?";
         $this->conn->query($query);
         $this->conn->bind(1, $classid, PDO::PARAM_INT);
         $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
