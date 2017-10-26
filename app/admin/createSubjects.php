@@ -39,7 +39,7 @@ $clientid = $_SESSION['user_info'][4];
                 <label for="subject-list">Select Subject</label>
                 <select class="custom-select form-control" id="subject-list">
                 </select>
-              </div>
+            </div>
 
               <div class="form-group col-md-6">
                 
