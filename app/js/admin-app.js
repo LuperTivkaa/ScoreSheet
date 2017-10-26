@@ -561,3 +561,37 @@ function studentGeneralSearch(searchvar) {
         },
     });
 }
+
+//create class teacher functionality
+
+$("#new-content").on('click', '#class-teacher', function(e) {
+    e.preventDefault();
+    $('#class-teacher').text("Assigning....").prop("disabled", true);
+    var staff = $("#staff option:selected").val();
+    var myclass = $("#class option:selected").val();
+    //var jsURL = $('#input').attr('value');
+    createClass(staff, myclass);
+});
+
+//function to assign class teacher call back
+function createClass(staff, myclass) {
+    $.ajax({
+        url: 'addClassTeacher.php',
+        type: 'POST',
+        data: { staff: staff, myclass: myclass },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#class-teacher').text("Assign Class Teacher").prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Staff assigned class successfully...");
+            } else {
+                $('#class-teacher').text("Assign Class Teacher").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+//end create class teacher functionality
