@@ -597,7 +597,7 @@ function advancedCaSearch($class,$subject,$session,$term,$schid)
   //Search Examination reecord
 function basicExamSearch($searchVar,$schid)
   {
-        // Try and Catch block
+        //Try and Catch block
    try
     {
     //CHECK IF THE VARIABLE SUPPLIED IS A STUDENT ID NUMBER AND NOT THE FULL REG NUMBER
@@ -1145,7 +1145,7 @@ function grandTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
  //END GRAND TOTAL
 
 //ca Totals 
-	function caTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
+function caTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
 	  {
 		
 		try {
@@ -1929,8 +1929,9 @@ function schoolProfileHeader($clientid)
                     }
                     else
                     {
-                    $printOutput.='<h5><img src="../images/avatar.jpg" alt="School Logo" class="logo-img"></h5>';
+                    $printOutput.='<h5><img src="../images/badge.jpg" alt="School Logo" class="logo-img"></h5>';
                     $printOutput.='<h5>'.$schoolName.'</h5>';
+                    $printOutput.='<p>'.$Address.'</p>';
                     $printOutput.='<p>'.$countryState.'</p>';
                     $printOutput.='<p>'.$Mobile.'</p>';
                     }
@@ -2035,7 +2036,7 @@ function editTerminalExam($score,$subj,$class,$staffid,$recordid,$schid)
       $termid = $this->getActiveTerm($schid);
       $sessionid = $this->getActiveSession($schid);
       //$student_id = $this->getStudentId($stud_no,$schid);
-
+      $this->isSubjectTeacher($staffid,$subj,$class,$schid);
         try {
 
           					//EDIT EXAM RECORD
@@ -2247,7 +2248,7 @@ function editCa($score,$subj,$class,$staffid,$recordid,$schid)
       $termid = $this->getActiveTerm($schid);
       $sessionid = $this->getActiveSession($schid);
       //$student_id = $this->getStudentId($stud_no,$schid);
-
+      $this->isSubjectTeacher($staffid,$subj,$class,$schid);
         try {
 
           					//EDIT EXAM RECORD
@@ -2290,8 +2291,8 @@ function editCa($score,$subj,$class,$staffid,$recordid,$schid)
 function traits($classid,$schoolid)
 	    {
 		 try {
-      $termid = $this->getActiveTerm($schid);
-      $sessionid = $this->getActiveSession($schid);
+      $termid = $this->getActiveTerm($schoolid);
+      $sessionid = $this->getActiveSession($schoolid);
         $query ="SELECT DISTINCT 
         CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname,
         student_initial.id AS StudentID,
@@ -2301,7 +2302,7 @@ function traits($classid,$schoolid)
         class.class_name AS ClassName,
         session.session AS SessionName,
         sch_term.term AS TermName
-	      FROM student_initial INNER JOIN classpositionals ON student_initial.id=classpositionals.student_id
+	      FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
         INNER JOIN class ON class.id=classpositionals.class_id
         INNER JOIN session ON session.id=classpositionals.session_id
         INNER JOIN sch_term ON sch_term.term_id=classpositionals.term_id 
@@ -2318,7 +2319,7 @@ function traits($classid,$schoolid)
             {
           $printOutput = " ";
         
-          $printOutput.= "<table class='datatable'>";
+          $printOutput.= "<table class='table table-responsive'>";
           $printOutput.="<tr>
           <th>S/NO</th>
           <th>Student Name</th>
@@ -2330,7 +2331,7 @@ function traits($classid,$schoolid)
           <TH>Action</th>
           </tr>";
 				  $ci=1;
-          foreach($myResult as $row => $key)
+          foreach($output as $row => $key)
           {
           $printOutput.='<tr>';
           $printOutput.='<td>'.$ci.'</td>';
@@ -2339,8 +2340,8 @@ function traits($classid,$schoolid)
           $printOutput.='<td>'.$key['TermName'].'</td>';
           $printOutput.='<td>'.$key['SessionName'].'</td>';
           $printOutput.='<td>'.$key['CumulativeScores'].'</td>';
-          $printOutput.='<td>'.$key['Position'].'</td>';
-          $printOutput.='<td><button type="button"  data-recordid="'.$key['RecordID'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Affetive Domain</button></td>';
+          $printOutput.='<td>'.$this->ordinalSuffix($key['Position']).'</td>';
+          $printOutput.='<td><button type="button"  data-recordid="'.$key['StudentID'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-plus" aria-hidden="true"></i>Add Traits & comments</button></td>';
           $printOutput.='</tr>'; 
           $ci++;
           }
@@ -2358,6 +2359,1107 @@ function traits($classid,$schoolid)
         }
 	    }
 //End traits
+
+//Create affective domain rating
+function newAffectiveDomain($domain,$rating,$studentid,$schid,$staffid,$date)
+  {
+  // always use try and catch block to write code
+       try {  
+                    $termid = $this->getActiveTerm($schid);
+                    $sessionid = $this->getActiveSession($schid);
+                    $query ="SELECT  id  FROM stud_affective_skills WHERE domain_id =?
+                    AND termid=? AND sessionid=? AND schid=?";
+                    $this->conn->query($query);
+										$this->conn->bind(1, $domain, PDO::PARAM_INT);
+										$this->conn->bind(2, $termid, PDO::PARAM_INT);
+										$this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+                    $this->conn->bind(4, $schid, PDO::PARAM_INT);
+                    $this->conn->resultset();
+                   
+                    	if ($this->conn->rowCount() >= 1)
+                    	  {
+                        exit("Item added already!");
+                    	  }
+                    	else{
+                            $sqlStmt = "INSERT INTO stud_affective_skills(domain_id,rating,studentid,
+                            termid,sessionid,schid,staffid,date_added)
+                            values (?,?,?,?,?,?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $domain, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $rating, PDO::PARAM_INT,100);
+                            $this->conn->bind(3, $studentid, PDO::PARAM_INT,100);
+                            $this->conn->bind(4, $termid, PDO::PARAM_INT);
+                            $this->conn->bind(5, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(6, $schid, PDO::PARAM_INT);
+                            $this->conn->bind(7, $staffid, PDO::PARAM_INT);
+                            $this->conn->bind(8, $date, PDO::PARAM_STR);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// SCORES ADDED
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error adding scores";
+                      			}
+
+                    		}
+        }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+
+//end method to create affectivec domain ratings
+
+//Create psychomotor skills
+function newPsychomotorSkills($domain,$rating,$studentid,$schid,$staffid,$date)
+  {
+  // always use try and catch block to write code
+       try {
+
+                    //ADD MAX OF THREE CA'S PER SUBJECT
+                    $termid = $this->getActiveTerm($schid);
+                    $sessionid = $this->getActiveSession($schid);
+                    //Check for the number of CA added
+                    $query ="SELECT  id  FROM stud_psychomotor_skills WHERE psycho_domain=?
+                    AND termid=? AND sessionid=? AND schid=?";
+                    $this->conn->query($query);
+										$this->conn->bind(1, $domain, PDO::PARAM_INT);
+										$this->conn->bind(2, $termid, PDO::PARAM_INT);
+										$this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+                    $this->conn->bind(4, $schid, PDO::PARAM_INT);
+                    $this->conn->resultset();
+                   
+                    	if ($this->conn->rowCount() >= 1)
+                    	  {
+                      exit("Item added already!");
+                    	  }
+                    	else{
+          					        // ADD PSYCHOMOTOR SKILLS
+                            $sqlStmt = "INSERT INTO stud_psychomotor_skills(psycho_domain,rating,studentid,
+                            termid,sessionid,schid,staff_id,date_added)
+                            values (?,?,?,?,?,?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $domain, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $rating, PDO::PARAM_INT,100);
+                            $this->conn->bind(3, $studentid, PDO::PARAM_INT,100);
+                            $this->conn->bind(4, $termid, PDO::PARAM_INT);
+                            $this->conn->bind(5, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(6, $schid, PDO::PARAM_INT);
+                            $this->conn->bind(7, $staffid, PDO::PARAM_INT);
+                            $this->conn->bind(8, $date, PDO::PARAM_STR);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		   {
+                         		   // SCORES ADDED
+                        		   echo "ok";
+                        		   }
+                        		   else
+                        		   {
+                        		   echo "Error adding scores";
+                      			   }
+
+                    		}
+        }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//end create psychomotor skills
+
+//load added traits items for a particular student
+/* 
+The exam id is the particula exam record id found in the classpositionals table
+This id relate to only one student for a particular term only
+Using it relates directly to a student
+*/
+function reloadAffectiveTraits($studentid,$schid)
+  {
+  // Try and Catch block
+   try
+        {
+           $termid = $this->getActiveTerm($schid);
+           $sessionid = $this->getActiveSession($schid);
+  			   $query ="SELECT stud_affective_skills.id AS Skills_ID,affective_domain.description AS Description, rating_system.description AS Rating
+             FROM stud_affective_skills 
+             INNER JOIN affective_domain ON affective_domain.id=stud_affective_skills.domain_id
+             INNER JOIN rating_system ON rating_system.id=stud_affective_skills.rating
+             WHERE 
+             stud_affective_skills.studentid=? 
+             AND stud_affective_skills.schid=?";
+          $this->conn->query($query);
+          //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $myResult= $this->conn->resultset();
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        exit("No added aafective traits seen!");
+                        }
+                        else{
+                        $printOutput = " ";
+                        $printOutput.= '<table  class="transparent-table">';
+                        $printOutput.='<tr><th>#</th>
+                        <th>Affective Domain</th>
+                        <th>Rating</th>
+                        <th>Remove</th>';
+                        $ci=1;
+                        foreach($myResult as $row => $key)
+                        {
+                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['Description'].'</td>';
+                        $printOutput.='<td>'.$key['Rating'].'</td>';
+                        $printOutput.='<td><button type="button" data-id="'.$key['Skills_ID'].'" class="btn btn-outline-danger btn-sm" id="remove-trait"><i class="fa fa-trash-o" aria-hidden="true"></i></button></td>'; 
+                        $printOutput.='</tr>'; 
+                        $ci++;
+                        }
+                      $printOutput.= "</table>";
+                      echo $printOutput;
+  		            }
+            //   }   
+  	
+  		      // else
+  		      //   {
+            //       exit("Can not find search record, something went wrong!");
+  		      //   }
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+
+//End load added traits items for a particular student
+
+//Load psychomotor skills added for a particular student
+function reloadPsychomotorSkills($studentid,$schid)
+
+
+  {
+  // Try and Catch block
+   try
+        {
+           $termid = $this->getActiveTerm($schid);
+           $sessionid = $this->getActiveSession($schid);
+  			   $query ="SELECT stud_psychomotor_skills.id AS Skills_ID,psychomotor_skills.description AS Description, rating_system.description AS Rating
+             FROM stud_psychomotor_skills 
+             INNER JOIN psychomotor_skills ON psychomotor_skills.id=stud_psychomotor_skills.psycho_domain
+             INNER JOIN rating_system ON rating_system.id=stud_psychomotor_skills.rating
+             WHERE 
+             stud_psychomotor_skills.studentid=? 
+             AND stud_psychomotor_skills.schid=?";
+          $this->conn->query($query);
+          //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $myResult= $this->conn->resultset();
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        exit("No added psychomotor skills seen!");
+                        }
+                        else{
+                        $printOutput = " ";
+                        $printOutput.= '<table  class="transparent-table">';
+                        $printOutput.='<tr><th>#</th>
+                        <th>Psychomotor</th>
+                        <th>Rating</th>
+                        <th>Remove</th>';
+                        $ci=1;
+                        foreach($myResult as $row => $key)
+                        {
+                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['Description'].'</td>';
+                        $printOutput.='<td>'.$key['Rating'].'</td>';
+                        $printOutput.='<td><button type="button" data-id="'.$key['Skills_ID'].'" class="btn btn-outline-danger btn-sm" id="remove-psycho-trait"><i class="fa fa-trash-o" aria-hidden="true"></i></button></td>'; 
+                        $printOutput.='</tr>'; 
+                        $ci++;
+                        }
+                      $printOutput.= "</table>";
+                      echo $printOutput;
+  		            }
+            //   }   
+  	
+  		      // else
+  		      //   {
+            //       exit("Can not find search record, something went wrong!");
+  		      //   }
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//End load psychomotor skills for a student
+//Remove affective traits
+function deleteAffectiveTraits($id)
+  {
+      
+                 try {
+
+          					     //EDIT EXAM RECORD
+                            $sqlStmt = "DELETE  FROM stud_affective_skills WHERE stud_affective_skills.id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $id, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// action successful
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error removing affective item";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+
+ //REMOVE PSYCHO SKILLS
+function deletePsychoSkills($id)
+   {
+      
+                 try {
+
+          					     //EDIT EXAM RECORD
+                            $sqlStmt = "DELETE  FROM stud_psychomotor_skills WHERE stud_psychomotor_skills.id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $id, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// action successful
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error removing psychomotor item";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+    }
+//add staff comments
+function newStaffComment($studentid,$comment,$schid)
+  {
+      // always use try and catch block to write code
+      $termid = $this->getActiveTerm($schid);
+      $sessionid = $this->getActiveSession($schid);
+      //$student_id = $this->getStudentId($stud_no,$schid);
+        try {
+
+                          $sqlStmt = "UPDATE classpositionals SET class_teacher_comm=? WHERE student_id=? AND term_id=? AND session_id=? AND school_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $comment, PDO::PARAM_INT);
+                            $this->conn->bind(2, $studentid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $termid, PDO::PARAM_INT);
+                            $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(5, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// comments added
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error adding staff comment";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+
+/*
+This  is a method that selects all students in a class and display
+their status in added comments. traits 
+*/
+
+//Add admin comment
+
+function newAdminComment($studentid,$comment,$schid)
+  {
+      // always use try and catch block to write code
+      $termid = $this->getActiveTerm($schid);
+      $sessionid = $this->getActiveSession($schid);
+      //$student_id = $this->getStudentId($stud_no,$schid);
+        try {
+
+                          $sqlStmt = "UPDATE classpositionals SET head_teacher_comm=? WHERE student_id=? AND term_id=? AND session_id=? AND school_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $comment, PDO::PARAM_INT);
+                            $this->conn->bind(2, $studentid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $termid, PDO::PARAM_INT);
+                            $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(5, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// comments added
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error adding Admin comment";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+
+//Add new admin comments
+
+//Comments summary
+function commentSummary($classid,$termid,$sessionid,$schoolid)
+	    {
+		 try {
+        $query ="SELECT DISTINCT classpositionals.student_id AS recordID,classpositionals.termgrandtotal AS cumTotal,classpositionals.termposition AS Position,
+        classpositionals.class_teacher_comm AS StaffComment,
+        CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname,
+        class.class_name AS ClassName,
+        session.session AS SessionName,
+        sch_term.term AS TermName
+	      FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
+        INNER JOIN class ON class.id=classpositionals.class_id
+        INNER JOIN session ON session.id=classpositionals.session_id
+        INNER JOIN sch_term ON sch_term.term_id=classpositionals.term_id 
+	      WHERE classpositionals.class_id=? AND 
+        classpositionals.term_id=? AND classpositionals.session_id=? AND classpositionals.school_id=? ORDER BY Position";
+        $this->conn->query($query);
+        $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+        $this->conn->bind(2, $termid, PDO::PARAM_INT); 
+        $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+				$this->conn->bind(4, $schoolid, PDO::PARAM_INT);
+        $output = $this->conn->resultset(); 
+        $printOutput = " ";
+          //ouput table headers below here
+					$printOutput = " ";
+          $printOutput.= "<table class='transparent-table'>";
+          $printOutput.="<tr>
+          <th>S/NO</th>
+          <th>Student Name</th>
+          <th>Class</th>
+          <th>Term</th>
+          <TH>Session</th>
+          <TH>Cum. Total</th>
+          <TH>Position</th>
+          <TH>Affective Domain</th>
+          <TH>Psychomotor Skills</th>
+          <TH>Staff Comment</th>
+          <TH>Action</th>
+          </tr>";
+          $ci=1;
+					foreach($output as $row => $key)
+					{
+            if(empty($key['StaffComment']) ||$key['StaffComment']==null ){
+              $comm = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>';
+            }else{
+              $comm= '<i class="fa fa-check" aria-hidden="true"></i>';
+            }
+          $printOutput.='<tr>';
+          $printOutput.='<td>'.$ci.'</td>';
+          $printOutput.='<td>'.$key['Fullname'].'</td>';
+          $printOutput.='<td>'.$key['ClassName'].'</td>';
+          $printOutput.='<td>'.$key['TermName'].'</td>';
+          $printOutput.='<td>'.$key['SessionName'].'</td>';
+          $printOutput.='<td>'.$key['cumTotal'].'</td>';
+          $printOutput.='<td>'.$key['Position'].'</td>';
+          $printOutput.='<td>'.$this->isAffectiveDomain($key['recordID'],$schoolid).'</td>';
+          $printOutput.='<td>'.$this->isPsychomotorSkills($key['recordID'],$schoolid).'</td>';
+          $printOutput.='<td>'.$comm.'</td>';
+          $printOutput.='<td><button type="button"  data-recordid="'.$key['recordID'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-plus" aria-hidden="true"></i>Add Traits & comments</button></td>';
+          $printOutput.='</tr>'; 
+          $ci++;
+					}
+          $printOutput.='</table>';
+          echo $printOutput;
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+      //End comment summary
+
+
+//Check availability of affective domain
+function isAffectiveDomain($studentid,$schid)
+  {
+  // Try and Catch block
+   try
+        {
+           $termid = $this->getActiveTerm($schid);
+           $sessionid = $this->getActiveSession($schid);
+  			   $query ="SELECT domain_id
+             FROM stud_affective_skills 
+             WHERE 
+             stud_affective_skills.studentid=? 
+             AND stud_affective_skills.schid=? LIMIT 1";
+          $this->conn->query($query);
+          //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $myResult= $this->conn->resultset();
+          $var ="";
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        $var = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>';
+                        return $var;
+                        }
+                        else{
+                        $var = '<i class="fa fa-check" aria-hidden="true"></i>';
+                        return $var;
+  		                    }
+  
+       }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+    //End check for affective domain
+
+//Check for availability of psychomotor
+function isPsychomotorSkills($studentid,$schid)
+  {
+  // Try and Catch block
+   try
+        {
+           $termid = $this->getActiveTerm($schid);
+           $sessionid = $this->getActiveSession($schid);
+  			   $query ="SELECT psycho_domain
+             FROM stud_psychomotor_skills 
+             WHERE 
+             stud_psychomotor_skills.studentid=? 
+             AND stud_psychomotor_skills.schid=? LIMIT 1";
+          $this->conn->query($query);
+          //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $myResult= $this->conn->resultset();
+            $var = "";
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        $var = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>';
+                        return $var;
+                        }
+                        else{
+                        $var = '<i class="fa fa-check" aria-hidden="true"></i>';
+                        return $var;
+  		                    }
+  
+       }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//End check for availability of psychomotor
+
+//Publish Final Result by staff
+function publishFinalResult($class,$term,$session,$schid,$status="Yes")
+  {
+      // always use try and catch block to write code
+      $termid = $this->getActiveTerm($schid);
+      $sessionid = $this->getActiveSession($schid);
+      //$student_id = $this->getStudentId($stud_no,$schid);
+        try {
+
+                          $sqlStmt = "UPDATE classpositionals SET published_status=? WHERE class_id=? AND term_id=? AND session_id=? AND school_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $status, PDO::PARAM_STR,12);
+                            $this->conn->bind(2, $class, PDO::PARAM_INT);
+                            $this->conn->bind(3, $term, PDO::PARAM_INT);
+                            $this->conn->bind(4, $session, PDO::PARAM_INT);
+                            $this->conn->bind(5, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() >= 1)
+                        		{
+                         		// comments added
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error publishing result";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+
+//RESULT DETAILS BY SUBJECT FOR RESULT SHEET
+function resultDetails($studentid,$classid,$termid,$sessionid,$schoolid)
+	    {
+		  try {
+			
+        $query ="SELECT DISTINCT 
+        subjects.subject_name AS subjectName,
+        subjects.sub_id AS SubjectID
+	      FROM subjects INNER JOIN assessment ON assessment.ass_subject_id=subjects.sub_id
+	      WHERE assessment.ass_student_id=? AND 
+        assessment.ass_class_id=? AND assessment.ass_session_id=?
+        AND assessment.ass_term_id=?  AND assessment.ass_sch_id=?";
+        $this->conn->query($query);
+        //$this->conn->bind(1, $subjectid, PDO::PARAM_INT);
+        $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+				$this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+        $this->conn->bind(4, $termid, PDO::PARAM_INT); 
+				$this->conn->bind(5, $schoolid, PDO::PARAM_INT);
+        $output = $this->conn->resultset(); 
+					//echo count($output);
+          //ouput table headers below here
+					$printOutput = " ";
+          $printOutput.= "<table class='datatable'>";
+          $printOutput.="<tr>
+          <th>Subject</th>
+          <th>1st CA 10%</th>
+          <th>2nd CA 10%</th>
+          <TH>3rd CA 10%</th>
+          <TH>CA Total 30%</th>
+          <TH>Term Exams 70%</th>
+          <TH>Term Total 100%</th>
+          <TH>Class AVerage</th>
+          <TH>Subject Position</th>
+          <TH>Grade</th>
+          <TH>Comment</th>
+          <th>Sign</th>
+          </tr>";
+					foreach($output as $row => $key)
+					{
+            $subjectID = $key['SubjectID'];
+
+            $terminalSUbjectTotals= $this->subjectTotals($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            
+						$printOutput.='<tr>';
+						$printOutput.='<td>'.$key['subjectName'].'</td>';
+            $printOutput.=$this->print_ca($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->caTotals($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->subject_ScoresTotal($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.='<td>'.$terminalSUbjectTotals.'</td>';
+            $printOutput.=$this->subjectAv($subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->getSubjectPosition($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->gradingScores($terminalSUbjectTotals);
+            $printOutput.='<td>'.$this->staffSign($classid,$subjectID,$schoolid).'</td>';
+						$printOutput.='</tr>';
+					}
+          $printOutput.='</table>';
+          echo $printOutput;
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+
+
+/*
+This block of code below retrieve cognitive and psychomotor skills
+*/
+
+//Retrieve Affecctive ratings
+function resultAffectiveTraits($studentid,$schid)
+  {
+  // Try and Catch block
+   try
+        {
+           $termid = $this->getActiveTerm($schid);
+           $sessionid = $this->getActiveSession($schid);
+  			   $query ="SELECT stud_affective_skills.id AS Skills_ID,affective_domain.description AS Description, rating_system.description AS Rating
+             FROM stud_affective_skills 
+             INNER JOIN affective_domain ON affective_domain.id=stud_affective_skills.domain_id
+             INNER JOIN rating_system ON rating_system.id=stud_affective_skills.rating
+             WHERE 
+             stud_affective_skills.studentid=? 
+             AND stud_affective_skills.schid=?";
+          $this->conn->query($query);
+          //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $myResult= $this->conn->resultset();
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        exit("No added affective traits seen!");
+                        }
+                        else{
+                        $printOutput = " ";
+                        $printOutput.= '<ul class="traits-display">';
+                        foreach($myResult as $row => $key)
+                        {
+                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $printOutput.='<li>';
+                        $printOutput.='<p>'.$key['Description'].'</p>';
+                        $printOutput.='<span>'.$key['Rating'].'</span>';
+                        $printOutput.='</li>'; 
+                        }
+                      $printOutput.= "</ul>";
+                      echo $printOutput;
+  		            }
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//End affective  ratings
+
+//Retrieve psychomotor skills
+function resultPsychomotorSkills($studentid,$schid)
+
+
+  {
+  // Try and Catch block
+   try
+        {
+           $termid = $this->getActiveTerm($schid);
+           $sessionid = $this->getActiveSession($schid);
+  			   $query ="SELECT stud_psychomotor_skills.id AS Skills_ID,psychomotor_skills.description AS Description, rating_system.description AS Rating
+             FROM stud_psychomotor_skills 
+             INNER JOIN psychomotor_skills ON psychomotor_skills.id=stud_psychomotor_skills.psycho_domain
+             INNER JOIN rating_system ON rating_system.id=stud_psychomotor_skills.rating
+             WHERE 
+             stud_psychomotor_skills.studentid=? 
+             AND stud_psychomotor_skills.schid=?";
+          $this->conn->query($query);
+          //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
+					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $myResult= $this->conn->resultset();
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        exit("No added psychomotor skills seen!");
+                        }
+                        else{
+                        $printOutput = " ";
+                        $printOutput.= '<ul class="traits-display">';
+                        $ci=1;
+                        foreach($myResult as $row => $key)
+                        {
+                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $printOutput.='<li>';
+                        $printOutput.='<p>'.$key['Description'].'</p>';
+                        $printOutput.='<span>'.$key['Rating'].'</span>'; 
+                        $printOutput.='</li>'; 
+                        $ci++;
+                        }
+                      $printOutput.= "</ul>";
+                      echo $printOutput;
+  		            }
+           
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+
+//end psychomotor skills
+
+//Random Color Generator
+function randomColor(){
+  $var = "";
+    $rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
+    $color = '#'.$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)];
+ $var.='style="background:'.$color.'"';
+    echo $var; 
+}
+
+//Student Avatar generator
+function studentAvatar($studentid,$schid)
+	    {
+		try {     	
+        $query ="SELECT surname AS Fullname,
+        img AS Image
+        FROM student_initial
+       
+	    WHERE id=? AND stud_sch_id=? ";
+        $this->conn->query($query);
+        $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+        $this->conn->bind(2, $schid, PDO::PARAM_INT);
+        $output = $this->conn->resultset(); 
+					//echo count($output);
+          //ouput table headers below here
+					$printOutput = " ";
+					foreach($output as $row => $key)
+					{
+            $studentName = $key['Fullname'];
+            $initial = strtoupper(substr($studentName, 0, 1));
+            $Image = $key['Image'];
+            //$color = $this->randomColor();
+					}
+          if(empty($Image))
+          {
+          $printOutput.='<div class="student-avatar">
+          <h5 class="avatar-h5">'.$initial.'</h5>
+          </div>';
+          }
+          else
+          {
+          $printOutput.='<div class="student-avatar">
+          <h5><img src="'.$Image.'" alt="'.$studentName.'" class="avatar-img"></h5>
+          </div>';
+          }
+                    
+          echo $printOutput;
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	     }
+
+//Test whether a staff is a subject teacher
+public  function isSubjectTeacher($staff_id,$subjectid,$class_id,$schid)
+  {
+   //always use try and catch block to write code
+  try{
+      //find the subject teacher
+                    $query ="SELECT id FROM staff_subject_taught WHERE subject_id=? AND class_taught=? AND my_id=? AND sch_identity=?";
+                    $this->conn->query($query);
+                     $this->conn->bind(1, $subjectid, PDO::PARAM_INT);
+                    $this->conn->bind(2, $class_taught, PDO::PARAM_INT);
+                    $this->conn->bind(3, $my_id, PDO::PARAM_INT);
+                    $this->conn->bind(4, $sch_identity, PDO::PARAM_INT);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() == 0)
+                    {
+                      exit("Sorry! You don't have access to edit this scores");
+                    }
+                    else{
+                          
+                        }     
+        }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+
+//View Published results
+
+function findPublishedResult($classid,$schoolid,$status='Yes')
+	    {
+		 try {
+      $termid = $this->getActiveTerm($schoolid);
+      $sessionid = $this->getActiveSession($schoolid);
+        $query ="SELECT DISTINCT 
+        CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname,
+        student_initial.id AS StudentID,
+        classpositionals.id AS RecordID,
+        classpositionals.termgrandtotal AS CumulativeScores,
+        classpositionals.termposition AS Position,
+        class.class_name AS ClassName,
+        session.session AS SessionName,
+        sch_term.term AS TermName
+	      FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
+        INNER JOIN class ON class.id=classpositionals.class_id
+        INNER JOIN session ON session.id=classpositionals.session_id
+        INNER JOIN sch_term ON sch_term.term_id=classpositionals.term_id 
+	      WHERE classpositionals.class_id=? AND 
+        classpositionals.term_id=? AND classpositionals.session_id=?
+        AND classpositionals.school_id=? AND classpositionals.published_status=?";
+        $this->conn->query($query);
+        $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+		$this->conn->bind(2, $termid, PDO::PARAM_INT);
+        $this->conn->bind(3, $sessionid, PDO::PARAM_INT); 
+		$this->conn->bind(4, $schoolid, PDO::PARAM_INT);
+        $this->conn->bind(5, $status, PDO::PARAM_INT);
+        $output = $this->conn->resultset(); 
+        if($this->conn->rowCount() >= 1)
+            {
+          $printOutput = " ";
+        
+          $printOutput.= "<table class='table table-responsive'>";
+          $printOutput.="<tr>
+          <th>S/NO</th>
+          <th>Student Name</th>
+          <TH>Class</th>
+          <TH>Term</th>
+          <TH>Session</th>
+          <TH>Cumulative Scores</th>
+          <TH>Position</th>
+          <TH>Action</th>
+          </tr>";
+				  $ci=1;
+          foreach($output as $row => $key)
+          {
+          $printOutput.='<tr>';
+          $printOutput.='<td>'.$ci.'</td>';
+          $printOutput.='<td>'.$key['Fullname'].'</td>';
+          $printOutput.='<td>'.$key['ClassName'].'</td>';
+          $printOutput.='<td>'.$key['TermName'].'</td>';
+          $printOutput.='<td>'.$key['SessionName'].'</td>';
+          $printOutput.='<td>'.$key['CumulativeScores'].'</td>';
+          $printOutput.='<td>'.$this->ordinalSuffix($key['Position']).'</td>';
+          $printOutput.='<td><button type="button"  data-recordid="'.$key['StudentID'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-plus" aria-hidden="true"></i>Add Traits & comments</button></td>';
+          $printOutput.='</tr>'; 
+          $ci++;
+          }
+          $printOutput.= "</table>";
+          echo $printOutput;
+            }
+            else{
+              exit("No result published for this class yet!");
+            }
+
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+
+//end published results
+
+
+//Fetch result for approval
+
+function resultForApproval($classid,$termid,$sessionid,$schoolid)
+	    {
+		 try {
+        $query ="SELECT DISTINCT classpositionals.student_id AS recordID,classpositionals.termgrandtotal AS cumTotal,classpositionals.termposition AS Position,
+        classpositionals.class_teacher_comm AS StaffComment,
+        classpositionals.head_teacher_comm AS headComment,
+        classpositionals.approval_status AS Approval,
+        CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname,
+        class.class_name AS ClassName,
+        session.session AS SessionName,
+        sch_term.term AS TermName
+	      FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
+        INNER JOIN class ON class.id=classpositionals.class_id
+        INNER JOIN session ON session.id=classpositionals.session_id
+        INNER JOIN sch_term ON sch_term.term_id=classpositionals.term_id 
+	      WHERE classpositionals.class_id=? AND 
+        classpositionals.term_id=? AND classpositionals.session_id=? AND classpositionals.school_id=? ORDER BY Position";
+        $this->conn->query($query);
+        $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+        $this->conn->bind(2, $termid, PDO::PARAM_INT); 
+        $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+				$this->conn->bind(4, $schoolid, PDO::PARAM_INT);
+        $output = $this->conn->resultset(); 
+        $printOutput = " ";
+          //ouput table headers below here
+					$printOutput = " ";
+          $printOutput.= "<table class='datatable'>";
+          $printOutput.="<tr>
+          <th>S/NO</th>
+          <th>Student Name</th>
+          <th>Class</th>
+          <th>Term</th>
+          <TH>Session</th>
+          <TH>Cum. Total</th>
+          <TH>Position</th>
+          <TH>Affective Domain</th>
+          <TH>Psychomotor Skills</th>
+          <TH>Staff Comment</th>
+          <TH>Head Teacher's Comment</th>
+          <TH>Action</th>
+          </tr>";
+          $ci=1;
+					foreach($output as $row => $key)
+					{
+            if(empty($key['StaffComment']) ||$key['StaffComment']==null ){
+              $comm = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>';
+            }else{
+              $comm= '<i class="fa fa-check" aria-hidden="true"></i>';
+            }
+            //check for head teacher comment
+            if(empty($key['headComment']) || $key['headComment']==null ){
+              $hcomm = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>';
+            }else{
+              $hcomm= '<i class="fa fa-check" aria-hidden="true"></i>';
+            }
+            //approval status
+            if(empty($key['Approval']) || $key['Approval']==null ){
+              $approval_status = '<button type="button"  data-recordid="'.$key['recordID'].'" class="not-approvedBtn btn-sm" id="approve">Approve</button>';
+            }else{
+              $approval_status= '<button type="button"  data-recordid="'.$key['recordID'].'" class="approvedBtn btn-sm" id="disapprove">Undo Approval</button>';
+            }
+          $printOutput.='<tr>';
+          $printOutput.='<td>'.$ci.'</td>';
+          $printOutput.='<td>'.$key['Fullname'].'</td>';
+          $printOutput.='<td>'.$key['ClassName'].'</td>';
+          $printOutput.='<td>'.$key['TermName'].'</td>';
+          $printOutput.='<td>'.$key['SessionName'].'</td>';
+          $printOutput.='<td>'.$key['cumTotal'].'</td>';
+          $printOutput.='<td>'.$key['Position'].'</td>';
+          $printOutput.='<td>'.$this->isAffectiveDomain($key['recordID'],$schoolid).'</td>';
+          $printOutput.='<td>'.$this->isPsychomotorSkills($key['recordID'],$schoolid).'</td>';
+          $printOutput.='<td>'.$comm.'</td>';
+          $printOutput.='<td>'.$hcomm.'</td>';
+          $printOutput.='<td>'.$approval_status.'</td>';
+          $printOutput.='</tr>'; 
+          $ci++;
+					}
+          $printOutput.='</table>';
+          echo $printOutput;
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+//end get result for approval
+
+
+//Approve Result
+function approveResult($studentid,$schid,$approve="Yes")
+  {
+      // always use try and catch block to write code
+      $termid = $this->getActiveTerm($schid);
+      $sessionid = $this->getActiveSession($schid);
+      //$student_id = $this->getStudentId($stud_no,$schid);
+        try {
+
+                          $sqlStmt = "UPDATE classpositionals SET approval_status=? WHERE student_id=? AND term_id=? AND session_id=? AND school_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $approve, PDO::PARAM_INT);
+                            $this->conn->bind(2, $studentid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $termid, PDO::PARAM_INT);
+                            $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(5, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//result approved
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error approving result";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+//end approve result
+
+//Disapprove result
+function disapproveResult($studentid,$schid,$approve="")
+  {
+      // always use try and catch block to write code
+      $termid = $this->getActiveTerm($schid);
+      $sessionid = $this->getActiveSession($schid);
+      //$student_id = $this->getStudentId($stud_no,$schid);
+        try {
+
+                          $sqlStmt = "UPDATE classpositionals SET approval_status=? WHERE student_id=? AND term_id=? AND session_id=? AND school_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $approve, PDO::PARAM_INT);
+                            $this->conn->bind(2, $studentid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $termid, PDO::PARAM_INT);
+                            $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(5, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//result approved
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error disapproving result";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+//End of disapprove result
+
+
+
+
+
 
 
 
