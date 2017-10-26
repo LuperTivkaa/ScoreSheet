@@ -5,7 +5,6 @@ use ScoreSheet\dbConnection;
 use ScoreSheet\client;
 use ScoreSheet\student;
 use ScoreSheet\staff;
-use ScoreSheet\jobmanager;
 //use \PDO;
 $dbConnection = new dbConnection();
 $student = new student($dbConnection);
