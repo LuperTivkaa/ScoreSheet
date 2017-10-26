@@ -22,7 +22,7 @@ $userid = $_SESSION['user_info'][0];
 
                             <div class="col-12">
                             <label for="studentclass">Select Class</label>
-                            <select class="custom-select  form-control" id="my-class">
+                            <select class="custom-select  form-control" id="studentclass">
                               <?php
                                 $student->loadClass($clientid);
                               ?>
@@ -50,7 +50,7 @@ $userid = $_SESSION['user_info'][0];
                         </div> 
                         <div class="row"> 
                         <div class="col-6">
-                    <button class="btn btn-primary mt-3" type="button" id="fetch-result"><i class="fa fa-database" aria-hidden="true"></i>Show Result</button>
+                    <button class="btn btn-primary mt-3" type="button" id="fetch-result"><i class="fa fa-database" aria-hidden="true"></i> Show Result</button>
                             </div>
                             </div>
                     </div>
