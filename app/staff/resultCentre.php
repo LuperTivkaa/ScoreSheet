@@ -22,33 +22,100 @@
                     <div class="modal-content-div">
                         <span class="closex">&times;</span>
 
-                        <div class="col-6">
-                        <h6 class="top-header text-xs-center mt-3"><i class="fa fa-pencil" aria-hidden="true"></i> Edit Examination Scores</h6>
-                        </div>
-                         <div class="col-6">
-                            <label for="edit-class">Select Class</label>
-                            <select class="custom-select  form-control" id="edit-class">
+                    <div class="col-8">
+                        <h6 class="top-header text-xs-center mt-3"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Student Traits & Comments  
+                        </h6>
+                        <p class="display">
+                            <button type="button" class="custom-btn" id="mydefault">Affective</button>
+                            <button type="button" class="custom-btn" id="nondefault">Psychomotor</button>
+                            <button type="button" class="custom-btn" id="studcomments">Comments</button>
+                        </p>
+                        <p id="modal_error"></p>  
+                         
+                    </div>
+
+                        <!--Affective Domain  -->
+                        <div class="affective-domain-div">
+
+                            <div class="col-8">
+                            <h6 class="highlight top-header text-xs-center mt-3">Affective Domain</h6>
+                            </div>
+
+                            <div class="col-8">
+                            <label for="affective-domain">Select Domain</label>
+                            <select class="custom-select  form-control" id="affective-domain">
                               <?php
-                                $student->loadClass($clientid);
+                                $client->fetchAffectiveDomain($clientid);
                               ?>
                             </select>
                             </div>
                             
-                            <div class="col-6">
-                            <label for="edit-subject">Subject</label>
-                            <select class="custom-select  form-control" id="edit-subject">
+                            <div class="col-8">
+                            <label for="affective-grading">Grading</label>
+                            <select class="custom-select  form-control" id="affective-grading">
+                                <?php
+                                $client->fetchGrading();
+                                ?>
                             </select>
                             </div>
 
-                                <div class="col-md-6">
-                                <label for="edit-scores">Scores</label>
-                                <input type="text" class="form-control" id="edit-scores" name="edit-scores">
-                                </div>
-
-                            <div class="col-6">
-                                <button class="submit btn btn-primary btn-md mt-3 mb-3" id="edit-exam">Edit Scores</button>
+                            <div class="col-4">
+                        <button class="submit btn btn-primary btn-md mt-3 mb-3" id="add-affective-domain"><i class="fa fa-plus" aria-hidden="true"></i> Affective Domain</button>
                             </div>
+                        </div>
+                        <!--End affective div  -->
+                        <!--Begin comments div  -->
+                        
+                        <div class="comments-div">
+                            <div class="col-8">
+                            <h6 class="highlight top-header text-xs-center mt-3">Add Comments</h6>
+                            </div>
+
+                            <div class="col-8">
+                            <label for="comment-id">Enter comment</label>
+                            <textarea class="form-control" id="comment-id" rows="2"></textarea>
+                            <span id="textRemaining">20</span> Characters remaining
+                            </div>
+                            
+                            <div class="col-4">
+                        <button class="submit btn btn-primary btn-md mt-3 mb-3" id="add-comments"><i class="fa fa-plus" aria-hidden="true"></i> Add Comments</button>
+                            </div>
+                        </div>
+                        <!--end comments div  -->
+                        <!--Begin psychomotor skills  -->
+                        <div class="psychomotor-domain-div">
+                            <div class="col-8">
+                            <h6 class="highlight top-header text-xs-center mt-3"> Psychomotor Domain</h6>
+                            </div>
+
+                            <div class="col-8">
+                             <label for="psycho=skills">Select Psychomotor Skills</label>
+                             <select class="custom-select  form-control" id="psycho-skills">
+                              <?php
+                                $client->fetchPsychomotor($clientid);
+                              ?>
+                             </select>
+                             </div>
+
+                             <div class="col-8">
+                            <label for="psycho-grading">Grading</label>
+                            <select class="custom-select  form-control" id="psycho-grading">
+                                <?php
+                                $client->fetchGrading();
+                                ?>
+                            </select>
+                            </div>
+
+                            <div class="col-4">
+                            <button class="submit btn btn-primary btn-md mt-3 mb-3" id="add-psycho-skills"><i class="fa fa-plus" aria-hidden="true"></i> Psychomotor Skills</button>
+                            </div>
+
+                        </div>
                             <input type="hidden" class="form-control" id="record-id" name="record-id">
+                            <hr>
+                            <div class="col-6" id="modal-list">
+                            
+                            </div>
                             
                     </div>
 
@@ -65,11 +132,13 @@
                             <ul class="staff-menu">
                             <li><a class="load-url" href="traits.php"><i class="fa fa-list"aria-hidden="true"></i> Add Cognitive Domain</a></li>
                     
-                             <li><a class="load-url" href="StaffComments.php">
-                             <i class="fa fa-comment-o" aria-hidden="true"></i> Comments</a></li>
+                             <li><a class="load-url" href="resultSummary.php">
+                             <i class="fa fa-sitemap" aria-hidden="true"></i> Comments Summary</a></li>
 
-                             <li><a class="load-url" href=""><i class="fa fa-database" aria-hidden="true"></i>
+                             <li><a class="load-url" href="publishResult.php"><i class="fa fa-database" aria-hidden="true"></i>
  Publish Result</a></li>
+       <li><a class="load-url" href="printResult.php"><i class="fa fa-print" aria-hidden="true"></i>
+ Print Result</a></li>
                              
                             </ul>
                             <hr class="mt-2">                
