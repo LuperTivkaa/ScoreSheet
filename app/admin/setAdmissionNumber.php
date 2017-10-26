@@ -19,32 +19,27 @@
 
               
               </div>
+              <div class="col-md-4">
               <button class="submit btn btn-primary" id="add-numbers">Generate Numbers</button>
+              </div>
 
               <hr>
               <div class="row">
               <div class="col-md-12 mb-3">
-              <h5 class="top-header text-xs-center mt-3">Admission Number Settings</h5><small>This section allows you to choose how your institution's  Admission Numbers will be represented e.g nadi/2012/0002. You can change this later if you wish.</small>
+              <h5 class="top-header text-xs-center mt-3">Admission Number Settings</h5><small>This section allows you to choose how your institution's  Admission Numbers will be represented e.g nadi/std. You can change this later if you wish.</small>
               </div>
               </div>
 
               <div class="row">
 
-            <div class="form-group col-md-6">
+                 <div class="form-group col-md-12">
                  <label for="prefix">Enter Prefix:</label>
-                <input type="text" class="form-control" id="prefix" name="prefix" placeholder="Enter prefix">
+                <input type="text" class="form-control" id="prefix" name="prefix" placeholder="Enter prefix eg nad/std">
               </div>
 
-              <div class="form-group col-md-6">
-                
-                 <label for="seperator">Separator</label>
-                <select class="custom-select form-control" id="seperator">
-                <option>/</option>
-                <option>-</option>
-                </select>
               </div>
-              
-              </div>
+              <div class="col-md-4">
               <button class="submit btn btn-primary mb-3" id="add-prefix">Create Prefix</button>
+              </div>
 
 
