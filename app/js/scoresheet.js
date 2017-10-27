@@ -1629,7 +1629,7 @@ $('#new-content').on('click', '.prefix-div', function(e) {
  */
 
 //Funtion to handle edit term
-$("#new-content").on('click', '#edit-term', function(e) {
+$('#edit-term').on('click', function(e) {
     e.preventDefault();
     var mybutton = $(this);
     var termid = $('#record-id').val();
@@ -1650,8 +1650,8 @@ function editSchTerm(termid, term) {
             if (data === "ok") {
                 $('#edit-term').text('Update Term').prop('disable', false);
                 $('#editterm').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Term updated");
             } else {
                 $('#edit-term').text('Update Term').prop('disable', false);
                 $("#modal_error").addClass("error");
@@ -1664,7 +1664,7 @@ function editSchTerm(termid, term) {
 
 
 //Function to edit subject
-$("#new-content").on('click', '#edit-subject', function(e) {
+$('#edit-subject').on('click', function(e) {
     e.preventDefault();
     var subjectid = $('#record-id').val();
     var subject = $('#editsubject').val();
@@ -1684,8 +1684,8 @@ function editSchSubject(subjectid, subject) {
             if (data === "ok") {
                 $('#edit-subject').text('Update Subject').prop('disable', false);
                 $('#editsubject').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Subject updated");
             } else {
                 $('#edit-subject').text('Update Term').prop('disable', false);
                 $("#modal_error").addClass("error");
@@ -1698,7 +1698,7 @@ function editSchSubject(subjectid, subject) {
 
 //Function to edit sessions
 
-$("#new-content").on('click', '#edit-session', function(e) {
+$('#edit-session').on('click', function(e) {
     e.preventDefault();
     var sessionid = $('#record-id').val();
     var session = $('#editsession').val();
@@ -1708,7 +1708,7 @@ $("#new-content").on('click', '#edit-session', function(e) {
     editSchSession(sessionid, session);
 });
 //call back for edit subject
-function editSchSubject(sessionid, session) {
+function editSchSession(sessionid, session) {
     $.ajax({
         url: 'editSchSession.php',
         type: 'POST',
@@ -1718,8 +1718,8 @@ function editSchSubject(sessionid, session) {
             if (data === "ok") {
                 $('#edit-session').text('Update Session').prop('disable', false);
                 $('#editsession').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Session updated");
             } else {
                 $('#edit-session').text('Update Session').prop('disable', false);
                 $("#modal_error").addClass("error");
@@ -1732,7 +1732,7 @@ function editSchSubject(sessionid, session) {
 
 
 //Function to edit classes
-$("#new-content").on('click', '#edit-class', function(e) {
+$('#edit-class').on('click', function(e) {
     e.preventDefault();
     var classid = $('#record-id').val();
     var schclass = $('#editclass').val();
@@ -1742,9 +1742,9 @@ $("#new-content").on('click', '#edit-class', function(e) {
     editSchClass(classid, schclass);
 });
 //call back for edit class
-function editSchSubject(classid, schclass) {
+function editSchClass(classid, schclass) {
     $.ajax({
-        url: 'editSchSubject.php',
+        url: 'editSchClass.php',
         type: 'POST',
         data: { classid: classid, schclass: schclass },
         success: function(response) {
@@ -1752,8 +1752,8 @@ function editSchSubject(classid, schclass) {
             if (data === "ok") {
                 $('#edit-class').text('Update Class').prop('disable', false);
                 $('#editclass').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Class updated successfully");
             } else {
                 $('#edit-class').text('Update Class').prop('disable', false);
                 $("#modal_error").addClass("error");
@@ -1765,10 +1765,11 @@ function editSchSubject(classid, schclass) {
 //end function to edit classes
 
 //Function to edit prefix settings
-$("#new-content").on('click', '#edit-prefix', function(e) {
+$('#edit-prefix').on('click', function(e) {
     e.preventDefault();
     var prefixid = $('#record-id').val();
     var prefix = $('#editprefix').val();
+    alert(prefixid + prefix);
 
     //var termid = $(this).data('recordid');
     $('#edit-prefix').text('Updating...').prop('disable', true);
@@ -1777,7 +1778,7 @@ $("#new-content").on('click', '#edit-prefix', function(e) {
 //call back for edit prefix
 function editSchPrefix(prefixid, prefix) {
     $.ajax({
-        url: 'editSchSubject.php',
+        url: 'editSchPrefix.php',
         type: 'POST',
         data: { prefixid: prefixid, prefix: prefix },
         success: function(response) {
@@ -1785,10 +1786,10 @@ function editSchPrefix(prefixid, prefix) {
             if (data === "ok") {
                 $('#edit-prefix').text('Update Prefix').prop('disable', false);
                 $('#editprefix').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Update of prefix settings successful");
             } else {
-                $('#edit-class').text('Update Class').prop('disable', false);
+                $('#edit-prefix').text('Update Prfeix').prop('disable', false);
                 $("#modal_error").addClass("error");
                 $("#modal_error").html(data);
             }
