@@ -1,11 +1,11 @@
 <?php
-//session_start();
-include 'inc/regSession.php';
-$clientid = $_SESSION['sess_info'][0];
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
-$client = new client();
-
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
+$clientid = $_SESSION['user_info'][4];
 $client->getMaleStaff($clientid);
     

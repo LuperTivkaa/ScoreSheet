@@ -59,7 +59,7 @@
 
                             <div class="col-8">
                              <label for="editsubject">Subject Name:</label>
-                            <input type="text" class="form-control" id="editsubject" name="editsubject">
+                            <input type="text" class="form-control" id="editsubject" name="editsubject" placeholder="Enter Subject">
                             </div>
                             
                         <div class="col-4">
@@ -75,7 +75,7 @@
 
                             <div class="col-8">
                              <label for="editclass">Class Name:</label>
-                            <input type="text" class="form-control" id="editclass" name="editclass">
+                            <input type="text" class="form-control" id="editclass" name="editclass" placeholder="Enter Class">
                             </div>
                             
                         <div class="col-4">
@@ -92,7 +92,7 @@
 
                             <div class="col-8">
                              <label for="editprefix">Prefix Settings:</label>
-                            <input type="text" class="form-control" id="editprefix" name="editprefix">
+                            <input type="text" class="form-control" id="editprefix" name="editprefix" placeholder="Enter Prefix">
                             </div>
                             
                         <div class="col-4">
@@ -110,7 +110,7 @@
 
                             <div class="col-8">
                             <label for="editsession">Edit Session</label>
-                            <input type="text" class="form-control" id="editsession" name="editsession"> 
+                            <input type="text" class="form-control" id="editsession" name="editsession" placeholder="Enter Session"> 
                             </div>
 
                             <div class="col-4">

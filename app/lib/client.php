@@ -2211,8 +2211,8 @@ function editSchClass($classid,$class,$schid)
                             $sqlStmt = "UPDATE class SET class_name=?
                             WHERE id=? AND my_inst_id=?";
                             $this->conn->query($sqlStmt);
-                            $this->conn->bind(1, $term, PDO::PARAM_INT,100);
-                            $this->conn->bind(2, $termid, PDO::PARAM_INT,100);
+                            $this->conn->bind(1, $class, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $classid, PDO::PARAM_INT,100);
                             $this->conn->bind(3, $schid, PDO::PARAM_INT);
                            
                             $this->conn->execute();
@@ -2247,10 +2247,9 @@ function editSchPrefixSettings($prefixid,$prefix,$schid)
                             $sqlStmt = "UPDATE admission_number_prefix SET prefix_name=?
                             WHERE prefix_id=? AND prefix_sch_id=?";
                             $this->conn->query($sqlStmt);
-                            $this->conn->bind(1, $prefix, PDO::PARAM_INT,100);
+                            $this->conn->bind(1, $prefix, PDO::PARAM_STR);
                             $this->conn->bind(2, $prefixid, PDO::PARAM_INT,100);
                             $this->conn->bind(3, $schid, PDO::PARAM_INT);
-                           
                             $this->conn->execute();
                         		if ($this->conn->rowCount() == 1)
                         		{
@@ -2259,7 +2258,7 @@ function editSchPrefixSettings($prefixid,$prefix,$schid)
                         		}
                         		else
                         		{
-                        		echo "Error edting term";
+                        		echo "Error editing school prefix ";
                       			}
 
                     		}
