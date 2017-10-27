@@ -1,33 +1,30 @@
 <?php
-//session_start();
-include 'inc/regSession.php';
-$clientid = $_SESSION['sess_info'][0];
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
-$client = new client();
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
+$clientid = $_SESSION['user_info'][4];
+$userid = $_SESSION['user_info'][0];
 $dateCreated = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 //$regno = $_SESSION['ID'];
-$staff = filter_input(INPUT_POST, "staff", FILTER_SANITIZE_STRING);
-$myclass = filter_input(INPUT_POST, "subj_class", FILTER_SANITIZE_STRING);
-$subject = filter_input(INPUT_POST, "subj", FILTER_SANITIZE_STRING);
-
-
-// $client->setUserName($username);
-// $user = $client->getUserName();
-
-// $client->setPassword($pass);
-// $pass = $client->Password();
-
-// $client->setRole($role);
-// $role = $client->getRole();
-
-
-$client->addSubject($subject,$myclass,$staff,$clientid,$dateCreated,$dateCreated,$clientid);
+$staff = filter_input(INPUT_POST, "staff", FILTER_SANITIZE_NUMBER_INT);
+$myclass = filter_input(INPUT_POST, "class_id", FILTER_SANITIZE_NUMBER_INT);
+$subject = filter_input(INPUT_POST, "subj", FILTER_SANITIZE_NUMBER_INT);
+if(empty($myclass))
+{
+  Exit("Please select a class");  
+}
+else{
+$client->addSubject($subject,$myclass,$staff,$clientid,$dateCreated,$dateCreated,$userid);
     
+}
 }
 else
 {
