@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
           exit("Please fill all the fields...");
        }else{
             //edit class
-            $client->editSchClass($prefixid,$prefix,$schid);
+            $client->editSchPrefixSettings($prefixid,$prefix,$schid);
         }
    }
 else
