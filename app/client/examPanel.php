@@ -11,7 +11,7 @@
 
             <?php include '../inc/scoresheet-school-profile.php';?>
 
-            <?php include '../inc/scoresheet-nav.php';?>
+            <?php include '../inc/scoresheet-nav-client.php';?>
 
             <div class="wrapper">
                              <!-- The Modal -->
