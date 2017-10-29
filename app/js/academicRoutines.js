@@ -76,7 +76,7 @@ function newExamScores(regno, scores, studentClass, subject) {
     });
 } //end add exam method
 
-//PROCESS SCORESHEET
+//PROCESS ASSESSMENT SCORESHEET
 
 //process scoresheet
 $("#new-content").on('click', '#scoresheet', function(e) {
@@ -119,7 +119,7 @@ $('#new-content').on('keyup', '#regno', function() {
     });
 });
 
-//LOAD SUBJECT ON SELECTION OF CLASS
+//LOAD STAFF SUBJECT ON SELECTION OF CLASS
 $('#new-content').on('change', '#my-class', function() {
     var id = $("#my-class option:selected").val();
     $.post("staffSubjectByClass.php", { id: id }, function(data) {
@@ -159,7 +159,7 @@ function subjectPosition(subj, myclass, session, term) {
     });
 }
 
-//post result
+//class teacher post result for processing
 $("#new-content").on('click', '#submit-result', function(e) {
     if (confirm("Be sure that you want to submit your result summary. This action can not be reversed!") == true) {
         e.preventDefault();
@@ -195,9 +195,9 @@ function postResult(myclass, session, term) {
 }
 //End post result
 
-//End assign class position
+//Begin assign class position
 $("#new-content").on('click', '#class-position', function(e) {
-    if (confirm("Be sure that you want to submit your result summary. This action can not be reversed!") == true) {
+    if (confirm("Be sure that you want to assign class postion. This action can not be reversed!") == true) {
         e.preventDefault();
         $('#class-position').text("Assigning...").prop("disabled", true);
         var myclass = $("#my-class option:selected").val();
@@ -205,11 +205,11 @@ $("#new-content").on('click', '#class-position', function(e) {
         var term = $("#term option:selected").val();
         classPositionAssign(myclass, session, term);
     } else {
-        $('#class-position').text("Submit Result").prop("disabled", false);
+        $('#class-position').text("Assign Class Position").prop("disabled", false);
     }
 });
 
-//call back function to add new continous assessment scores
+//call back function to add class position
 function classPositionAssign(myclass, session, term) {
     $.ajax({
         url: 'assignClassPosition.php',
@@ -384,6 +384,7 @@ function caAdvancedSearch(myclass, subject, session, term) {
 }
 
 //Function to handle students traits
+//Fetch result to add traits by staff
 $("#new-content").on('click', '#fetch-result', function(e) {
     e.preventDefault();
     $('#fetch-result').text("Fetching...").prop("disabled", true);
@@ -412,7 +413,7 @@ function traitsRecords(studentclass, session, term) {
         });
 }
 
-//fetch published results for admin comments
+//fetch published results for adding admin comments
 $("#new-content").on('click', '#published-result', function(e) {
     e.preventDefault();
     $('#fetch-result').text("Fetching...").prop("disabled", true);
