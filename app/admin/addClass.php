@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 //$regno = $_SESSION['ID'];
 $class = filter_input(INPUT_POST, "myclass", FILTER_SANITIZE_STRING);
-//$pass = filter_input(INPUT_POST, "pass", FILTER_SANITIZE_STRING);
+  $category = filter_input(INPUT_POST, "category", FILTER_SANITIZE_NUMBER_INT);
 //$role = filter_input(INPUT_POST, "role", FILTER_SANITIZE_STRING);
 
 if(empty($class)){
@@ -26,7 +26,7 @@ if(empty($class)){
 }
 
 
-$client->newClass($class,$clientid);
+$client->newClass($class,$category,$clientid);
     
 }
 else
