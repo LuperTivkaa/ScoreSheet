@@ -10,21 +10,20 @@ $student = new student($dbConnection);
 $client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
-$clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
 ?>
 
 <!--Row  to hold some sub menu  -->
 <div class="row">
                     <div class="col-md-12 mt-1">
-                         <h5 class="top-header">Add Affective & Psychomotor</h6>
+                         <h5 class="top-header">Add Affective & Psychomotor :: Staff</h6>
                         <div class="row">
 
                             <div class="col-12">
                             <label for="studentclass">Select Class</label>
                             <select class="custom-select  form-control" id="studentclass">
                               <?php
-                                $student->loadClass($clientid);
+                                $client->loadClassTeacherClass($userid,$clientid);
                               ?>
                             </select>
                     </div>
