@@ -14,12 +14,45 @@
             <?php include '../inc/scoresheet-nav-client.php';?>
 
             <div class="wrapper">
+            <!-- The Modal -->
+                    <div id="myModal" class="modal-div">
+
+                    <!-- Modal content -->
+                    <div class="modal-content-div">
+                        <span class="closex">&times;</span>
+
+                    <div class="col-8">
+                        <h6 class="top-header text-xs-center mt-3"><i class="fa fa-plus-circle" aria-hidden="true"></i>Edit Menu  
+                        </h6>
+                        <p class="display">
+                           
+                        </p>
+                        <p id="modal_error"></p>  
+                         
+                       </div>
+
+                        <!--View Staff div -->
+                        <div class="viewStaff-div">
+                           
+                        </div>
+                        <!--End edit term -->
+
+                            <input type="hidden" class="form-control" id="record-id" name="record-id">
+                            <input type="hidden" class="form-control" id="item-value" name="item-value">
+                            <hr>
+                            <div class="col-6" id="modal-list">
+                            </div>
+                            </div>
+
+                    </div>
+                <!--end new modal  -->
 
                 <div class="primary-col">
                         <div class="aux-menu">
                             <h6> Staff Settings Sub Menu</h6>
                             <ul>
                             <li><a class="load-url" href="newStaff.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i>New Staff</a></li>
+                            <li><a class="load-url" href="approveStaff.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i>Approve Staff</a></li>
                             <li><a class="load-url" href="createStaffSubjects.php"><i class="fa fa-clone fa-fw" aria-hidden="true"></i>Assign Subject(s)</a></li>
                             <li><a class="load-url" href="classTeacher.php"><i class="fa fa-briefcase" aria-hidden="true"></i>Assign Class Teacher</a></li>
                             <li><a class="my-staff" href="male.php"><i class="fa fa-male fa-fw" aria-hidden="true"></i>Staff</a></li>
