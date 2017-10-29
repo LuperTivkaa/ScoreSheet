@@ -535,7 +535,7 @@ function staffComment(studentid, staffcomment) {
     });
 }
 
-//Show comments summary
+//Show staff (class teacher) comments summary
 $("#new-content").on('click', '#comments-summary', function(e) {
     e.preventDefault();
     $('#comments-summary').text('Please wait...').prop("disabled", true);
@@ -545,10 +545,10 @@ $("#new-content").on('click', '#comments-summary', function(e) {
     var term = $("#s-term option:selected").val();
     //alert(myclass + session + term);
 
-    summaryComments(myclass, session, term);
+    staffSummaryComments(myclass, session, term);
 });
-//call back for delete affective skilss
-function summaryComments(myclass, session, term) {
+//call back for class teacher comments
+function staffSummaryComments(myclass, session, term) {
     $.ajax({
         url: 'commentSummary.php',
         type: 'POST',
@@ -576,7 +576,7 @@ function summaryComments(myclass, session, term) {
  * This function is to publish result
  * Admin can only see result when published by the class teacher
  */
-//Show comments summary
+//publish result for Head Teacher by class teacher
 $("#new-content").on('click', '#publish-result', function(e) {
     e.preventDefault();
     $('#publish-result').text('Publishing...').prop("disabled", true);
@@ -584,7 +584,6 @@ $("#new-content").on('click', '#publish-result', function(e) {
     var myclass = $("#studentclass option:selected").val();
     var session = $("#session option:selected").val();
     var term = $("#term option:selected").val();
-    alert(myclass + session + term);
 
     publishResult(myclass, session, term);
 });
@@ -613,7 +612,7 @@ function publishResult(myclass, session, term) {
 }
 
 
-//Display result for approval
+//Display result for approval 
 $("#new-content").on('click', '#result-approval', function(e) {
     e.preventDefault();
     $('#result-approval').text('Please wait...').prop("disabled", true);
@@ -625,7 +624,7 @@ $("#new-content").on('click', '#result-approval', function(e) {
 
     summaryComments(myclass, session, term);
 });
-//call back for delete affective skilss
+//call back for result approval
 function summaryComments(myclass, session, term) {
     $.ajax({
         url: 'displayFinalComments.php',
@@ -802,6 +801,87 @@ function deactivateTerm(termid, mybutton) {
 
 //end code to deactivate term
 
+//=================================================================================
+/**
+ * Code to approve/activate staff 
+ */
+//Code to activate staff user
+$("#new-content").on('click', '#staffOn', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+
+    var staffuserid = $(this).data('recordid');
+
+    $(this).text('Please wait...');
+
+    approveStaffUser(staffuserid, mybutton);
+});
+//call back for activating staff user
+function approveStaffUser(userid, mybutton) {
+    $.ajax({
+        url: 'approveStaffUser.php',
+        type: 'POST',
+        data: { userid: userid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'staffOff');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Deactivate');
+                mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
+            } else {
+                mybutton.text('Activate');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End code to activate Staff user
+
+//code to un approve staff user
+$("#new-content").on('click', '#staffOff', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+
+    var termid = $(this).data('recordid');
+    $(this).text('Please wait...');
+    unapproveStaffUser(staffuserid, mybutton);
+});
+//call back for disapproving result
+function unapproveStaffUser(userid, mybutton) {
+    $.ajax({
+        url: 'unapproveStaffUser.php',
+        type: 'POST',
+        data: { userid: userid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'staffOn');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Activate');
+                mybutton.removeClass('approvedBtn').addClass('not-approvedBtn');
+            } else {
+
+                mybutton.text('Deactivate');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+//end code to deactivate term
+
+
+
+
+//==================================================================================
+
 /**
  * The code block below activate/deactivate sessions
  * 
@@ -952,6 +1032,48 @@ function deactivateSess(sessionid, mybutton) {
     });
 }
 //
+//==========================================================================================
+/**
+ * Code to show Client view staff user modal
+ */
+$('#new-content').on('click', '#viewStaffUser', function(e) {
+    e.preventDefault();
+
+    var userid = $(this).data('recordid');
+    // //var editValue = $(this).data('value');
+    //alert(userid);
+
+    // ///$('#item-value').val(editValue);
+    // $('#record-id').val(recordid);
+
+    $('#modal-list').empty();
+    $('#modal-error').empty();
+    var modalid = $('#myModal');
+
+    modalid.css('display', 'block');
+    viewStaffUser(userid);
+});
+
+//function to fetch and display user profile
+function viewStaffUser(userid) {
+    $.ajax({
+            url: 'viewStaffUser.php',
+            type: 'POST',
+            data: { userid: userid },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            //$('#published-result').text("Show Result").prop("disabled", false);
+            $('.viewStaff-div').html(data); // load here 
+        })
+        .fail(function(data) {
+            $('#my_info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+//End View User modal functionality
+//======================================================================
 
 /**
  * CODE TO SHOW ACADEMIC SETTINGS MANAGEMENT  AND MODAL
@@ -1032,7 +1154,7 @@ $('#new-content').on('click', '.prefix-div', function(e) {
  */
 
 //Funtion to handle edit term
-$("#new-content").on('click', '#edit-term', function(e) {
+$('#edit-term').on('click', function(e) {
     e.preventDefault();
     var mybutton = $(this);
     var termid = $('#record-id').val();
@@ -1053,8 +1175,8 @@ function editSchTerm(termid, term) {
             if (data === "ok") {
                 $('#edit-term').text('Update Term').prop('disable', false);
                 $('#editterm').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Term updated");
             } else {
                 $('#edit-term').text('Update Term').prop('disable', false);
                 $("#modal_error").addClass("error");
@@ -1067,7 +1189,7 @@ function editSchTerm(termid, term) {
 
 
 //Function to edit subject
-$("#new-content").on('click', '#edit-subject', function(e) {
+$('#edit-subject').on('click', function(e) {
     e.preventDefault();
     var subjectid = $('#record-id').val();
     var subject = $('#editsubject').val();
@@ -1087,8 +1209,8 @@ function editSchSubject(subjectid, subject) {
             if (data === "ok") {
                 $('#edit-subject').text('Update Subject').prop('disable', false);
                 $('#editsubject').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Subject updated");
             } else {
                 $('#edit-subject').text('Update Term').prop('disable', false);
                 $("#modal_error").addClass("error");
@@ -1101,7 +1223,7 @@ function editSchSubject(subjectid, subject) {
 
 //Function to edit sessions
 
-$("#new-content").on('click', '#edit-session', function(e) {
+$('#edit-session').on('click', function(e) {
     e.preventDefault();
     var sessionid = $('#record-id').val();
     var session = $('#editsession').val();
@@ -1111,7 +1233,7 @@ $("#new-content").on('click', '#edit-session', function(e) {
     editSchSession(sessionid, session);
 });
 //call back for edit subject
-function editSchSubject(sessionid, session) {
+function editSchSession(sessionid, session) {
     $.ajax({
         url: 'editSchSession.php',
         type: 'POST',
@@ -1121,8 +1243,8 @@ function editSchSubject(sessionid, session) {
             if (data === "ok") {
                 $('#edit-session').text('Update Session').prop('disable', false);
                 $('#editsession').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Session updated");
             } else {
                 $('#edit-session').text('Update Session').prop('disable', false);
                 $("#modal_error").addClass("error");
@@ -1135,7 +1257,7 @@ function editSchSubject(sessionid, session) {
 
 
 //Function to edit classes
-$("#new-content").on('click', '#edit-class', function(e) {
+$('#edit-class').on('click', function(e) {
     e.preventDefault();
     var classid = $('#record-id').val();
     var schclass = $('#editclass').val();
@@ -1145,9 +1267,9 @@ $("#new-content").on('click', '#edit-class', function(e) {
     editSchClass(classid, schclass);
 });
 //call back for edit class
-function editSchSubject(classid, schclass) {
+function editSchClass(classid, schclass) {
     $.ajax({
-        url: 'editSchSubject.php',
+        url: 'editSchClass.php',
         type: 'POST',
         data: { classid: classid, schclass: schclass },
         success: function(response) {
@@ -1155,8 +1277,8 @@ function editSchSubject(classid, schclass) {
             if (data === "ok") {
                 $('#edit-class').text('Update Class').prop('disable', false);
                 $('#editclass').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Class updated successfully");
             } else {
                 $('#edit-class').text('Update Class').prop('disable', false);
                 $("#modal_error").addClass("error");
@@ -1168,10 +1290,11 @@ function editSchSubject(classid, schclass) {
 //end function to edit classes
 
 //Function to edit prefix settings
-$("#new-content").on('click', '#edit-prefix', function(e) {
+$('#edit-prefix').on('click', function(e) {
     e.preventDefault();
     var prefixid = $('#record-id').val();
     var prefix = $('#editprefix').val();
+    alert(prefixid + prefix);
 
     //var termid = $(this).data('recordid');
     $('#edit-prefix').text('Updating...').prop('disable', true);
@@ -1180,7 +1303,7 @@ $("#new-content").on('click', '#edit-prefix', function(e) {
 //call back for edit prefix
 function editSchPrefix(prefixid, prefix) {
     $.ajax({
-        url: 'editSchSubject.php',
+        url: 'editSchPrefix.php',
         type: 'POST',
         data: { prefixid: prefixid, prefix: prefix },
         success: function(response) {
@@ -1188,10 +1311,10 @@ function editSchPrefix(prefixid, prefix) {
             if (data === "ok") {
                 $('#edit-prefix').text('Update Prefix').prop('disable', false);
                 $('#editprefix').val("");
-                $("#my_info").addClass("info");
-                $("#my_info").html(data);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Update of prefix settings successful");
             } else {
-                $('#edit-class').text('Update Class').prop('disable', false);
+                $('#edit-prefix').text('Update Prfeix').prop('disable', false);
                 $("#modal_error").addClass("error");
                 $("#modal_error").html(data);
             }
