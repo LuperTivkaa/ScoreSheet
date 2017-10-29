@@ -1183,7 +1183,6 @@ public function loadLga($id)
 
 
 // load city  on selection of local governments
-     //this function loads state
 public function loadCity($id)
     {
         try {
@@ -1210,7 +1209,71 @@ public function loadCity($id)
             echo "Error: Unable to load cities";
         }
         }
+        //end function to load city
 
+//Method to load class category based on school
+public function classCategory($clientid)
+    {
+        try {
+                $query ="SELECT id,class_category FROM class_category WHERE class_sch_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $myResult= $this->conn->resultset();
+               $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['id'];
+            $classCategory = $key['class_category'];
+
+          $output .= "<option value=".$ID.">".$classCategory."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to load class   category";
+        }
+        }
+
+
+//End method to load class category based on school
+
+
+//Create new class category
+public  function newClassCategory($category,$clientid,$userid)
+  {
+  //always use try and catch block to write code   
+  try{
+          //insert new term
+                            $sqlStmt = "INSERT INTO class_category (class_category,class_sch_id,createdBy) 
+                            values (?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $category, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $userid, PDO::PARAM_INT);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Could not create class category, try again";
+                        }
+
+        }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+}
+//Create new class category
 
 //add new school term
 public  function newTerm($term,$clientid,$status='Inactive')
@@ -1245,6 +1308,8 @@ public  function newTerm($term,$clientid,$status='Inactive')
         echo "Error:". $e->getMessage();
         }
 }
+//end term
+
 //new academic session
  //create new academic sessionss
 public  function newAcademicSession($session,$clientid,$status="Inactive")
@@ -1518,17 +1583,17 @@ public  function assignSubject($subject_id,$class_id,$sch_id)
 
 //================================================
 //ADD NEW SCHOOL CLASS
-public  function newClass($class,$clientid,$status='Unpublished')
+public  function newClass($class,$category,$clientid)
   {
   
   try{
           //insert new class
-                            $sqlStmt = "INSERT INTO class (class_name,my_inst_id,published_status) 
+                            $sqlStmt = "INSERT INTO class (class_name,my_inst_id,class_categoryid) 
                             values (?,?,?)";
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $class, PDO::PARAM_STR,100);
                             $this->conn->bind(2, $clientid, PDO::PARAM_INT);
-                            $this->conn->bind(3, $status, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $category, PDO::PARAM_INT);
                             $this->conn->execute(); 
                         if ($this->conn->rowCount() == 1) 
                         {
@@ -1838,6 +1903,38 @@ public  function addClassTeacher($staff_id,$class_id,$schid,$createdBy,$addedDat
          }
     }
 //end create class teacher
+
+//load class assigned to a staff as CLAS TEACHER
+public function loadClassTeacherClass($staffid,$schid)
+        {
+        try {
+                $query ="SELECT class_teacher.class_id AS ID,class.class_name AS ClassName FROM class_teacher
+                INNER JOIN class ON class_teacher.class_id=class.id
+                WHERE class_teacher.staff_id=? AND class_teacher.school_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $staffid, PDO::PARAM_INT);
+                    $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                    $myResult = $this->conn->resultset();
+                   $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['ID'];
+            $class = $key['ClassName'];
+
+          //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+                //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$class."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to load staff classes";
+        }
+        }
+//END METHOD TO LOAD CLASS TEACHER CLASS
 
 //Activate Term
 function activateTerm($termid,$schid,$activate="Active")
@@ -2273,13 +2370,230 @@ function editSchPrefixSettings($prefixid,$prefix,$schid)
 //End edit school prefix settings
 
 
+//Method to list all users (Staff)
+public function allStaffUsers($clientid)
+        {
+        try {
+
+                $query ="SELECT users.id AS ID, CONCAT(staff_profile.surname, ', ', staff_profile.middle_name, ' ', staff_profile.lastname) AS FullName, users.status AS Status,institutional_responsibilities.responsibility_name AS Role
+                FROM users
+                INNER JOIN staff_profile ON users.id=staff_profile.user_id 
+                INNER JOIN institutional_responsibilities ON users.role=institutional_responsibilities.id
+                WHERE users.created_By=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+                    $output="";
+                    $myResult = $this->conn->resultset();
+                    $output.="<h5 class='top-header mt-2'>All Staff Users</h5><br/>";
+                    $output .='<table class="table">';
+            $output .='<thead>
+            <tr><th>Name</th><th>Role</th><th>Action</th><th>View</th></tr>
+            </thead>
+            <tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
+                    {
+                         
+                        //approval status
+                        if($key['Status'] =='On'){
+                        $active_status = '<button type="button"  data-recordid="'.$key['ID'].'" class="approvedBtn" id="staffOff">Deactivate</button>';
+                        }else{
+                        $active_status= '<button type="button"  data-recordid="'.$key['ID'].'" class="not-approvedBtn" id="staffOn">Activate</button>';
+                        }
+                   
+                    $fullname = $key['FullName'];
+                   // $status = $key['Status'];
+                    $role = $key['Role'];
+                   
+                    $output.= '<tr>';
+                    $output.='<td>'.$fullname.'</td>';
+                     $output.='<td>'.$role.'</td>';
+                    $output.='<td>'.$active_status.'</td>';
+                    $output.='<td><button type="button" data-recordid="'.$key['ID'].'" class="btn btn-info btn-sm viewUser-div" id="viewStaffUser"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> View</button></td>';
+                   $output.='</tr>';
+                   //$output .= "<option value=".$ID.">".$category."</option>";
+                    }
+                    $output.=' </tbody></table>';
+                    echo $output;
+                    }
+                    else{
+                        echo "No staff users yet!";
+                    }
+                    
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo ("Error: Unable to fetch  staff users!");
+        }
+        }
+
+//End method to list all users  (Staff)
+
+//Approve staff user
+function approveStaffUser($userid,$schid,$activate="On")
+  {
+      
+        try {
+
+            //Staff user
+                          $sqlStmt = "UPDATE users SET status=? WHERE id=? AND created_By=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                            $this->conn->bind(2, $userid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//result approved
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error approving staff user";
+                      			}
+                            
+                }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+
+//End approve staff user
+
+//Unapprove Staff user
+function unapproveStaffUser($userid,$schid,$activate="Off")
+  {
+      
+        try {
+
+            //Staff user
+                          $sqlStmt = "UPDATE users SET status=? WHERE id=? AND created_By=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $activate, PDO::PARAM_INT);
+                            $this->conn->bind(2, $userid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		//result approved
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error unapproving staff user";
+                      			}
+                            
+                }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+
+//End un approve Staff user
+
+//Add max CA Score Settings
+public  function newMaxCaScore($cascore,$category,$clientid)
+  {
+  
+  try{
+       $query ="SELECT id FROM ass_score_setting WHERE class_category_id=? AND sch_id=?";
+                    $this->conn->query($query);
+                     $this->conn->bind(1, $category, PDO::PARAM_INT);
+                    $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >= 1)
+                    {
+                      exit("You can not add more than one scores for a category");
+                    }
+                    {
+          //insert new ca max score
+                            $sqlStmt = "INSERT INTO ass_score_setting (max_ca_score,class_category_id,sch_id) 
+                            values (?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $cascore, PDO::PARAM_INT);
+                            $this->conn->bind(2, $category, PDO::PARAM_INT);
+                            $this->conn->bind(3, $clientid, PDO::PARAM_INT);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                        // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Could not add max ca score, try again";
+                        }
+                    }
+        }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+        }
+//end max CA Score Settings
 
 
+//Create Max Exam Score
+public  function newMaxExamScore($examscore,$category,$clientid)
+  {
+  
+  try{
 
+      //Check for multiple category
+        $query ="SELECT id FROM exam_score_setting WHERE class_category_id=? AND sch_id=?";
+                    $this->conn->query($query);
+                     $this->conn->bind(1, $category, PDO::PARAM_INT);
+                    $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >= 1)
+                    {
+                      exit("You can not add more than one scores for a category");
+                    }
+                    {
+          //insert new ca max score
+                            $sqlStmt = "INSERT INTO exam_score_setting (max_exam_score,class_category_id,sch_id) 
+                            values (?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $examscore, PDO::PARAM_INT);
+                            $this->conn->bind(2, $category, PDO::PARAM_INT);
+                            $this->conn->bind(3, $clientid, PDO::PARAM_INT);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                        // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Could not add max exam score, try again";
+                        }
+                    }
 
-
-
-
+        }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+        }
+//End create Max Exam Score
 
 
 
