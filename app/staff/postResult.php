@@ -10,7 +10,6 @@ $student = new student($dbConnection);
 $client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
-$clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
 ?>
 
@@ -24,7 +23,7 @@ $userid = $_SESSION['user_info'][0];
                             <label for="my-class">Select Class</label>
                             <select class="custom-select  form-control" id="my-class">
                               <?php
-                                $student->loadClass($clientid);
+                                $client->loadClassTeacherClass($userid,$clientid);
                               ?>
                             </select>
                             </div>
