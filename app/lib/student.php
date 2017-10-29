@@ -161,7 +161,7 @@ public function staffSubject($user_id)
    }
   //end staff subjects
 
-  //load subject by class
+  //load staff subject by class
 public function staffSubjectByClass($user_id,$classid)
     {
         try {
