@@ -127,6 +127,93 @@ function getActiveTerm($schid,$status='Active')
   }
 //END METHOD TO GET ACTIVE TERM
 
+//compare max ca scores
+function getMaxCaScores($class,$schid)
+ {
+    //always use try and catch block to write code
+  try 
+    {
+        //
+          $sqlStmt = "SELECT class.class_categoryid AS ClassCatID, ass_score_setting.max_ca_score AS MaxScore FROM class INNER JOIN ass_score_setting ON class.class_categoryid=ass_score_setting.class_category_id WHERE class.id=? AND class.my_inst_id=?";
+          $this->conn->query($sqlStmt);
+          $this->conn->bind(1, $class, PDO::PARAM_INT);
+          $this->conn->bind(2, $schid, PDO::PARAM_STR);
+          $myResult = $this->conn->resultset();
+              if ($this->conn->rowCount() >= 1)
+              {
+                 //loop through the result set
+                 foreach ($myResult as $row => $key)
+					        {
+					            $maxScore = $key['MaxScore'];
+					        }
+					        // compare
+                  // if($scores <= $maxScore){
+
+                  // }
+                  // else{
+                  //   exit("Maximum scores exceeded!");
+                  // }
+                  return $maxScore;
+              }
+              else
+              {
+              exit("No max ca scores set. Contact the admin");
+
+              }
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+  }
+//end compare max ca scores
+
+//compare max exam scores
+function getMaxExamScores($class,$schid)
+ {
+    //always use try and catch block to write code
+  try 
+    {
+        //
+          $sqlStmt = "SELECT class.class_categoryid AS ClassCatID, exam_score_setting.max_exam_score AS MaxScore FROM class INNER JOIN exam_score_setting ON class.class_categoryid=exam_score_setting.class_category_id WHERE class.id=? AND class.my_inst_id=?";
+          $this->conn->query($sqlStmt);
+          $this->conn->bind(1, $class, PDO::PARAM_INT);
+          $this->conn->bind(2, $schid, PDO::PARAM_STR);
+          $myResult = $this->conn->resultset();
+              if ($this->conn->rowCount() >= 1)
+              {
+                 //loop through the result set
+                 foreach ($myResult as $row => $key)
+					        {
+					            $maxScore = $key['MaxScore'];
+					        }
+					        // compare
+                  // if($scores <= $maxScore){
+
+                  // }
+                  // else{
+                  //   exit("Maximum scores exceeded!");
+                  // }
+                return $maxScore;
+              }
+              else
+              {
+              exit("No max exam scores set. Contact the admin");
+
+              }
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+  }
+//End Compare max exam scores
 
 //FUNCTION TO ENROLL STUDENTS/PUPILS IN A CLASS
  function enrollStudent($studentid,$class,$sessionid,$staffid,$inst_id)
@@ -190,7 +277,7 @@ function getActiveTerm($schid,$status='Active')
 //METHOD TO ADD NEW ASSESSMENT
 //Get student id from a function that takes in reg number of a student and return the id of the student
 //get session id from a function that select the id of the active session
-function addCa($score,$stud_no,$subj,$class_arm,$staffid,$canumber,$schid,$date)
+function addCa($score,$stud_no,$subj,$class,$staffid,$canumber,$schid,$date)
   {
   // always use try and catch block to write code
        try {
@@ -199,12 +286,15 @@ function addCa($score,$stud_no,$subj,$class_arm,$staffid,$canumber,$schid,$date)
                     $termid = $this->getActiveTerm($schid);
                     $sessionid = $this->getActiveSession($schid);
                     $student_id = $this->getStudentId($stud_no,$schid);
+                   $maxScores =  $this->getMaxCaScores($class,$schid);
+                   if($scores <= $maxScores)
+                   {
                     //Check for the number of CA added
                     $query ="SELECT  ass_student_id AS studentID FROM assessment WHERE ass_subject_id =?
                     && ass_class_id=? AND ass_term_id=? AND ass_session_id=? AND ca_no_id=? AND ass_student_id=?";
                     $this->conn->query($query);
                     $this->conn->bind(1, $subj, PDO::PARAM_INT);
-										$this->conn->bind(2, $class_arm, PDO::PARAM_INT);
+										$this->conn->bind(2, $class, PDO::PARAM_INT);
 										$this->conn->bind(3, $termid, PDO::PARAM_INT);
 										$this->conn->bind(4, $sessionid, PDO::PARAM_INT);
                     $this->conn->bind(5, $canumber, PDO::PARAM_INT);
@@ -226,7 +316,7 @@ function addCa($score,$stud_no,$subj,$class_arm,$staffid,$canumber,$schid,$date)
                             $this->conn->bind(1, $score, PDO::PARAM_INT,100);
                             $this->conn->bind(2, $student_id, PDO::PARAM_INT,100);
                             $this->conn->bind(3, $subj, PDO::PARAM_INT,100);
-                            $this->conn->bind(4, $class_arm, PDO::PARAM_INT);
+                            $this->conn->bind(4, $class, PDO::PARAM_INT);
                             $this->conn->bind(5, $sessionid, PDO::PARAM_INT);
                             $this->conn->bind(6, $termid, PDO::PARAM_INT);
                             $this->conn->bind(7, $staffid, PDO::PARAM_INT);
@@ -245,6 +335,10 @@ function addCa($score,$stud_no,$subj,$class_arm,$staffid,$canumber,$schid,$date)
                       			}
 
                     		}
+              }
+              else{
+                exit("Maximum scores exceeded!");
+              }
         }
 
         catch(Exception $e)
@@ -258,13 +352,16 @@ function addCa($score,$stud_no,$subj,$class_arm,$staffid,$canumber,$schid,$date)
 //METHOD TO ADD NEW TERMINAL EXAMINATION REECORDS
 function addTerminalExam($score,$subj,$class,$staffid,$schid,$stud_no,$date)
   {
-      // always use try and catch block to write code
-      $termid = $this->getActiveTerm($schid);
-      $sessionid = $this->getActiveSession($schid);
-      $student_id = $this->getStudentId($stud_no,$schid);
+      
 
         try {
-
+                    // always use try and catch block to write code
+                    $termid = $this->getActiveTerm($schid);
+                    $sessionid = $this->getActiveSession($schid);
+                    $student_id = $this->getStudentId($stud_no,$schid);
+                    $maxScores = $this->getMaxExamScores($class,$schid);
+                    if($score <= $maxScores)
+                    {
                     //CHECK WHETHER MULTIPLE EXAMS SCORES ARE ADDED FOR ONE SUBJECT
                     //TODO: NO STUDENT SHOULD BE ENROLLED TWICE IN THE SAME CLASS AND ARM IN THE SAME SESSION
                     $query ="SELECT exam_subj_id AS SubjectID FROM terminal_exam WHERE exam_term_id =?
@@ -311,6 +408,11 @@ function addTerminalExam($score,$subj,$class,$staffid,$schid,$stud_no,$date)
                       			}
 
                     		}
+                    }
+                    else{
+                      exit("Max exam scores exceeded!");
+                      
+                    }
       }
 
         catch(Exception $e)
@@ -1248,22 +1350,28 @@ function caTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
         $output = $this->conn->resultset(); 
 					//echo count($output);
           //ouput table headers below here
+          $caMaxScore = $this->getMaxCaScores($classid,$schoolid);
+          $examMaxScore = $this->getMaxExamScores($classid,$schoolid);
+          $totalCA = 3*$caMaxScore;
+          $totalExam = $totalCA + $examMaxScore;
 					$printOutput = " ";
           $printOutput.= "<table class='datatable'>";
           $printOutput.="<tr>
           <th></th>
           <th>Subject</th>
-          <th>1st CA 10%</th>
-          <th>2nd CA 10%</th>
-          <TH>3rd CA 10%</th>
-          <TH>CA Total 30%</th>
-          <TH>Term Exams 70%</th>
-          <TH>Term Total 100%</th>
+          <th>1st CA '.$caMaxScore.'%</th>
+          <th>2nd CA '.$caMaxScore.'%</th>
+          <TH>3rd CA '.$caMaxScore.'%</th>
+          <TH>CA Total'.$totalCA.'%</th>
+          <TH>Term Exams '.$examMaxScore.'%</th>
+          <TH>Term Total '.$totalExam.'%</th>
           <TH>Class AVerage</th>
-          <TH>Subject Position</th>
+          <TH>Highest In Class</th>
+          <TH>Lowest In Class</th>
+          <TH>Position In Class</th>
           <TH>Grade</th>
           <TH>Comment</th>
-          <TH>Sign</th>
+          <th>Sign</th>
           </tr>";
 					foreach($output as $row => $key)
 					{
@@ -1276,10 +1384,12 @@ function caTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
             $printOutput.=$this->subject_ScoresTotal($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
             $printOutput.='<td>'.$this->subjectTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid).'</td>';
             $printOutput.=$this->subjectAv($subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->highestInClass($subjectID,$classid,$termid,$sessionid,$schoolid);
+            $printOutput.=$this->lowestInClass($subjectID,$classid,$termid,$sessionid,$schoolid);
             $printOutput.=$this->getSubjectPosition($studentid,$subjectID,$classid,$sessionid,$termid,$schoolid);
             $printOutput.=$this->gradingScores($this->subjectTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid));
             $printOutput.=$this->staffSign($classid,$subjectID,$schoolid);
-						$printOutput.='</tr><br>';
+						$printOutput.='</tr>';
 					}
           echo $printOutput;
 
@@ -1468,6 +1578,86 @@ function subjectPosition($subjectid,$termid,$sessionid,$classid,$schid)
     } 
 // End subject position method
 
+//Highest by subject in a class
+function highestInClass($subjectid,$classid,$termid,$sessionid,$schoolid)
+	    {
+		  try {
+        //check to see if records already exist 
+        $query ="SELECT TermTotal AS HighestTotal FROM subjecttotals WHERE subject_id=? AND class_id=? AND 
+        term_id=? AND session_id=? AND school_id=? DESC LIMIT 1";
+        $this->conn->query($query);
+        $this->conn->bind(1, $subjectid, PDO::PARAM_INT);
+        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+				$this->conn->bind(3, $termid, PDO::PARAM_INT);
+        $this->conn->bind(4, $sessionid, PDO::PARAM_INT); 
+				$this->conn->bind(5, $schoolid, PDO::PARAM_INT);
+        $output = $this->conn->resultset();
+        $printOutput = " ";
+        if($output && $this->conn->rowCount() >=1)
+        {
+          	foreach($output as $row => $key)
+					{
+            $highesttotal = $key['HighestTotal'];
+					//	$printOutput.='<tr>';
+						$printOutput.='<td>'.$highesttotal.'</td>';
+            
+					//$printOutput.='</tr>';
+					}
+          return $printOutput;
+        }
+            else
+            {
+        
+            }
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+
+//end Highest by subject in a class
+
+//Lowest by subject in class
+function lowestInClass($subjectid,$classid,$termid,$sessionid,$schoolid)
+	    {
+		  try {
+        //check to see if records already exist 
+        $query ="SELECT TermTotal AS LowestTotal FROM subjecttotals WHERE subject_id=? AND class_id=? AND 
+        term_id=? AND session_id=? AND school_id=? ASC LIMIT 1";
+        $this->conn->query($query);
+        $this->conn->bind(1, $subjectid, PDO::PARAM_INT);
+        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+				$this->conn->bind(3, $termid, PDO::PARAM_INT);
+        $this->conn->bind(4, $sessionid, PDO::PARAM_INT); 
+				$this->conn->bind(5, $schoolid, PDO::PARAM_INT);
+        $output = $this->conn->resultset();
+        $printOutput = " ";
+        if($output && $this->conn->rowCount() >=1)
+        {
+          	foreach($output as $row => $key)
+					{
+            $lowesttotal = $key['LowestTotal'];
+					//	$printOutput.='<tr>';
+						$printOutput.='<td>'.$lowesttotal.'</td>';
+            
+					//$printOutput.='</tr>';
+					}
+          return $printOutput;
+        }
+            else
+            {
+        
+            }
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+
+//end lowest by subject in class
+
 //Scoresheet method
 function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
 	    {
@@ -1503,21 +1693,27 @@ function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
         $printOutput.=$this->scoreSheetHeaderInformation($subjectid,$classid,$termid,$sessionid,$schoolid);
           //ouput table headers below here
 					//$printOutput = " ";
+          $caMaxScore = $this->getMaxCaScores($classid,$schoolid);
+          $examMaxScore = $this->getMaxExamScores($classid,$schoolid);
+          $totalCA = 3*$caMaxScore;
+          $totalExam = $totalCA + $examMaxScore; 
           $printOutput.= "<table class='datatable'>";
-          $printOutput.="<tr>
+          $printOutput.='<tr>
           <th>Student Name</th>
-          <th>1st CA 10%</th>
-          <th>2nd CA 10%</th>
-          <TH>3rd CA 10%</th>
-          <TH>CA Total 30%</th>
-          <TH>Term Exams 70%</th>
-          <TH>Term Total 100%</th>
+          <th>1st CA '.$caMaxScore.'%</th>
+          <th>2nd CA '.$caMaxScore.'%</th>
+          <TH>3rd CA '.$caMaxScore.'%</th>
+          <TH>CA Total'.$totalCA.'%</th>
+          <TH>Exam Score '.$examMaxScore.'%</th>
+          <TH>Term Total '.$totalExam.'%</th>
           <TH>Class AVerage</th>
-          <TH>Subject Position</th>
+          <TH>Highest In Class</th>
+          <TH>Lowest In Class</th>
+          <TH>Position In Class</th>
           <TH>Grade</th>
           <TH>Comment</th>
           <th>Sign</th>
-          </tr>";
+          </tr>';
 					foreach($output as $row => $key)
 					{
             $studentID = $key['studentID'];
@@ -1531,6 +1727,8 @@ function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
             $printOutput.=$this->subject_ScoresTotal($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
             $printOutput.='<td>'.$terminalSUbjectTotals.'</td>';
             $printOutput.=$this->subjectAv($subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.=$this->highestInClass($subjectID,$classid,$termid,$sessionid,$schoolid);
+            $printOutput.=$this->lowestInClass($subjectID,$classid,$termid,$sessionid,$schoolid);
             $printOutput.=$this->getSubjectPosition($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
             $printOutput.=$this->gradingScores($terminalSUbjectTotals);
             $printOutput.='<td>'.$this->staffSign($classid,$subjectID,$schoolid).'</td>';
@@ -1662,7 +1860,7 @@ function ExaminationSummarySheet($classid,$termid,$sessionid,$schoolid)
 	    }
       //End examination sheet
 
-//submit result summary
+//submit result summary by class teacher only
 function submitSummary($classid,$termid,$sessionid,$schoolid)
 	    {
 		  try {
@@ -1709,7 +1907,7 @@ function submitSummary($classid,$termid,$sessionid,$schoolid)
 	    }
 //end submit result summary
 
-//Method to assign class position
+//Method to assign class position only class teacher
 function classPosition($termid,$sessionid,$classid,$schid)
     { 
       try
@@ -2016,9 +2214,9 @@ public function staffProfileCard($clientid,$userid)
                                         </label>
                                         <input type="file" name="image-file" class="form-control" id="image-file">
                                         </span>';
-                                        $printOutput.='<h1>'.$fullname.'</h1>';
+                                        $printOutput.='<h5>'.$fullname.'</h5>';
                                         $printOutput.='<p class="title">'.$role.'</p>';
-                                    $printOutput.='</div></div>';
+                                        $printOutput.='</div></div>';
                     }
                     echo $printOutput;
             }// End of try catch block
@@ -3211,8 +3409,10 @@ public  function isSubjectTeacher($staff_id,$subjectid,$class_id,$schid)
          }
     }
 
-//View Published results
 
+
+
+//View Published results
 function findPublishedResult($classid,$schoolid,$status='Yes')
 	    {
 		 try {
@@ -3236,9 +3436,9 @@ function findPublishedResult($classid,$schoolid,$status='Yes')
         AND classpositionals.school_id=? AND classpositionals.published_status=?";
         $this->conn->query($query);
         $this->conn->bind(1, $classid, PDO::PARAM_INT); 
-		$this->conn->bind(2, $termid, PDO::PARAM_INT);
+		    $this->conn->bind(2, $termid, PDO::PARAM_INT);
         $this->conn->bind(3, $sessionid, PDO::PARAM_INT); 
-		$this->conn->bind(4, $schoolid, PDO::PARAM_INT);
+		    $this->conn->bind(4, $schoolid, PDO::PARAM_INT);
         $this->conn->bind(5, $status, PDO::PARAM_INT);
         $output = $this->conn->resultset(); 
         if($this->conn->rowCount() >= 1)
