@@ -197,15 +197,16 @@ $("#new-content").on('click', '#add-new-class', function(e) {
     e.preventDefault();
     $('#add-new-class').prop("disabled", true);
     var myclass = $('#class-name').val();
-    newClass(myclass);
+    var category = $("#class-category option:selected").val();
+    newClass(myclass, category);
 });
 //end create new class
 //add new class callback function
-function newClass(myclass) {
+function newClass(myclass, category) {
     $.ajax({
         url: 'addClass.php',
         type: 'POST',
-        data: { myclass: myclass },
+        data: { myclass: myclass, category: category },
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
@@ -222,43 +223,113 @@ function newClass(myclass) {
     });
 }
 //END CREATE NEW SCHOOL CLASS
-//=======================================================
-//THIS SECTION OF THE CODE IS NO LONGER IN USE
-//=======================================================
-// //create Class description
-// $("#new-content").on('click', '#assign-desc', function(e) {
-//     e.preventDefault();
-//     $('#assign-desc').prop("disabled", true);
-//     var class_id = $('#class-list option:selected').val();
-//     var description = $('#class-desc option:selected').val();
-//     classDescription(description, class_id);
-// });
 
-// //call back to assign class description
-// function classDescription(description, class_id) {
-//     $.ajax({
-//         url: 'assignClassArm.php',
-//         type: 'POST',
-//         data: { class_descr: description, class_id: class_id },
-//         success: function(response) {
-//             var data = $.trim(response);
-//             if (data === "ok") {
-//                 $('#assign-desc').prop("disabled", false);
-//                 $("#my-info").addClass("info");
-//                 $("#my-info").html("Class arm created successfully");
-//             } else {
-//                 //alert("me")
-//                 $('#assign-desc').prop("disabled", false);
-//                 $("#my-info").addClass("error");
-//                 $("#my-info").html(data);
-//             }
-//         },
-//     })
-// }
-// // End assign block
+//=======================================================
+//ADD CLASS CATEGORY
 
-// ///end of class escription
+// //create Class category
+$("#new-content").on('click', '#class-category-btn', function(e) {
+    e.preventDefault();
+    $('#class-category-btn').prop("disabled", true);
+    var category = $('#class-category').val();
+    //var description = $('#class-desc option:selected').val();
+    classCategory(category);
+});
+
+//call back to assign class description
+function classCategory(category) {
+    $.ajax({
+        url: 'addClassCategory.php',
+        type: 'POST',
+        data: { category: category },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#class-category-btn').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Class category added");
+            } else {
+                //alert("me")
+                $('#class-category-btn').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+// ///end of class CATEGORY
 //=================================================================================
+
+//===============================================================================
+//CREATE CA AND EXAM MAX SCORES
+
+
+//Create CA max score
+$("#new-content").on('click', '#ca-max-score', function(e) {
+    e.preventDefault();
+    $('#ca-max-score').prop("disabled", true);
+    var maxscore = $('#ca-score').val();
+    var category = $('#caclass-category option:selected').val();
+    caMaxScore(maxscore, category);
+});
+
+//call back to create ca max score
+function caMaxScore(maxscore, category) {
+    $.ajax({
+        url: 'addcaMaxScore.php',
+        type: 'POST',
+        data: { maxscore: maxscore, category: category },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#ca-max-score').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("CA Max Scores added");
+            } else {
+                //alert("me")
+                $('#ca-max-score').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end create ca max score
+
+
+//create Max exam scores
+$("#new-content").on('click', '#exam-max-score', function(e) {
+    e.preventDefault();
+    $('#exam-max-score').prop("disabled", true);
+    var maxscore = $('#exam-score').val();
+    var category = $('#examclass-category option:selected').val();
+    examMaxScore(maxscore, category);
+});
+
+//call back to create exam max score
+function examMaxScore(maxscore, category) {
+    $.ajax({
+        url: 'addexamMaxScore.php',
+        type: 'POST',
+        data: { maxscore: maxscore, category: category },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#exam-max-score').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Exam Max Scores added");
+            } else {
+                //alert("me")
+                $('#exam-max-score').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+//end create Max exam scores
 
 //==================================================================================
 //Assign subject block
@@ -595,3 +666,5 @@ function createClass(staff, myclass) {
 }
 
 //end create class teacher functionality
+
+//
