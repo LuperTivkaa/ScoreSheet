@@ -32,7 +32,7 @@ include 'app/inc/mainHeader.php';
               </div>
 
          </div>
-              <button class="btn btn-primary" id="client-btn">Client Login</button>
+              <button class="btn btn-primary" id="client-btn"> Client Login</button>
               <div id="client-login"></div>              
 
     <hr class="underlineHr">
