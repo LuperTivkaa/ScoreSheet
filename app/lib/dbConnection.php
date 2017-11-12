@@ -5,14 +5,14 @@ class dbConnection {
 //class members
 private $dsn= 1;
 private $host ="localhost";
-private $user = "smarty_ems_2017";
-private $pass = "*enterprise_ems";
-private $dbname = "smarty";
+// private $user = "smarty_ems_2017";
+// private $pass = "*enterprise_ems";
+// private $dbname = "smarty";
 
 //
-// private $user = "skygift2_smarty7";
-// private $pass = "2017_sky";
-// private $dbname = "skygift2_smarty";
+private $user = "skygift2_scores7";
+private $pass = "scoresheet_ems";
+private $dbname = "skygift2_scoresheet";
 
 private $dbh;
 private $error;
