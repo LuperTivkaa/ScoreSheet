@@ -39,7 +39,7 @@ public function __construct(){
 	//Create new PDO Object
 	try{
 
-		$this->dbh = new PDO('mysql:host=localhost;dbname=smarty',$this->user,$this->pass,$options);
+		$this->dbh = new PDO('mysql:host=localhost;dbname=skygift2_scoresheet',$this->user,$this->pass,$options);
 	}
 	catch(PDOException $e){
 		$this->error = $e->getMessage();

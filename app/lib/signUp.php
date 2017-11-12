@@ -234,7 +234,7 @@ public  function client_root($instid,$email,$username,$password,$editDate,$creat
 //Function to log all users in i.e. admin created users
 //=============================================================================
 //log users and direct to the appropriate module
-public  function user_login($email,$password)
+public  function user_login($email,$password,$status="On")
  {
     //try and catch block
   try{
@@ -253,6 +253,7 @@ public  function user_login($email,$password)
     $this->conn->query($sql);
     $this->conn->bind(1, $this->email, PDO::PARAM_STR,12);
     $this->conn->bind(2, $this->password, PDO::PARAM_STR,12);
+    $this->conn->bind(2, $status, PDO::PARAM_STR,12);
     $user_info = array();
     $myLoginObject = array();
     $myResult = $this->conn->resultset();
