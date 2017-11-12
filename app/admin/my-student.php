@@ -1,3 +1,21 @@
+<?php
+//session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use ScoreSheet\staff;
+use Carbon\Carbon;
+//use \PDO;
+$dbConnection = new dbConnection();
+$client = new client($dbConnection);
+$student = new student($dbConnection);
+$staff = new staff($dbConnection);
+
+$clientid = $_SESSION['user_info'][4];
+$userid = $_SESSION['user_info'][0];
+$staff->adminUser($userid,$clientid);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +39,9 @@
                             <h6> My Student Sub Menu</h6>
                             <ul>
                             <li><a class="load-url" href="newStudent.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Student</a></li>
+                            <li><a class="load-url" href="studentPhoto.php"><i class="fa fa-camera fa-fw" aria-hidden="true"></i> Upload Passport</a></li>
                             <li><a class="load-url" href="studentParent.php"><i class="fa fa-male fa-fw fa-fw" aria-hidden="true"></i>Add Parent</a></li>
+                            <li><a class="load-url" href="studentGuardian.php"><i class="fa fa-male fa-fw fa-fw" aria-hidden="true"></i>Add Guardian</a></li>
                             <li><a class="load-url" href="createAdmissionNumber.php"><i class="fa fa-sort-numeric-asc fa-fw" aria-hidden="true"></i> Assign Admission Number</a></li>
                              <li><a class="load-url" href="student-list.php"><i class="fa fa-th-list fa-fw" aria-hidden="true"></i>Student's Preview</a></li>
                              <li><a class="load-url" href="student-search.php"><i class="fa fa-search fa-fw" aria-hidden="true"></i>Search Student</a></li>

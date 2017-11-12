@@ -1,6 +1,22 @@
+<?php
+//session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use ScoreSheet\staff;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
+$staff = new staff($dbConnection);
+$schid = $_SESSION['user_info'][4];
+
+$staffid = $_SESSION['user_info'][0];
+$staff->staff($staffid,$schid);
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <title>ScoreSheet| Academic Routines </title>
@@ -24,19 +40,21 @@
 
                         <div class="col-6">
                         <h6 class="top-header text-xs-center mt-3"><i class="fa fa-pencil" aria-hidden="true"></i> Edit Assessment Scores</h6>
+                        <p id="modal_error"></p>
                         </div>
+                        
                          <div class="col-6">
-                            <label for="edit-class">Select Class</label>
-                            <select class="custom-select  form-control" id="edit-class">
+                            <label for="mystudentclass">Select Class</label>
+                            <select class="custom-select  form-control" id="mystudentclass">
                               <?php
-                                $student->loadClass($clientid);
+                                $client->loadClass($clientid);
                               ?>
                             </select>
                             </div>
                             
                             <div class="col-6">
-                            <label for="edit-subject">Subject</label>
-                            <select class="custom-select  form-control" id="edit-subject">
+                            <label for="mystudentsubject">Subject</label>
+                            <select class="custom-select  form-control" id="mystudentsubject">
                             </select>
                             </div>
 

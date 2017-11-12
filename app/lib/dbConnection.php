@@ -9,6 +9,11 @@ private $user = "smarty_ems_2017";
 private $pass = "*enterprise_ems";
 private $dbname = "smarty";
 
+//
+// private $user = "skygift2_smarty7";
+// private $pass = "2017_sky";
+// private $dbname = "skygift2_smarty";
+
 private $dbh;
 private $error;
 private $stmt;

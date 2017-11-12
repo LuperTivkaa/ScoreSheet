@@ -4,13 +4,18 @@ require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
 use ScoreSheet\student;
+use ScoreSheet\staff;
+use Carbon\Carbon;
 //use \PDO;
-
 $dbConnection = new dbConnection();
 $client = new client($dbConnection);
-$clientid = $_SESSION['user_info'][4];
+$student = new student($dbConnection);
+$staff = new staff($dbConnection);
 
-$mystudent = new student($dbConnection);
+$clientid = $_SESSION['user_info'][4];
+$userid = $_SESSION['user_info'][0];
+$staff->adminUser($userid,$clientid);
+
 $dateCreated = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
@@ -23,7 +28,7 @@ if(empty($range) || !is_numeric($range))
 	exit("Please provide how many numbers you wish to generate or provide a valid data");
     }
 //creating new admission numbers
-$mystudent->newAdmissionNumber($clientid,$range,$dateCreated);    
+$student->newAdmissionNumber($clientid,$range,$dateCreated);    
     }
     else
     {

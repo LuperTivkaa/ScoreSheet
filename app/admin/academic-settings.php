@@ -1,3 +1,21 @@
+<?php
+//session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use ScoreSheet\staff;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
+$staff = new staff($dbConnection);
+//$jobmanager = new manager($dbConnection);
+$schid = $_SESSION['user_info'][4];
+//$newStaff = new student();
+$staffid = $_SESSION['user_info'][0];
+$staff->adminUser($staffid,$schid);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,9 +46,14 @@
                             <li> <a class="load-url" href="classCategory.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Class Category</a></li>
                             <li> <a class="load-url" href="ScoreSettings.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Scores Settings</a></li>
                             <li><a class="load-url" href="setAdmissionNumber.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> New Numbers</a></li>
+                            <li><a class="load-url" href="attendanceSettings.php"><i class="fa fa-calendar" aria-hidden="true"></i> Attendance Settings</a></li>
+                            <li><a class="load-url" href="nextTerm.php"><i class="fa fa-calendar" aria-hidden="true"></i> Resumption</a></li>
+
                             </ul>   
                         </div>  
                     <!--You can put content here inside the primary column  -->
+                    
+
 
                     <!--end custom content  -->
                     <div id="my-info">

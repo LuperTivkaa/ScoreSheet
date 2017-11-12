@@ -1,11 +1,20 @@
 <?php
-//session_start();
-include 'inc/regSession.php';
-$clientid = $_SESSION['sess_info'][0];
-//function to generate unique number below
-//Autoload classes
-include'inc/autoload.php';
-$client = new client();
+session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use ScoreSheet\staff;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
+$staff = new staff($dbConnection);
+//$jobmanager = new manager($dbConnection);
+$clientid = $_SESSION['user_info'][4];
+//$newStaff = new student();
+$userid = $_SESSION['user_info'][0];
+$staff->clientUser($userid,$clientid);;
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 //$regno = $_SESSION['ID'];
@@ -15,8 +24,12 @@ $nation = filter_input(INPUT_POST, "nation", FILTER_SANITIZE_STRING);
 $state = filter_input(INPUT_POST, "state", FILTER_SANITIZE_STRING);
 $lg = filter_input(INPUT_POST, "lg", FILTER_SANITIZE_STRING);
 $city = filter_input(INPUT_POST, "city", FILTER_SANITIZE_STRING);
-$address = filter_input(INPUT_POST, "address", FILTER_SANITIZE_STRING);
 $mobile = filter_input(INPUT_POST, "mobile", FILTER_SANITIZE_STRING);
+$url = filter_input(INPUT_POST, "webAdd", FILTER_SANITIZE_URL);
+$email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
+$strtAdd = filter_input(INPUT_POST, "streetAdd", FILTER_SANITIZE_STRING);
+$mailbox = filter_input(INPUT_POST, "mailAdd", FILTER_SANITIZE_STRING);
+
 
 $client->setSchName($sch_name);
 $schname = $client->getSchName();
@@ -36,13 +49,27 @@ $lga = $client->getLga();
 $client->setCity($city);
 $city = $client->getCity();
 
-$client->setAddress($address);
-$address = $client->getAddress();
 
 $client->setMobile($mobile);
 $mobile = $client->getMobile();
 
-$client->instProfile($schname,$schtype,$clientid,$country,$state,$lga,$city,$address,$mobile);
+$client->setEmail($email);
+$email = $client->getEmail();
+
+$client->setAddress($strtAdd);
+$strtAdd = $client->getAddress();
+
+$client->setAddress($mailbox);
+$mailbox = $client->getAddress();
+
+
+
+ if(empty($schname) || empty($state) || empty($lga) || empty($city) || empty($mobile) || empty($strtAdd))
+        {
+         exit("Please fill all the fields...");
+       }else{
+           $client->instProfile($schname,$schtype,$clientid,$country,$state,$lga,$city,$mobile,$url,$email,$strtAdd,$mailbox);
+       }
     
 }
 else

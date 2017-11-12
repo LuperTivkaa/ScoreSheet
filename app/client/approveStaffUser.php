@@ -11,9 +11,10 @@ $student = new student($dbConnection);
 $client = new client($dbConnection);
 $staff = new staff($dbConnection);
 //$jobmanager = new manager($dbConnection);
-$schid = $_SESSION['user_info'][4];
+$clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
-$staffid = $_SESSION['user_info'][0];
+$userid = $_SESSION['user_info'][0];
+$staff->clientUser($userid,$clientid);
 
 $dateCreated = date("Y-m-d");
 
@@ -31,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
           ///  exit("Please fill all the fields...");
        // }else{
             //edit exam scores
-            $client->approveStaffUser($userid,$schid);
+            $client->approveStaffUser($staffuserid,$clientid);
         //}
    }
 else

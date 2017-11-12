@@ -1,5 +1,5 @@
 <?php
-session_start();
+//session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
@@ -15,6 +15,7 @@ $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
+$staff->staff($userid,$clientid);
 ?>
 
 <!--Row  to hold some sub menu  -->

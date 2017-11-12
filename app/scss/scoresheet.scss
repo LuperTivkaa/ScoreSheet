@@ -24,7 +24,7 @@
                                 padding: 1em 0;
                                 .secondary-nav-content {
                                     padding: 1.5px 1.5px 1.5px 1.5px;
-                                    border-left: 3px solid deepskyblue;
+                                    // border-left: 3px solid deepskyblue;
                                     @include center-content;
                                     h4 {
                                         font-family: $font-primary;
@@ -325,7 +325,7 @@
                                     a {
                                         text-decoration: none !important;
                                         color: $nav-link-color;
-                                        font-size: .85em;
+                                        font-size: .65em;
                                     }
                                 }
                             }
@@ -361,20 +361,44 @@
                             .datatable {
                                 border: 0.5px solid #e5e7e9;
                                 //border-collapse: collapse;
-                                font-family: $datatable;
-                                margin-left: 0px;
+                                //font-family: $datatable;
+                                font-family: $font-secondary;
+                                margin-left: 3px;
                                 td {
                                     border: 1px solid #e5e7e9;
                                     text-align: left;
                                     //padding: 0.2em;
                                     //font-family: $font-primary;
-                                    font-size: .7em;
+                                    font-size: .6em;
                                     white-space: nowrap;
                                 }
                                 th {
                                     border: 0.5px solid #e5e7e9;
                                     text-align: left;
-                                    font-size: .8em;
+                                    font-size: .6em;
+                                    //font-weight: 20;
+                                }
+                            }
+                            
+                            //////////////////////////////////////////////////
+                            .rating-table {
+                                border: 0.5px solid #e5e7e9;
+                                //border-collapse: collapse;
+                                //font-family: $datatable;
+                                font-family: $font-secondary;
+                                //margin-left: 3px;
+                                td {
+                                    border: 1px solid #e5e7e9;
+                                    text-align: left;
+                                    //padding: 0.2em;
+                                    //font-family: $font-primary;
+                                    font-size: .4em;
+                                    white-space: nowrap;
+                                }
+                                th {
+                                    border: 0.5px solid #e5e7e9;
+                                    text-align: left;
+                                    font-size: .4em;
                                     //font-weight: 20;
                                 }
                             }
@@ -404,31 +428,63 @@
                             //=====================
                             //Result sheet styles
                             .result-content-wrapper {
-                                @include center-content;
+                                @include resultcenter-content;
                             }
                             
                             .school-profile {
                                 //border: 2px solid brown;
-                                border-left: 3px solid deepskyblue;
+                                display: inline-block;
+                                width: 80%;
                                 text-align: center;
-                                margin-bottom: 15px;
                                 margin-top: 10px;
+                                margin-right: -7px;
+                                vertical-align: top;
                                 p {
                                     font-family: $result-font2;
-                                    font-size: .9em;
-                                    line-height: .9px;
+                                    font-size: .6em;
+                                    line-height: 0.3;
+                                    margin-bottom: 0px;
                                 }
                                 h5 {
                                     font-family: $font-primary;
                                     color: $black;
-                                    font-size: 1.7em;
+                                    font-size: 1.2em;
                                 }
                             }
                             
                             .student-profile {
                                 //border: 1px solid black;
-                                border-left: 3px solid deepskyblue;
-                                margin-bottom: 15px;
+                                @include container-styles;
+                            }
+                            
+                            .result-details-container {
+                                @include container-styles;
+                            }
+                            
+                            .school-profile-container {
+                                @include container-styles;
+                            }
+                            
+                            .national-emblem {
+                                @include container-styles;
+                                text-align: center;
+                                margin-top: 10px;
+                                vertical-align: top;
+                                p {
+                                    font-size: .5em;
+                                    line-height: 1.3;
+                                    margin-bottom: 0px;
+                                }
+                            }
+                            
+                            .school-avatar-container {
+                                display: inline-block;
+                                //border: 2px solid red;
+                                width: 10%;
+                                //padding-right: 1em;
+                                margin-right: -2px;
+                                margin-top: 10px;
+                                vertical-align: top;
                             }
                             
                             .item-container {
@@ -436,14 +492,19 @@
                                 width: 100%;
                                 h6 {
                                     font-family: $font-primary;
-                                    font-size: .7em;
+                                    font-size: .6em;
                                     color: $black;
                                 }
                                 span {
                                     font-family: $result-font1;
                                     color: $black;
-                                    font-size: .6em;
+                                    font-size: .5em;
                                     font-weight: 400;
+                                }
+                                .grading-header {
+                                    font-family: $font-primary;
+                                    font-size: .5em;
+                                    color: $black;
                                 }
                             }
                             
@@ -458,7 +519,7 @@
                                     margin-top: 5px;
                                     font-family: $font-primary;
                                     color: $black;
-                                    font-size: 1.5em;
+                                    font-size: 13px;
                                 }
                             }
                             
@@ -467,25 +528,37 @@
                                 //border: 2px solid red;
                                 width: 10%;
                                 padding-right: 1em;
-                                margin-right: -5px;
+                                //margin-right: -5px;
                                 vertical-align: top;
                             }
                             
                             .colm {
                                 display: inline-block;
-                                width: 13%;
+                                width: 11%;
+                                padding-left: 3px;
+                                margin-right: -5px;
+                                span {
+                                    margin-top: .2px;
+                                }
+                            }
+                            
+                            .grading-items {
+                                display: inline-block;
+                                width: 20%;
                                 padding-left: 3px;
                                 margin-right: -5px;
                                 span {
                                     margin-top: .6px;
+                                    color: lightgrey;
                                 }
                             }
                             
                             .logo-img {
                                 width: 60px;
                                 height: 60px;
-                                border-radius: 50%;
+                                border-radius: 2px 2px 2px 2px;
                                 border: 1px solid $general;
+                                margin-bottom: 4px;
                                 // bottom: -30px;
                                 // left: 100px;
                                 // top: 17px;
@@ -517,17 +590,99 @@
                             }
                             
                             .result-details {
-                                border-left: 3px solid deepskyblue;
-                                margin-bottom: 15px;
+                                // border-left: 3px solid deepskyblue;
+                                // margin-bottom: 15px;
+                                display: inline-block;
+                                //border-left: 3px solid deepskyblue;
+                                //border: 3px solid purple;
+                                width: 80%;
+                                margin-right: -7px;
+                                padding-left: 0px;
+                                vertical-align: top;
                             }
                             
-                            .cognitive-marks {
-                                margin-bottom: 15px;
-                                border-left: 3px solid deepskyblue;
+                            .domain-ratings {
+                                display: inline-block;
+                                //border: 2px solid red;
+                                width: 20%;
+                                padding-right: 3px;
+                                // margin-left: 3px;
+                                vertical-align: top;
+                                margin-top: 7px;
                             }
                             
+                            .traits-items {
+                                padding-left: 4px;
+                            }
+                            
+                            .staff-comments-header {
+                                display: block;
+                                font-family: $font-secondary;
+                                font-size: 11px;
+                                font-weight: bold;
+                            }
+                            
+                            .staff-comments-item {
+                                display: block;
+                                font-family: $font-secondary;
+                                font-size: 10px;
+                                font-weight: bold;
+                                color: #96a1ac;
+                            }
+                            
+                            .domain-ratings-header {
+                                font-family: $font-secondary;
+                                font-size: 8px;
+                                font-weight: bolder;
+                                text-align: center;
+                            }
+                            
+                            .category-header {
+                                font-family: $font-secondary;
+                                font-size: 14px;
+                                font-weight: bolder;
+                            }
+                            
+                            // .cognitive-marks {
+                            //     margin-bottom: 15px;
+                            //     border-left: 3px solid deepskyblue;
+                            // }
                             .comments-section {
                                 border-left: 3px solid deepskyblue;
+                            }
+                            
+                            .teacher-comments-container {
+                                @include bottom-margin;
+                            }
+                            
+                            .principal-comments-container {
+                                @include bottom-margin;
+                            }
+                            
+                            .principal-name {
+                                @include half-div;
+                                margin-right: -5px;
+                            }
+                            
+                            .principal-comments {
+                                @include quarter-div;
+                            }
+                            
+                            .principal-sign {
+                                @include half-div;
+                            }
+                            
+                            .class-teacher-name {
+                                @include half-div;
+                                margin-right: -5px;
+                            }
+                            
+                            .class-teacher-comments {
+                                @include quarter-div;
+                            }
+                            
+                            .class-teacher-sign {
+                                @include half-div;
                             }
                             
                             //School profile header styles
@@ -546,9 +701,18 @@
                             }
                             
                             .school-avatar {
-                                width: 30px;
-                                height: 30px;
-                                border-radius: 50%;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 2px 2px 2px 2px;
+                                //text-align: center;
+                                border: 1px solid $general;
+                            }
+                            
+                            .school-logo {
+                                width: 50%;
+                                //height: 30px;
+                                border-radius: 2px 2px 2px 2px;
+                                text-align: center;
                                 border: 1px solid $general;
                             }
                             
@@ -584,6 +748,10 @@
                             }
                             
                             .comments-div {
+                                display: none;
+                            }
+                            
+                            .attendance-div {
                                 display: none;
                             }
                             
@@ -657,20 +825,26 @@
                                 //border-bottom: 1px solid gray;
                                 margin-bottom: 12px;
                                 li {
-                                    display: inline-block;
+                                    //display: inline-block;
+                                    display: block;
                                     padding: 0px;
-                                    margin-right: 5px;
-                                    p {
-                                        font-size: 11px;
-                                        color: $black;
-                                        margin-bottom: 3px;
-                                        border-bottom: 1.5px solid deepskyblue;
-                                    }
+                                    //margin-right: 5px;
+                                    // p {
+                                    //     display: inline-block;
+                                    //     font-size: 11px;
+                                    //     color: $black;
+                                    //     margin-bottom: 2px;
+                                    //     margin-right: 2px;
+                                    //     border-bottom: 1.5px solid deepskyblue;
+                                    //    }
                                     span {
-                                        display: inline-block;
-                                        font-size: 9px;
-                                        color: #96a1ac;
-                                        margin-top: 3px;
+                                        // display: inline-block;
+                                        //display: inline-block;
+                                        font-size: .4em;
+                                        color: $black;
+                                        margin-right: 3px;
+                                        //color: #96a1ac;
+                                        // margin-top: 3px;
                                     }
                                 }
                             }
@@ -691,6 +865,12 @@
                                     h2 {
                                         font-size: 1em;
                                     }
+                                }
+                                .result-content-wrapper {
+                                    @include smallscreen-result-content;
+                                }
+                                .result-details {
+                                    margin-right: 1px;
                                 }
                                 .secondary-nav-content {
                                     @include small-device-center-content;

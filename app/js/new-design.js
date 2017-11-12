@@ -80,10 +80,12 @@ $('#new-content').on('click', '#newbtn', function(e) {
     e.preventDefault();
 
     var recordid = $(this).data('recordid');
+    var classid = $(this).data('classid');
     var scores = $(this).data('scores');
 
     $('#edit-scores').val(scores);
     $('#record-id').val(recordid);
+    $('#studclassid').val(classid);
     $('#modal-list').empty();
     $('#modal-error').empty();
     var modalid = $('#myModal');
@@ -114,10 +116,10 @@ $('.closex').on('click', function(evt) {
 
 //LOAD SUBJECT BASED ON SELECTION OF CLASS
 
-$('#edit-class').on('change', function() {
-    var id = $("#edit-class option:selected").val();
+$('#mystudentclass').on('change', function() {
+    var id = $("#mystudentclass option:selected").val();
     $.post("staffSubjectByClass.php", { id: id }, function(data) {
-        $("#edit-subject").html(data);
+        $("#mystudentsubject").html(data);
     });
 });
 //END LOAD SUBJECT BASED ON CLASS
@@ -127,8 +129,8 @@ $("#edit-exam").on('click', function(e) {
     if (confirm("Do you really want to edit?") == true) {
         e.preventDefault();
         $('#edit-exam').text("Editing...").prop("disabled", true);
-        var myclass = $("#edit-class option:selected").val();
-        var subject = $("#edit-subject option:selected").val();
+        var myclass = $("#mystudentclass option:selected").val();
+        var subject = $("#mystudentsubject option:selected").val();
         var scores = $("#edit-scores").val();
         var recordid = $("#record-id").val();
         editExamScores(myclass, subject, scores, recordid);
@@ -155,11 +157,11 @@ function editExamScores(myclass, subject, scores, recordid) {
                 $("#my-info").html("Exam scores edited successfully");
             } else {
                 $('#edit-exam').text("Edit Scores").prop("disabled", false);
-                var modal = $('#myModal');
-                modal.css('display', 'none');
+                //var modal = $('#myModal');
+                //modal.css('display', 'none');
                 reloadSubjectScores(myclass, subject);
-                $("#my-info").addClass("error");
-                $("#my-info").html(data);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
             }
         },
     });
@@ -187,8 +189,8 @@ $("#edit-ca").on('click', function(e) {
     if (confirm("Do you really want to edit?") == true) {
         e.preventDefault();
         $('#edit-ca').text("Editing...").prop("disabled", true);
-        var myclass = $("#edit-class option:selected").val();
-        var subject = $("#edit-subject option:selected").val();
+        var myclass = $("#mystudentclass option:selected").val();
+        var subject = $("#mystudentsubject option:selected").val();
         var scores = $("#edit-scores").val();
         var recordid = $("#record-id").val();
         editca(myclass, subject, scores, recordid);
@@ -215,11 +217,11 @@ function editca(myclass, subject, scores, recordid) {
                 $("#my-info").html("Assessment scores edited successfully");
             } else {
                 $('#edit-ca').text("Edit Scores").prop("disabled", false);
-                var modal = $('#myModal');
-                modal.css('display', 'none');
+                //var modal = $('#myModal');
+                //modal.css('display', 'none');
                 reloadCaScores(myclass, subject);
-                $("#my-info").addClass("error");
-                $("#my-info").html(data);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
             }
         },
     });
@@ -251,6 +253,7 @@ $('#mydefault').on('click', function(e) {
     $(this).removeClass("custom-btn").addClass("active-trait");
     $('#nondefault').removeClass('custom-btn active-trait').addClass('custom-btn');
     $('#studcomments').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#attendancediv').removeClass('custom-btn active-trait').addClass('custom-btn');
     var psychomotor = $('.psychomotor-domain-div');
     psychomotor.hide();
 
@@ -262,32 +265,62 @@ $('#studcomments').on('click', function(e) {
     var affective = $('.affective-domain-div');
     var psychomotor = $('.psychomotor-domain-div');
     var mycomments = $('.comments-div');
+    var att = $('.attendance-div');
     $('#modal-list').empty();
     $('#modal_error').empty();
     $('#comment-id').val("");
     $('#nondefault').removeClass('custom-btn active-trait').addClass('custom-btn');
     $('#mydefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#attendancediv').removeClass('custom-btn active-trait').addClass('custom-btn');
     psychomotor.hide();
     affective.hide();
+    att.hide();
     mycomments.show();
     $(this).removeClass("custom-btn").addClass("active-trait");
 
 });
+//Show attendance div
+$('#attendancediv').on('click', function(e) {
+    e.preventDefault();
+    //$('#comment-id').val("");
+    var affective = $('.affective-domain-div');
+    var psychomotor = $('.psychomotor-domain-div');
+    var mycomments = $('.comments-div');
+    var attendance = $('.attendance-div');
+    $('#modal-list').empty();
+    $('#modal_error').empty();
+    $('#comment-id').val("");
+    $('#nondefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#mydefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#studcomments').removeClass('custom-btn active-trait').addClass('custom-btn');
+    psychomotor.hide();
+    affective.hide();
+    mycomments.hide();
+    attendance.show();
+    $(this).removeClass("custom-btn").addClass("active-trait");
 
+});
+//end attendance div
 //Show psychomotor div on button click
 $('#nondefault').on('click', function(e) {
     e.preventDefault();
     var affective = $('.affective-domain-div');
     var mycomments = $('.comments-div');
-    mycomments.hide();
-    affective.hide();
     var psychomotor = $('.psychomotor-domain-div');
+    var attend = $('.attendance-div');
     $('#modal-list').empty();
     $('#modal_error').empty();
-    psychomotor.show();
-    $(this).removeClass("custom-btn").addClass("active-trait");
+
+
     $('#mydefault').removeClass('custom-btn active-trait').addClass('custom-btn');
     $('#studcomments').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#attendancediv').removeClass('custom-btn active-trait').addClass('custom-btn');
+
+    mycomments.hide();
+    affective.hide();
+    attend.hide();
+    psychomotor.show();
+    $(this).removeClass("custom-btn").addClass("active-trait");
 
 });
 
@@ -325,6 +358,45 @@ function addAffectiveDomain(mydomain, grading, studentid) {
     });
 }
 //end functionality to handle affective domain
+
+//Add number of days student attended school
+$("#add-attendance").on('click', function(e) {
+    e.preventDefault();
+    $('#add-attendance').text("Adding  please wait...").prop("disabled", true);
+    var days = $("#days").val();
+    var studentid = $("#record-id").val();
+    var classid = $("#studclassid").val();
+    //var classid = $(this).data('classid');
+    //alert(days + studentid + classid);
+    daysAttended(classid, days, studentid);
+
+});
+
+//call back function to add number of days student attended school
+function daysAttended(classid, days, studentid) {
+    $.ajax({
+        url: 'addAttendance.php',
+        type: 'POST',
+        data: { classid: classid, days: days, studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#add-attendance').text("Add Attendance").prop("disabled", false);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Number of days attended school added");
+                //$("#modal_error").removeClass("error").empty();
+            } else {
+                $('#add-attendance').text("Add Attendance").prop("disabled", false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+
+
+//End number of days student attended school
+
 
 //functionality to handle psychomotor skills
 $("#add-psycho-skills").on('click', function(e) {
@@ -391,7 +463,6 @@ $("#modal-list").on('click', '#remove-trait', function(e) {
         $('#remove-trait').prop("disabled", true);
         var id = $(this).data('id');
         var examid = $("#record-id").val();
-        alert(examid);
         deleteAffectiveSkills(id, examid);
     } else {
         $('#remove-trait').prop("disabled", false);
@@ -846,7 +917,7 @@ $("#new-content").on('click', '#staffOff', function(e) {
     e.preventDefault();
     var mybutton = $(this);
 
-    var termid = $(this).data('recordid');
+    var staffuserid = $(this).data('recordid');
     $(this).text('Please wait...');
     unapproveStaffUser(staffuserid, mybutton);
 });
@@ -1321,8 +1392,94 @@ function editSchPrefix(prefixid, prefix) {
         },
     });
 }
-
-
-
-
 //End function to edit prefix settings
+//===========================================================================================================
+
+//PROMOTION CDE BLOCK
+//load promotion settings page
+$('#new-content').on('click', '#loadClassSettings', function(evt) {
+    evt.preventDefault();
+    // $("#my-info").empty();
+    // $('#student-search-result').empty();
+    var url = $(this).attr('href');
+    $('#promotionSettings').load(url);
+});
+//end load promotion settings page
+
+//===========================================================================================================
+//Code to promote student
+$("#new-content").on('click', '#promote', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+    var promotedClass = $("#promotedclass option:selected").val();
+    var promotedSess = $("#promotedsession option:selected").val();
+    var recordid = $(this).data('recordid');
+    var studentid = $(this).data('studentid');
+
+    $(this).text('Please wait...');
+
+    promote(recordid, promotedClass, promotedSess, studentid, mybutton);
+});
+//call back for promoting student
+function promote(recordid, promotedClass, promotedSess, studentid, mybutton) {
+    $.ajax({
+        url: 'promoteStudent.php',
+        type: 'POST',
+        data: { recordid: recordid, promotedClass: promotedClass, promotedSess: promotedSess, studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'unpromote');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Unpromote');
+                mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
+            } else {
+                mybutton.text('Promote');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end code to promoting student
+
+//===========
+//code block to unpromote student
+$("#new-content").on('click', '#unpromote', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+    //alert("unpromote click");
+    var promotedClass = $("#promotedclass option:selected").val();
+    var promotedSess = $("#promotedsession option:selected").val();
+    var recordid = $(this).data('recordid');
+    var studentid = $(this).data('studentid');
+    $(this).text('Please wait...');
+    unpromote(recordid, promotedClass, promotedSess, studentid, mybutton);
+});
+//call back for unpromoting student
+function unpromote(recordid, promotedClass, promotedSess, studentid, mybutton) {
+    $.ajax({
+        url: 'unpromoteStudent.php',
+        type: 'POST',
+        data: { recordid: recordid, promotedClass: promotedClass, promotedSess: promotedSess, studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'promote');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Promote');
+                mybutton.removeClass('approvedBtn').addClass('not-approvedBtn');
+            } else {
+
+                mybutton.text('Unpromote');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end code to unpromote student

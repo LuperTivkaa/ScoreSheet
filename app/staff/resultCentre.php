@@ -1,3 +1,21 @@
+<?php
+//session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use ScoreSheet\staff;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
+$staff = new staff($dbConnection);
+//$manager = new manager($dbConnection);
+$schid = $_SESSION['user_info'][4];
+//$newStaff = new student();
+$staffid = $_SESSION['user_info'][0];
+$staff->staff($staffid,$schid);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,6 +47,9 @@
                             <button type="button" class="custom-btn" id="mydefault">Affective</button>
                             <button type="button" class="custom-btn" id="nondefault">Psychomotor</button>
                             <button type="button" class="custom-btn" id="studcomments">Comments</button>
+                            <button type="button" class="custom-btn" id="attendancediv">Attendance</button>
+                            
+                            
                         </p>
                         <p id="modal_error"></p>  
                          
@@ -82,6 +103,23 @@
                             </div>
                         </div>
                         <!--end comments div  -->
+                        <!--Attendance div  -->
+                        <div class="attendance-div">
+                            <div class="col-8">
+                            <h6 class="highlight top-header text-xs-center mt-3">Add Attendance</h6>
+                            </div>
+
+                            <div class="col-8">
+                            <label for="days">Attendance Days</label>
+                             <input type="text" class="form-control" id="days" name="days" placeholder="Days attended">
+                            </div>
+                            
+                            <div class="col-4">
+                        <button class="submit btn btn-primary btn-md mt-3 mb-3" id="add-attendance"><i class="fa fa-plus" aria-hidden="true"></i> Add Attendance </button>
+                            </div>
+                        </div>
+                        <!--end comments div  -->
+                        <!--End attendance div  -->
                         <!--Begin psychomotor skills  -->
                         <div class="psychomotor-domain-div">
                             <div class="col-8">
@@ -112,6 +150,7 @@
 
                         </div>
                             <input type="hidden" class="form-control" id="record-id" name="record-id">
+                            <input type="hidden" class="form-control" id="studclassid" name="studclassid">
                             <hr>
                             <div class="col-6" id="modal-list">
                             
@@ -135,10 +174,11 @@
                              <li><a class="load-url" href="resultSummary.php">
                              <i class="fa fa-sitemap" aria-hidden="true"></i> Comments Summary</a></li>
 
-                             <li><a class="load-url" href="publishResult.php"><i class="fa fa-database" aria-hidden="true"></i>
+                        <li><a class="load-url" href="publishResult.php"><i class="fa fa-database" aria-hidden="true"></i>
  Publish Result</a></li>
-       <li><a class="load-url" href="printResult.php"><i class="fa fa-print" aria-hidden="true"></i>
- Print Result</a></li>
+   <li><a class="load-url" href="studentPromotion.php"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Promotions</a></li>
+       <li><a class="load-url" href="printResult.php"><i class="fa fa-eye" aria-hidden="true"></i>
+ View Result</a></li>
                              
                             </ul>
                             <hr class="mt-2">                

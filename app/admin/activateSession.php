@@ -14,6 +14,7 @@ $staff = new staff($dbConnection);
 $schid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 $staffid = $_SESSION['user_info'][0];
+$staff->adminUser($staffid,$schid);
 
 $dateCreated = date("Y-m-d");
 

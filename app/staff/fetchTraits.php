@@ -13,6 +13,7 @@ $client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 $userid = $_SESSION['user_info'][0];
+$staff->staff($userid,$clientid);
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {

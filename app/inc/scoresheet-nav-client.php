@@ -4,17 +4,18 @@
                     <li>
                         <div class="dropdown">
                             <a href="" class="dropbtn"><i class="fa fa-university fa-fw" aria-hidden="true"></i> Institution <i class="fa fa-caret-down dropbtn" aria-hidden="true"></i>
-</a>
+                             </a>
                             <div id="myDropdown" class="dropdown-content">
                                 <a href="my-school.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> DashBoard</a>
-            
+                                <a href="institutionalProfile.php"><i class="fa fa-graduation-cap fa-fw" aria-hidden="true"></i>
+                                School Profile</a>
                             </div>
                         </div>
                     </li>
                      <li>
                         <div class="dropdown">
                             <a href="" class="dropbtn"><i class="fa fa-user fa-fw" aria-hidden="true"></i> Student<i class="fa fa-caret-down dropbtn" aria-hidden="true"></i>
-</a>
+                            </a>
                             <div id="myDropdown" class="dropdown-content">
                                 <a href="my-student.php"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i> My Student</a>
             

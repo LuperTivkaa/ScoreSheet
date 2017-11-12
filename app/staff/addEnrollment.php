@@ -1,16 +1,19 @@
 <?php
-session_start();
+//session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
 use ScoreSheet\student;
+use ScoreSheet\staff;
 //use \PDO;
 $dbConnection = new dbConnection();
 $student = new student($dbConnection);
+$staff = new staff($dbConnection);
 $client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 $userid = $_SESSION['user_info'][0];
+$staff->staff($userid,$clientid);
 ?>
 <!-- Enter form to create new student here -->
 <div class="row mb-3">
@@ -22,16 +25,18 @@ $userid = $_SESSION['user_info'][0];
   
         
         <!-- ENROLL NEW STUDENT IN A CLASS -->
-    <div class="row">
+        <div class="row">
 
-    <div class="form-group col-md-4">
-                 <label for="tag">Reg Number</label>
-                <input type="text" class="form-control" id="tag" name="tag" placeholder="Admission Number"> 
-              </div>
+            <div class="col-md-4">
+                <label for="regno">Reg Number</label>
+                <input type="text" class="form-control" id="regno" name="regno" placeholder="Reg Number">
+                <span id="user_details">Student name</span> 
+            </div>
+             
 
-            <div class="form-group col-md-4">
-                 <label for="student-class">Choose Class</label>
-                <select class="custom-select form-control" id="student-class">
+            <div class="form-group col-md-3">
+                 <label for="enroll-class">Choose Class</label>
+                <select class="custom-select form-control" id="enroll-class">
                     <?php
                     $client->loadClassTeacherClass($userid,$clientid);
                     ?>
@@ -39,17 +44,26 @@ $userid = $_SESSION['user_info'][0];
               </div>
 
              
-              <div class="form-group col-md-4">
+              <div class="form-group col-md-3">
                 
-                 <label for="session">Session</label>
-                <select class="custom-select form-control" id="">
+                 <label for="enroll-session">Session</label>
+                <select class="custom-select form-control" id="enroll-session">
                 <?php 
-                   $client->loadSession($clientid);
+                   $staff->activeSession($clientid);
                   ?>
                 </select>
               </div>
               
               </div>
-              <div class="col-md-6">
-              <button class="submit btn btn-primary" id="assign-admission-no">Enroll Student</button>
+              <div class="col-md-3">
+              <button class="submit btn btn-primary" id="enroll-student">Enroll Student</button>
               <div>
+
+              <div class="row">
+                  <div class="col-md-12 enrolled-stud-list mt-3">
+
+                  </div>
+
+              </div>
+
+            

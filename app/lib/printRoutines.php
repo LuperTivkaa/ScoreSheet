@@ -7,7 +7,7 @@ class printRoutines extends \ScoreSheet\staff{
 function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
 	    {
 		try {     	
-        $query ="SELECT CONCAT(student_initial.surname, ', ', LOWER(student_initial.firstName), '  ',LOWER(student_initial.lastName) ) AS Fullname,
+        $query ="SELECT CONCAT(student_initial.surname, ', ', LOWER(student_initial.firstName), '  ',LOWER(student_initial.lastName) ) AS Fullname, student_initial.gender AS Sex,
         class.class_name AS ClassName, 
         sch_term.term AS Term,
         session.session AS session, (SELECT COUNT( classpositionals.student_id )
@@ -15,23 +15,23 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
         AND classpositionals.session_id=?
         AND classpositionals.term_id=?
         AND classpositionals.school_id=?) AS studentCount,
-        (SELECT FORMAT(GrandTermTotal / (SELECT COUNT( subjects.sub_id )
-        FROM subjects INNER JOIN class_subject
-        ON subjects.sub_id=class_subject.subject_id 
-        WHERE class_subject.class_id=? AND class_subject.school_id=?),2 ) 
-        FROM termgrandtotal WHERE 
-        termgrandtotal.student_id=? 
-        AND termgrandtotal.class_id=?
-        AND termgrandtotal.term_id=? 
-        AND termgrandtotal.session_id=?
-        AND termgrandtotal.sch_id=?) AS Average,
-        classpositionals.termgrandtotal AS Total,
-        classpositionals.termposition AS TermPosition
+        (SELECT FORMAT(GrandTermTotal/(SELECT COUNT( DISTINCT class_category_subject.subject_id ) AS SubjectCount
+         FROM class INNER JOIN class_category_subject
+         ON class.class_categoryid=class_category_subject.class_category_id 
+         WHERE class.id=? AND class.my_inst_id=?),2 ) AS TotalAverage
+         FROM termgrandtotal WHERE 
+         termgrandtotal.student_id=? 
+         AND termgrandtotal.class_id=?
+         AND termgrandtotal.term_id=? AND termgrandtotal.session_id=?
+         AND termgrandtotal.sch_id=?) AS Average,
+         termgrandtotal.GrandTermTotal AS Total,
+         classpositionals.termposition AS TermPosition
 	    FROM student_initial 
         INNER JOIN classpositionals ON student_initial.id=classpositionals.student_id
         INNER JOIN class ON class.id=classpositionals.class_id
         INNER JOIN sch_term ON classpositionals.term_id=sch_term.term_id
         INNER JOIN session ON session.id=classpositionals.session_id
+        INNER JOIN termgrandtotal ON termgrandtotal.student_id=classpositionals.student_id
 	    WHERE classpositionals.student_id=? 
         AND classpositionals.class_id=? 
         AND classpositionals.session_id=?
@@ -62,6 +62,7 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
 					foreach($output as $row => $key)
 					{
                     $studentName = $key['Fullname'];
+                    $gender = $key['Sex'];
                     $className = $key['ClassName'];
                     $term = $key['Term'];
                     $session = $key['session'];
@@ -70,7 +71,7 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
                     $total = $key['Total'];
                     $classPosition = $this->ordinalSuffix($key['TermPosition']);
                     //bind values to html
-                    $printOutput.='<h5>'.$studentName.'</h5>';
+                    $printOutput.='<h5>'.$studentName.'<span>[sky/2012/123/001]</span></h5>';
                     $printOutput.='<div class="item-container">
                     <div class="student-item colm"><h6>Class</h6><span>'.$className.'</span></div>';
                     $printOutput.='<div class="student-item colm"><h6>Term</h6><span>'.$term.'</span></div>';
@@ -78,8 +79,11 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
                     $printOutput.='<div class="student-item colm"><h6>Students</h6><span>'.$studentCount.'</span></div>';
                     $printOutput.='<div class="student-item colm"><h6>Scores</h6><span>'.$total.'</span></div>';
                     $printOutput.='<div class="student-item colm"><h6>Average</h6><span>'.$average.'</span></div>';
-                    $printOutput.='<div class="student-item colm"><h6>Postion</h6><span>'.$classPosition.'</span></div></div>';
+                    $printOutput.='<div class="student-item colm"><h6>Postion</h6><span>'.$classPosition.'</span></div>';
+                    $printOutput.='<div class="student-item colm"><h6>Gender</h6><span>'.$gender.'</span></div>';
+                    $printOutput.='<div class="student-item colm"><h6>Attendance (Days)</h6><span>89 of 180</span></div></div>';
 					}
+
                     
           echo $printOutput;
         }//End of try catch block
@@ -121,40 +125,51 @@ function printScoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
         $output = $this->conn->resultset(); 
 		$this->scoreSheetHeaderInformation($subjectid,$classid,$termid,$sessionid,$schoolid);
         //ouput table headers below here
-					$printOutput = " ";
+        $printOutput ="";
+		 $caMaxScore = $this->getMaxCaScores($classid,$schoolid);
+          $examMaxScore = $this->getMaxExamScores($classid,$schoolid);
+          $totalCA = 3*$caMaxScore;
+          $totalExam = $totalCA + $examMaxScore;
+            
           $printOutput.= "<table class='datatable'>";
-          $printOutput.="<tr>
+          $printOutput.='<tr>
           <th>Student Name</th>
-          <th>1st CA 10%</th>
-          <th>2nd CA 10%</th>
-          <TH>3rd CA 10%</th>
-          <TH>CA Total 30%</th>
-          <TH>Term Exams 70%</th>
-          <TH>Term Total 100%</th>
+          <th>1st CA '.$caMaxScore.'%</th>
+          <th>2nd CA '.$caMaxScore.'%</th>
+          <TH>3rd CA '.$caMaxScore.'%</th>
+          <TH>CA Total'.$totalCA.' %</th>
+          <TH>Exam Score '.$examMaxScore.'%</th>
+          <TH>Term Total '.$totalExam.'%</th>
           <TH>Class AVerage</th>
-          <TH>Subject Position</th>
+          <TH>Highest In Class</th>
+          <TH>Lowest In Class</th>
+          <TH>Position In Class</th>
           <TH>Grade</th>
           <TH>Comment</th>
           <th>Sign</th>
-          </tr>";
+          </tr>';
 					foreach($output as $row => $key)
 					{
             $studentID = $key['studentID'];
-			$studentName = $key['Fullname'];
+						$studentName = $key['Fullname'];
             $subjectID = $key['SubjectID'];
+            $highestInClass =  $this->highestInClass($subjectID,$classid,$termid,$sessionid,$schoolid);
+            $lowestInClass  = $this->lowestInClass($subjectID,$classid,$termid,$sessionid,$schoolid);
             $terminalSUbjectTotals= $this->subjectTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
 			$printOutput.='<tr>';
 			$printOutput.='<td>'.$studentName.'</td>';
 			$printOutput.=$this->print_ca($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
-            $printOutput.=$this->caTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
-            $printOutput.=$this->subject_ScoresTotal($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.='<td>'.$this->caTotals($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid).'</td>';
+            $printOutput.='<td>'.$this->subject_ScoresTotal($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid).'</td>';
             $printOutput.='<td>'.$terminalSUbjectTotals.'</td>';
-            $printOutput.=$this->subjectAv($subjectID,$classid,$sessionid,$termid,$schoolid);
-            $printOutput.=$this->getSubjectPosition($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid);
+            $printOutput.='<td>'.$this->subjectAv($subjectID,$classid,$sessionid,$termid,$schoolid).'</td>';
+            $printOutput.='<td>'.$highestInClass.'</td>';
+            $printOutput.= '<td>'.$lowestInClass.'</td>';
+            $printOutput.='<td>'.$this->getSubjectPosition($studentID,$subjectID,$classid,$sessionid,$termid,$schoolid).'</td>';
             $printOutput.=$this->gradingScores($terminalSUbjectTotals);
             $printOutput.='<td>'.$this->staffSign($classid,$subjectID,$schoolid).'</td>';
-						$printOutput.='</tr>';
-					}
+		    $printOutput.='</tr>';
+		}
           $printOutput.='</table>';
           echo $printOutput;
         }//End of try catch block
@@ -163,7 +178,489 @@ function printScoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
             echo "Error:". $e->getMessage();
         }
 	    }
-        
+        //end of print method
+
+        //Method to return  serial admission number of student
+function studentSerialNumber($studentid,$clientid)
+    {
+        try {
+                $query ="SELECT  admission_number.serial_number AS MySerialNumber,
+                FROM admission_number
+                INNER JOIN student_admission_no ON admission_number.id=student_admission_no.admission_number
+                WHERE student_admission_no.stud_id=? AND student_admission_no.my_stud_sch_id=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            $serialNumber = $key['MySerialNumber'];
+            //$output .= "<option value=".$ID.">".$termName."</option>";
+        }
+       return $serialNumber;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get serial number for student";
+        }
+    }
+//End method to get serial admission number of  student
+
+//Method to get school admission number prefix
+function schoolPrefix($clientid)
+    {
+        try {
+                $query ="SELECT
+                prefix_name AS Prefix
+                FROM admission_number_prefix
+                WHERE prefix_sch_id=?";
+                $this->conn->query($query);
+                //$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            $Prefix = $key['Prefix'];
+        }
+       return $Prefix;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get school prefix";
+        }
+    }
+//end method to get school admision number prefix
+
+
+//Method to get year of admission for student
+function yearAdmitted($studentid,$clientid)
+    {
+        try {
+            $query ="SELECT  session.session AS AdmittedSession 
+            FROM session 
+            INNER JOIN student_initial ON student_initial.sessionAdmitted=session.id
+            WHERE student_initial.id=? AND student_initial.stud_sch_id=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            $admittedSess = $key['AdmittedSession'];
+        }
+        return $admittedSess;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get year of admission";
+        }
+    }
+
+//End method to get year of admission for student
+
+//final registration number
+function finalRegistrationNumber($studentid,$clientid){
+
+        $prefix = $this->schoolPrefix($clientid);
+        $yearAdmitted = $this->yearAdmitted($studentid,$clientid);
+        $serialNo = $this->studentSerialNumber($studentid,$clientid);
+
+        $myReg = $prefix.'/'.$yearAdmitted.'/'.$serialNo;
+
+        echo $myReg;
+    }
+
+//End final registration number
+
+
+//Get staff comments
+function getStaffComment($studentid,$classid,$termid,$sessionid,$clientid)
+    {
+        try {
+                $query ="SELECT class_teacher_comm AS teacherComments 
+                FROM classpositionals  
+                WHERE student_id=? AND class_id=? AND term_id=? AND session_id=? AND school_id=?";
+                $this->conn->query($query);
+                //$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                $this->conn->bind(2, $classid, PDO::PARAM_INT);
+                $this->conn->bind(3, $termid, PDO::PARAM_INT);
+                $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                $this->conn->bind(5, $clientid, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            $teacherComments = $key['teacherComments'];
+        }
+        return $teacherComments;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get class teacher comments";
+        }
+    }
+//End get staff 
+
+//Get heade teacher comments
+function getHeadTeacherComment($studentid,$classid,$termid,$sessionid,$clientid)
+    {
+        try {
+                $query ="SELECT head_teacher_comm AS HeadTeacherComments 
+                FROM classpositionals  
+                WHERE student_id=? AND class_id=? AND term_id=? AND session_id=? AND school_id=?";
+                $this->conn->query($query);
+                //$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                $this->conn->bind(2, $classid, PDO::PARAM_INT);
+                $this->conn->bind(3, $termid, PDO::PARAM_INT);
+                $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                $this->conn->bind(5, $clientid, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            $headTeacherComments = $key['HeadTeacherComments'];
+        }
+        return $headTeacherComments;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get head teacher comments";
+        }
+    }
+//End get staff comment
+
+//Get student attendnce
+function studentAttendanceScores($studentid,$classid,$termid, $sessionid,$clientid)
+    {
+        try {
+                $query ="SELECT student_attendance.days_attended AS DaysPresent, school_attendance.days_open AS DaysOpen FROM student_attendance 
+                INNER JOIN school_attendance ON student_attendance.termid=school_attendance.termid
+                WHERE student_attendance.studentid=?
+                 AND student_attendance.classid=? 
+                 AND student_termid=? 
+                 AND student_attendance.sessionid=?
+                 AND student_attendance.sch_id=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                $this->conn->bind(2, $classid, PDO::PARAM_INT);
+                $this->conn->bind(3, $termid, PDO::PARAM_INT);
+                $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                $this->conn->bind(5, $clientid, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            $Present = $key['DaysPresent'];
+            $Open = $key['DaysOpen'];
+        }
+        $days = $Present.' of '. $Open;
+       return $days;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get student attedance";
+        }
+    }
+
+//end get student attendance
+
+//Get resumption date
+
+function getResumptionDate($clientid)
+    {
+        try {
+                    $currentTerm = $this->getActiveTerm($schid);
+                    $currentSession = $this->getActiveSession($schid);
+                $query ="SELECT resumptionDate AS ResumeDate FROM
+                term_begins
+                WHERE  
+                 AND termid=? 
+                 AND sessionid=?
+                 AND schoolid=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $currentTerm, PDO::PARAM_INT);
+                $this->conn->bind(2, $currentSession, PDO::PARAM_INT);
+                $this->conn->bind(3, $clientid, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            $resumptionDate = $key['ResumeDate'];
+        }
+       return $resumptionDate;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get student attedance";
+        }
+    }
+
+//end get resumption date
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -188,3 +685,4 @@ function printScoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
 
     
 }
+//end of class

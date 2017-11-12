@@ -387,7 +387,8 @@ public function loadSession($clientid)
         {
             echo "Error: Unable to load sessions";
         }
-        }
+    }
+        //end load all sessions
 //load terms
 public function loadTerm($clientid)
     {
@@ -788,7 +789,7 @@ public  function newStaff($email,$username,$password,$role,$clientid,$editedDate
 //end new staff
 
     //function to create institution profile
-public  function instProfile($sch_name,$sch_type,$clientid,$country,$state, $lg, $city,$address,$mobile)
+public  function instProfile($sch_name,$sch_type,$clientid,$country,$state,$lg,$city,$mobile,$webadd,$email,$strtAdd,$mailbox)
  	{
     // always use try and catch block to write code
      
@@ -800,9 +801,9 @@ public  function instProfile($sch_name,$sch_type,$clientid,$country,$state, $lg,
                     $this->conn->query($query);
                     $this->conn->bind(1, $clientid, PDO::PARAM_STR);
                     $this->conn->execute();
-                    if ($this->conn->rowCount() >3)
+                    if ($this->conn->rowCount() >= 1)
                     {
-                      echo "Please you can add only three institutions";
+                      echo "Please you can add only one institution per user";
                     }
                     else{
 
@@ -811,18 +812,22 @@ public  function instProfile($sch_name,$sch_type,$clientid,$country,$state, $lg,
           //There is so much information using the php documentation 
                             $sqlStmt = "INSERT INTO institutional_signup(institution_name,institution_type,
                             client_id,country_id,state_id,
-                            lg_id,inst_city_id,inst_add,
-                            inst_mobile) values (?,?,?,?,?,?,?,?,?)";
+                            lg_id,inst_city_id,
+                            inst_mobile,web_address,email_add,street_address,mail_box) 
+                            values (?,?,?,?,?,?,?,?,?)";
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $this->sch_name, PDO::PARAM_STR,100);
-                            $this->conn->bind(2, $this->sch_type, PDO::PARAM_STR,100);
-                            $this->conn->bind(3, $clientid, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $this->sch_type, PDO::PARAM_INT);
+                            $this->conn->bind(3, $clientid, PDO::PARAM_INT);
                             $this->conn->bind(4, $this->country, PDO::PARAM_INT); 
                             $this->conn->bind(5, $this->state, PDO::PARAM_INT);
                             $this->conn->bind(6, $this->lg, PDO::PARAM_INT); 
                             $this->conn->bind(7, $this->city, PDO::PARAM_INT);
-                            $this->conn->bind(8, $this->address, PDO::PARAM_STR); 
-                            $this->conn->bind(9, $this->mobile, PDO::PARAM_INT);
+                            $this->conn->bind(8, $this->mobile, PDO::PARAM_STR);
+                            $this->conn->bind(9, $webadd, PDO::PARAM_STR);
+                            $this->conn->bind(10, $this->email, PDO::PARAM_STR);
+                            $this->conn->bind(11, $this->strtAdd, PDO::PARAM_STR);
+                            $this->conn->bind(12, $this->mailbox, PDO::PARAM_STR);
                             $this->conn->execute(); 
                         if ($this->conn->rowCount() == 1) 
                             {
@@ -2382,7 +2387,7 @@ public function allStaffUsers($clientid)
                 WHERE users.created_By=?";
                     $this->conn->query($query);
                     $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
-                    $output="";
+                    $output=" ";
                     $myResult = $this->conn->resultset();
                     $output.="<h5 class='top-header mt-2'>All Staff Users</h5><br/>";
                     $output .='<table class="table">';
@@ -2595,10 +2600,116 @@ public  function newMaxExamScore($examscore,$category,$clientid)
         }
 //End create Max Exam Score
 
+//Create attendance settings
+function attendanceSettings($daysOpen,$daysClosed,$termid,$sessionid,$schid)
+  {
+  // always use try and catch block to write code
+       try {        
+                    $query ="SELECT  id  FROM school_attendance 
+                    WHERE termid=? AND sessionid=? AND sch_att_id=? ";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $termid, PDO::PARAM_INT);
+                    $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+                    $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                    $this->conn->resultset();
+                   
+                    	if ($this->conn->rowCount() >= 1)
+                    	  {
+                      exit("Attendance settings added already!");
+                    	  }
+                    	else{
+          					        // ADD PSYCHOMOTOR SKILLS
+                            $sqlStmt = "INSERT INTO school_attendance(days_open,days_closed,termid,sessionid,
+                            sch_att_id)
+                            values (?,?,?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $daysOpen, PDO::PARAM_INT,100);
+                            $this->conn->bind(2, $daysClosed, PDO::PARAM_INT,100);
+                            $this->conn->bind(3, $termid, PDO::PARAM_INT,100);
+                            $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                            $this->conn->bind(5, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		   {
+                         		   // SCORES ADDED
+                        		   echo "ok";
+                        		   }
+                        		   else
+                        		   {
+                        		   echo "Error adding attendance settings";
+                      			   }
+
+                    		}
+        }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//end create attendance settings
+
+
+//Resumption Date settings
+function resumptionDate($schid,$date)
+  {
+  // always use try and catch block to write code
+       try {        
+                    $currentTerm = $this->getActiveTerm($schid);
+                    $currentSession = $this->getActiveSession($schid);
+                    $query ="SELECT  id  FROM term_begins 
+                    WHERE termid=? AND sessionid=? AND schoolid=? ";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $currentTerm, PDO::PARAM_INT);
+                    $this->conn->bind(2, $currentSession, PDO::PARAM_INT);
+                    $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                    $this->conn->resultset();
+                   
+                    	  if ($this->conn->rowCount() >= 1)
+                    	  {
+                          exit("Resumption Date already created!");
+                    	  }
+                    	  else{
+          					// ADD PSYCHOMOTOR SKILLS
+                            $sqlStmt = "INSERT INTO term_begins (termid,sessionid,
+                            schoolid,resumptionDate)
+                            values (?,?,?,?)";
+                            $this->conn->query($sqlStmt);
+                           
+                            $this->conn->bind(1, $currentTerm, PDO::PARAM_INT);
+                            $this->conn->bind(2, $currentSession, PDO::PARAM_INT);
+                            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                             $this->conn->bind(4, $date, PDO::PARAM_STR);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		   {
+                         		   // SCORES ADDED
+                        		   echo "ok";
+                        		   }
+                        		   else
+                        		   {
+                        		   echo "Error adding resumption date";
+                      			   }
+
+                    		}
+        }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
 
 
 
 
+
+
+//end resumption date settings
 
 
 

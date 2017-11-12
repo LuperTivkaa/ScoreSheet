@@ -3,6 +3,16 @@
     margin: 0 auto;
 }
 
+@mixin resultcenter-content {
+    width: 98%;
+    margin: 0 auto;
+}
+
+@mixin smallscreen-result-content {
+    width: 99.5%;
+    margin: 0 auto;
+}
+
 @mixin aux-menu-content {
     width: 100%;
     margin: 0 auto;
@@ -11,6 +21,28 @@
 @mixin small-device-center-content {
     width: 95%;
     margin: 0 auto;
+}
+
+@mixin container-styles {
+    border-left: 3px solid deepskyblue;
+    margin-bottom: 10px;
+}
+
+@mixin bottom-margin {
+    margin-bottom: 10px;
+}
+
+@mixin half-div {
+    display: inline-block;
+    width: 30%;
+    padding: 2px 2px 2px 2px;
+}
+
+@mixin quarter-div {
+    display: inline-block;
+    width: 40%;
+    padding: 2px 2px 2px 2px;
+    margin-right: -5px;
 }
 
 @mixin tablet-device-center-content {

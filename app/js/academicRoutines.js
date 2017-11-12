@@ -78,6 +78,40 @@ function newExamScores(regno, scores, studentClass, subject) {
 
 //PROCESS ASSESSMENT SCORESHEET
 
+//View Result summary for print
+$("#new-content").on('click', '#print-result', function(e) {
+    e.preventDefault();
+    $('#print-result').prop("disabled", true);
+    var studclass = $("#studclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+
+    alert(studclass + session + term);
+    viewResultPrint(studclass, session, term);
+});
+
+//call back function to add new continous assessment scores
+function viewResultPrint(studclass, session, term) {
+    $.ajax({
+        url: 'viewResultPrint.php',
+        type: 'POST',
+        data: { studclass: studclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#print-result').prop("disabled", false);
+                $("#new-content").html(data);
+            } else {
+                $('#print-result').prop("disabled", false);
+                // $("#my-info").addClass("error");
+                $("#new-content").html(data);
+            }
+        },
+    });
+}
+
+//End View Result summary for print
+
 //process scoresheet
 $("#new-content").on('click', '#scoresheet', function(e) {
     e.preventDefault();
@@ -118,7 +152,7 @@ $('#new-content').on('keyup', '#regno', function() {
         $("#user_details").html(data);
     });
 });
-
+//REFACTOR CODE  REMOVE
 //LOAD STAFF SUBJECT ON SELECTION OF CLASS
 $('#new-content').on('change', '#my-class', function() {
     var id = $("#my-class option:selected").val();
@@ -126,6 +160,8 @@ $('#new-content').on('change', '#my-class', function() {
         $("#position-subject").html(data);
     });
 });
+
+//REFACTOR CODE
 
 //Assign subject position
 $("#new-content").on('click', '#assign-position', function(e) {
@@ -159,7 +195,88 @@ function subjectPosition(subj, myclass, session, term) {
     });
 }
 
-//class teacher post result for processing
+//ENROLL NEW STUDENT IN A CLASS
+$("#new-content").on('click', '#enroll-student', function(e) {
+    e.preventDefault();
+    $('#enroll-student').text("Enrolling...").prop("disabled", true);
+    var enrollregno = $("#regno").val();
+    var myclass = $("#enroll-class option:selected").val();
+    var session = $("#enroll-session option:selected").val();
+    newEnrollment(enrollregno, myclass, session);
+});
+
+//call back function to enroll new student
+function newEnrollment(enrollregno, myclass, session) {
+    $.ajax({
+        url: 'newEnrollment.php',
+        type: 'POST',
+        data: { enrollregno: enrollregno, myclass: myclass, session: session },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#enroll-student').text("Enroll Student").prop("disabled", false);
+                loadEnrolledStudents(myclass);
+            } else {
+                $('#enroll-student').text("Enroll Student").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//END ENROLL NEW STUDENT IN A CLASS
+
+//RELOAD ENROLLED STUDENT
+
+function loadEnrolledStudents(myclass) {
+    $.ajax({
+        url: 'reloadEnrolledStudents.php',
+        type: 'POST',
+        data: { myclass: myclass },
+        success: function(response) {
+            $(".enrolled-stud-list").html(response);
+        },
+    });
+}
+//END RELOAD ENROLLED STUDENT
+
+//remove enrolled student
+$("#new-content").on('click', '#remove-enrolled-student', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to rmove item. This action can not be reversed!") == true) {
+        $('#remove-enrolled-student').prop("disabled", true);
+        var id = $(this).data('id');
+        var myclass = $("#enroll-class").val();
+        deleteEnrolledStud(id, myclass);
+    } else {
+        $('#remove-enrolled-student').prop("disabled", false);
+    }
+
+});
+//call back for delete affective skilss
+function deleteEnrolledStud(id, myclass) {
+    $.ajax({
+        url: 'deleteEnrolledStudent.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                loadEnrolledStudents(myclass);
+            } else {
+                //$('#remove-trait').prop("disabled", false);
+                //$("#modal_error").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+//remove enrolled student
+
+//class teacher post result for processing i.e assigning class position
 $("#new-content").on('click', '#submit-result', function(e) {
     if (confirm("Be sure that you want to submit your result summary. This action can not be reversed!") == true) {
         e.preventDefault();
@@ -383,6 +500,42 @@ function caAdvancedSearch(myclass, subject, session, term) {
         });
 }
 
+//Functionality to fetch result for promotion
+
+
+$("#new-content").on('click', '#show-summary-result', function(e) {
+    e.preventDefault();
+    $('#show-summary-result').text("Fetching...").prop("disabled", true);
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+    //alert(myclass + session + term);
+    getRecords(myclass, session, term);
+});
+
+function getRecords(studentclass, session, term) {
+    $.ajax({
+            url: 'getExamsRecords.php',
+            type: 'POST',
+            data: { studentclass: studentclass, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#show-summary-result').text("Show Result Summary").prop("disabled", false);
+            $('#new-content').html(data); // load here 
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+
+
+
+//end functionality to fetch result for
+
+
 //Function to handle students traits
 //Fetch result to add traits by staff
 $("#new-content").on('click', '#fetch-result', function(e) {
@@ -443,3 +596,72 @@ function publishedReslt(studentclass, session, term) {
 }
 
 //End published results for admin comments
+
+//Add attendance settings
+$("#new-content").on('click', '#add-attendance-days', function(e) {
+    e.preventDefault();
+    $('#add-attendance-days').text("Adding...").prop("disabled", true);
+    var daysOpen = $("#daysOpen").val();
+    var daysClosed = $("#daysClosed").val();
+    var term = $("#term option:selected").val();
+    var session = $("#session option:selected").val();
+    attendanceSettings(daysOpen, daysClosed, term, session);
+});
+
+//call back function to enroll new student
+function attendanceSettings(daysOpen, daysClosed, term, session) {
+    $.ajax({
+        url: 'addAttendanceSettings.php',
+        type: 'POST',
+        data: { daysOpen: daysOpen, daysClosed: daysClosed, term: term, session: session },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#add-attendance-days').text("Add Settings").prop("disabled", false);
+                $("#my-info").addClass("info");
+                $('#my-info').text("Settings created successfully");
+            } else {
+                $('#add-attendance-days').text("Add Settings").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end add attendance settings
+
+//Add resumption date settings
+//Add attendance settings
+$("#new-content").on('click', '#next-term', function(e) {
+    e.preventDefault();
+    $('#next-term').text("Adding...").prop("disabled", true);
+    var date = $("#r-date").val();
+    //var term = $("#term option:selected").val();
+    //var session = $("#session option:selected").val();
+    nexttermbegins(date);
+});
+
+//call back function to enroll new student
+function nexttermbegins(date) {
+    $.ajax({
+        url: 'addResumptionSettings.php',
+        type: 'POST',
+        data: { date: date },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#next-term').text("Add Resumption Date").prop("disabled", false);
+                $("#my-info").addClass("info");
+                $('#my-info').text("Resumption Date Settings Created Successfully");
+            } else {
+                $('#next-term').text("Add Resumption Date").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end add attendance settings
+
+
+//End resumption date settings

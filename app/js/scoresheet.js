@@ -407,15 +407,18 @@ function createSubject(staff, class_id, subj) {
 
 
 // new institution profile
-$('#sch-profile-btn').on('click', function() {
-    //$(this).text("Submitting, please wait...").prop("disabled", true);
+$("#new-content").on('click', '#sch-profile-btn', function() {
+    $('#sch-profile-btn').text("Creating...").prop("disabled", true);
     var inst_name = $("#institution_name").val();
     var inst_category = $("#institution_category").val();
     var nation = $("#nation").val();
     var state = $("#state").val();
     var lg = $("#lg").val();
     var city = $("#city").val();
-    var address = $("#address").val();
+    var webAdd = $("#webAdd").val();
+    var email = $("#Email").val();
+    var streetAdd = $("#streetAdd").val();
+    var mailAdd = $("#mailAdd").val();
     var mobile = $("#mobile").val();
     $.post("addSchoolProfile.php", {
         inst_name: inst_name,
@@ -424,22 +427,27 @@ $('#sch-profile-btn').on('click', function() {
         state: state,
         lg: lg,
         city: city,
-        address: address,
+        webAdd: webAdd,
+        email: email,
+        streetAdd: streetAdd,
+        mailAdd: mailAdd,
         mobile: mobile
     }).done(createInst);
 });
 //institution profile call back function
 function createInst(response) {
-    $("#register").modal("hide");
-    //get inserted records from the database
 
     var data = $.trim(response);
     if (data === "ok") {
-        window.location.replace("uploadLogo.php");
+        $("#my-info").addClass("info");
+        $("#my-info").text("School Profile Created Successfully");
+        $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
+        // window.location.replace("uploadLogo.php");
     } else {
         //alert("me")
-        $("#profile-info").addClass("error");;
+        $("#profile-info").addClass("error");
         $("#profile-info").html(data);
+        $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
     }
 
 }
@@ -564,7 +572,7 @@ function uploadFiles(event) {
 // Catch the form files
 function uploadLogo(event) {
     //firing ok
-    console.log('Testing the second event handler');
+    //console.log('Testing the second event handler');
     event.stopPropagation(); // Stop stuff happening
     event.preventDefault(); // Totally stop stuff happening
 
@@ -750,10 +758,12 @@ $('#new-content').on('click', '#newbtn', function(e) {
     e.preventDefault();
 
     var recordid = $(this).data('recordid');
+    var classid = $(this).data('classid');
     var scores = $(this).data('scores');
 
     $('#edit-scores').val(scores);
     $('#record-id').val(recordid);
+    $('#studclassid').val(classid);
     $('#modal-list').empty();
     $('#modal-error').empty();
     var modalid = $('#myModal');
@@ -784,10 +794,10 @@ $('.closex').on('click', function(evt) {
 
 //LOAD SUBJECT BASED ON SELECTION OF CLASS
 
-$('#edit-class').on('change', function() {
-    var id = $("#edit-class option:selected").val();
+$('#mystudentclass').on('change', function() {
+    var id = $("#mystudentclass option:selected").val();
     $.post("staffSubjectByClass.php", { id: id }, function(data) {
-        $("#edit-subject").html(data);
+        $("#mystudentsubject").html(data);
     });
 });
 //END LOAD SUBJECT BASED ON CLASS
@@ -797,8 +807,8 @@ $("#edit-exam").on('click', function(e) {
     if (confirm("Do you really want to edit?") == true) {
         e.preventDefault();
         $('#edit-exam').text("Editing...").prop("disabled", true);
-        var myclass = $("#edit-class option:selected").val();
-        var subject = $("#edit-subject option:selected").val();
+        var myclass = $("#mystudentclass option:selected").val();
+        var subject = $("#mystudentsubject option:selected").val();
         var scores = $("#edit-scores").val();
         var recordid = $("#record-id").val();
         editExamScores(myclass, subject, scores, recordid);
@@ -825,11 +835,11 @@ function editExamScores(myclass, subject, scores, recordid) {
                 $("#my-info").html("Exam scores edited successfully");
             } else {
                 $('#edit-exam').text("Edit Scores").prop("disabled", false);
-                var modal = $('#myModal');
-                modal.css('display', 'none');
+                //var modal = $('#myModal');
+                //modal.css('display', 'none');
                 reloadSubjectScores(myclass, subject);
-                $("#my-info").addClass("error");
-                $("#my-info").html(data);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
             }
         },
     });
@@ -857,8 +867,8 @@ $("#edit-ca").on('click', function(e) {
     if (confirm("Do you really want to edit?") == true) {
         e.preventDefault();
         $('#edit-ca').text("Editing...").prop("disabled", true);
-        var myclass = $("#edit-class option:selected").val();
-        var subject = $("#edit-subject option:selected").val();
+        var myclass = $("#mystudentclass option:selected").val();
+        var subject = $("#mystudentsubject option:selected").val();
         var scores = $("#edit-scores").val();
         var recordid = $("#record-id").val();
         editca(myclass, subject, scores, recordid);
@@ -885,11 +895,11 @@ function editca(myclass, subject, scores, recordid) {
                 $("#my-info").html("Assessment scores edited successfully");
             } else {
                 $('#edit-ca').text("Edit Scores").prop("disabled", false);
-                var modal = $('#myModal');
-                modal.css('display', 'none');
+                //var modal = $('#myModal');
+                //modal.css('display', 'none');
                 reloadCaScores(myclass, subject);
-                $("#my-info").addClass("error");
-                $("#my-info").html(data);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
             }
         },
     });
@@ -921,6 +931,7 @@ $('#mydefault').on('click', function(e) {
     $(this).removeClass("custom-btn").addClass("active-trait");
     $('#nondefault').removeClass('custom-btn active-trait').addClass('custom-btn');
     $('#studcomments').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#attendancediv').removeClass('custom-btn active-trait').addClass('custom-btn');
     var psychomotor = $('.psychomotor-domain-div');
     psychomotor.hide();
 
@@ -932,32 +943,62 @@ $('#studcomments').on('click', function(e) {
     var affective = $('.affective-domain-div');
     var psychomotor = $('.psychomotor-domain-div');
     var mycomments = $('.comments-div');
+    var att = $('.attendance-div');
     $('#modal-list').empty();
     $('#modal_error').empty();
     $('#comment-id').val("");
     $('#nondefault').removeClass('custom-btn active-trait').addClass('custom-btn');
     $('#mydefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#attendancediv').removeClass('custom-btn active-trait').addClass('custom-btn');
     psychomotor.hide();
     affective.hide();
+    att.hide();
     mycomments.show();
     $(this).removeClass("custom-btn").addClass("active-trait");
 
 });
+//Show attendance div
+$('#attendancediv').on('click', function(e) {
+    e.preventDefault();
+    //$('#comment-id').val("");
+    var affective = $('.affective-domain-div');
+    var psychomotor = $('.psychomotor-domain-div');
+    var mycomments = $('.comments-div');
+    var attendance = $('.attendance-div');
+    $('#modal-list').empty();
+    $('#modal_error').empty();
+    $('#comment-id').val("");
+    $('#nondefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#mydefault').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#studcomments').removeClass('custom-btn active-trait').addClass('custom-btn');
+    psychomotor.hide();
+    affective.hide();
+    mycomments.hide();
+    attendance.show();
+    $(this).removeClass("custom-btn").addClass("active-trait");
 
+});
+//end attendance div
 //Show psychomotor div on button click
 $('#nondefault').on('click', function(e) {
     e.preventDefault();
     var affective = $('.affective-domain-div');
     var mycomments = $('.comments-div');
-    mycomments.hide();
-    affective.hide();
     var psychomotor = $('.psychomotor-domain-div');
+    var attend = $('.attendance-div');
     $('#modal-list').empty();
     $('#modal_error').empty();
-    psychomotor.show();
-    $(this).removeClass("custom-btn").addClass("active-trait");
+
+
     $('#mydefault').removeClass('custom-btn active-trait').addClass('custom-btn');
     $('#studcomments').removeClass('custom-btn active-trait').addClass('custom-btn');
+    $('#attendancediv').removeClass('custom-btn active-trait').addClass('custom-btn');
+
+    mycomments.hide();
+    affective.hide();
+    attend.hide();
+    psychomotor.show();
+    $(this).removeClass("custom-btn").addClass("active-trait");
 
 });
 
@@ -995,6 +1036,45 @@ function addAffectiveDomain(mydomain, grading, studentid) {
     });
 }
 //end functionality to handle affective domain
+
+//Add number of days student attended school
+$("#add-attendance").on('click', function(e) {
+    e.preventDefault();
+    $('#add-attendance').text("Adding  please wait...").prop("disabled", true);
+    var days = $("#days").val();
+    var studentid = $("#record-id").val();
+    var classid = $("#studclassid").val();
+    //var classid = $(this).data('classid');
+    //alert(days + studentid + classid);
+    daysAttended(classid, days, studentid);
+
+});
+
+//call back function to add number of days student attended school
+function daysAttended(classid, days, studentid) {
+    $.ajax({
+        url: 'addAttendance.php',
+        type: 'POST',
+        data: { classid: classid, days: days, studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#add-attendance').text("Add Attendance").prop("disabled", false);
+                $("#modal_error").addClass("info");
+                $("#modal_error").text("Number of days attended school added");
+                //$("#modal_error").removeClass("error").empty();
+            } else {
+                $('#add-attendance').text("Add Attendance").prop("disabled", false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+    });
+}
+
+
+//End number of days student attended school
+
 
 //functionality to handle psychomotor skills
 $("#add-psycho-skills").on('click', function(e) {
@@ -1061,7 +1141,6 @@ $("#modal-list").on('click', '#remove-trait', function(e) {
         $('#remove-trait').prop("disabled", true);
         var id = $(this).data('id');
         var examid = $("#record-id").val();
-        alert(examid);
         deleteAffectiveSkills(id, examid);
     } else {
         $('#remove-trait').prop("disabled", false);
@@ -1516,7 +1595,7 @@ $("#new-content").on('click', '#staffOff', function(e) {
     e.preventDefault();
     var mybutton = $(this);
 
-    var termid = $(this).data('recordid');
+    var staffuserid = $(this).data('recordid');
     $(this).text('Please wait...');
     unapproveStaffUser(staffuserid, mybutton);
 });
@@ -1991,11 +2070,97 @@ function editSchPrefix(prefixid, prefix) {
         },
     });
 }
-
-
-
-
 //End function to edit prefix settings
+//===========================================================================================================
+
+//PROMOTION CDE BLOCK
+//load promotion settings page
+$('#new-content').on('click', '#loadClassSettings', function(evt) {
+    evt.preventDefault();
+    // $("#my-info").empty();
+    // $('#student-search-result').empty();
+    var url = $(this).attr('href');
+    $('#promotionSettings').load(url);
+});
+//end load promotion settings page
+
+//===========================================================================================================
+//Code to promote student
+$("#new-content").on('click', '#promote', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+    var promotedClass = $("#promotedclass option:selected").val();
+    var promotedSess = $("#promotedsession option:selected").val();
+    var recordid = $(this).data('recordid');
+    var studentid = $(this).data('studentid');
+
+    $(this).text('Please wait...');
+
+    promote(recordid, promotedClass, promotedSess, studentid, mybutton);
+});
+//call back for promoting student
+function promote(recordid, promotedClass, promotedSess, studentid, mybutton) {
+    $.ajax({
+        url: 'promoteStudent.php',
+        type: 'POST',
+        data: { recordid: recordid, promotedClass: promotedClass, promotedSess: promotedSess, studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'unpromote');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Unpromote');
+                mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
+            } else {
+                mybutton.text('Promote');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end code to promoting student
+
+//===========
+//code block to unpromote student
+$("#new-content").on('click', '#unpromote', function(e) {
+    e.preventDefault();
+    var mybutton = $(this);
+    //alert("unpromote click");
+    var promotedClass = $("#promotedclass option:selected").val();
+    var promotedSess = $("#promotedsession option:selected").val();
+    var recordid = $(this).data('recordid');
+    var studentid = $(this).data('studentid');
+    $(this).text('Please wait...');
+    unpromote(recordid, promotedClass, promotedSess, studentid, mybutton);
+});
+//call back for unpromoting student
+function unpromote(recordid, promotedClass, promotedSess, studentid, mybutton) {
+    $.ajax({
+        url: 'unpromoteStudent.php',
+        type: 'POST',
+        data: { recordid: recordid, promotedClass: promotedClass, promotedSess: promotedSess, studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+
+                mybutton.attr('id', 'promote');
+                //alert(id);
+                //$(this).attr('id', 'disapprove');
+                mybutton.text('Promote');
+                mybutton.removeClass('approvedBtn').addClass('not-approvedBtn');
+            } else {
+
+                mybutton.text('Unpromote');
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end code to unpromote student
 //add Session code
 $("#new-content").on('click', '#add-session', function(e) {
     e.preventDefault();
@@ -2245,6 +2410,73 @@ function newStudent(surname, firstname, lastname, religion, nation, state,
 
 
 ///////////////////////
+
+//Add student guardian
+
+$("#new-content").on('click', '#add-guardian-info', function(e) {
+    e.preventDefault();
+    $('#add-guardian-info').prop("disabled", true);
+    var studid = $("#student").val();
+    var sn = $("#surname").val();
+    var fn = $("#firstname").val();
+    var ln = $("#lastname").val();
+    var occup = $("#occupation").val();
+    var sex = $("#sex").val();
+    var relationship = $("#relationship").val();
+    var address = $("#cont_add").val();
+    var parentmail = $("#parent-mail").val();
+    var mobile = $("#mobile").val();
+    var emergency = $("#emergency-contact").val();
+    newGuardian(sn, fn, ln, occup, sex, relationship, address, parentmail, mobile, emergency, studid);
+});
+
+//function to add new parent
+function newGuardian(sn, fn, ln, occup, sex, relationship, address, parentmail, mobile, emergency, studid) {
+    $.ajax({
+        url: 'addGuardian.php',
+        type: 'POST',
+        data: {
+            sn: sn,
+            fn: fn,
+            ln: ln,
+            occup: occup,
+            sex: sex,
+            relationship: relationship,
+            address: address,
+            parentmail: parentmail,
+            mobile: mobile,
+            emergency: emergency,
+            studid: studid
+        },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#add-guardian-info').prop("disabled", false);
+                $("#my-info").addClass("info");
+                var studid = $("#student").val();
+                $("#surname").val("");
+                $("#firstname").val("");
+                $("#lastname").val("");
+                $("#occupation").val("");
+                $("#cont_add").val("");
+                $("#parent-mail").val("");
+                $("#mobile").val("");
+                $("#emergency-contact").prop("checked", false);
+                $("#my-info").text("Guardian added successfully");
+                $("#student").empty();
+
+            } else {
+                //alert("me")
+                $('#add-guardian-info').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+
+//end add student guardian
 
 //add new Student parent
 $("#new-content").on('click', '#add-parent-info', function(e) {
@@ -2640,6 +2872,40 @@ function newExamScores(regno, scores, studentClass, subject) {
 
 //PROCESS ASSESSMENT SCORESHEET
 
+//View Result summary for print
+$("#new-content").on('click', '#print-result', function(e) {
+    e.preventDefault();
+    $('#print-result').prop("disabled", true);
+    var studclass = $("#studclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+
+    alert(studclass + session + term);
+    viewResultPrint(studclass, session, term);
+});
+
+//call back function to add new continous assessment scores
+function viewResultPrint(studclass, session, term) {
+    $.ajax({
+        url: 'viewResultPrint.php',
+        type: 'POST',
+        data: { studclass: studclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#print-result').prop("disabled", false);
+                $("#new-content").html(data);
+            } else {
+                $('#print-result').prop("disabled", false);
+                // $("#my-info").addClass("error");
+                $("#new-content").html(data);
+            }
+        },
+    });
+}
+
+//End View Result summary for print
+
 //process scoresheet
 $("#new-content").on('click', '#scoresheet', function(e) {
     e.preventDefault();
@@ -2680,7 +2946,7 @@ $('#new-content').on('keyup', '#regno', function() {
         $("#user_details").html(data);
     });
 });
-
+//REFACTOR CODE  REMOVE
 //LOAD STAFF SUBJECT ON SELECTION OF CLASS
 $('#new-content').on('change', '#my-class', function() {
     var id = $("#my-class option:selected").val();
@@ -2688,6 +2954,8 @@ $('#new-content').on('change', '#my-class', function() {
         $("#position-subject").html(data);
     });
 });
+
+//REFACTOR CODE
 
 //Assign subject position
 $("#new-content").on('click', '#assign-position', function(e) {
@@ -2721,7 +2989,88 @@ function subjectPosition(subj, myclass, session, term) {
     });
 }
 
-//class teacher post result for processing
+//ENROLL NEW STUDENT IN A CLASS
+$("#new-content").on('click', '#enroll-student', function(e) {
+    e.preventDefault();
+    $('#enroll-student').text("Enrolling...").prop("disabled", true);
+    var enrollregno = $("#regno").val();
+    var myclass = $("#enroll-class option:selected").val();
+    var session = $("#enroll-session option:selected").val();
+    newEnrollment(enrollregno, myclass, session);
+});
+
+//call back function to enroll new student
+function newEnrollment(enrollregno, myclass, session) {
+    $.ajax({
+        url: 'newEnrollment.php',
+        type: 'POST',
+        data: { enrollregno: enrollregno, myclass: myclass, session: session },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#enroll-student').text("Enroll Student").prop("disabled", false);
+                loadEnrolledStudents(myclass);
+            } else {
+                $('#enroll-student').text("Enroll Student").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//END ENROLL NEW STUDENT IN A CLASS
+
+//RELOAD ENROLLED STUDENT
+
+function loadEnrolledStudents(myclass) {
+    $.ajax({
+        url: 'reloadEnrolledStudents.php',
+        type: 'POST',
+        data: { myclass: myclass },
+        success: function(response) {
+            $(".enrolled-stud-list").html(response);
+        },
+    });
+}
+//END RELOAD ENROLLED STUDENT
+
+//remove enrolled student
+$("#new-content").on('click', '#remove-enrolled-student', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to rmove item. This action can not be reversed!") == true) {
+        $('#remove-enrolled-student').prop("disabled", true);
+        var id = $(this).data('id');
+        var myclass = $("#enroll-class").val();
+        deleteEnrolledStud(id, myclass);
+    } else {
+        $('#remove-enrolled-student').prop("disabled", false);
+    }
+
+});
+//call back for delete affective skilss
+function deleteEnrolledStud(id, myclass) {
+    $.ajax({
+        url: 'deleteEnrolledStudent.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                loadEnrolledStudents(myclass);
+            } else {
+                //$('#remove-trait').prop("disabled", false);
+                //$("#modal_error").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+//remove enrolled student
+
+//class teacher post result for processing i.e assigning class position
 $("#new-content").on('click', '#submit-result', function(e) {
     if (confirm("Be sure that you want to submit your result summary. This action can not be reversed!") == true) {
         e.preventDefault();
@@ -2945,6 +3294,42 @@ function caAdvancedSearch(myclass, subject, session, term) {
         });
 }
 
+//Functionality to fetch result for promotion
+
+
+$("#new-content").on('click', '#show-summary-result', function(e) {
+    e.preventDefault();
+    $('#show-summary-result').text("Fetching...").prop("disabled", true);
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+    //alert(myclass + session + term);
+    getRecords(myclass, session, term);
+});
+
+function getRecords(studentclass, session, term) {
+    $.ajax({
+            url: 'getExamsRecords.php',
+            type: 'POST',
+            data: { studentclass: studentclass, session: session, term: term },
+            dataType: 'html'
+        })
+        .done(function(data) {
+            //console.log(data);
+            $('#show-summary-result').text("Show Result Summary").prop("disabled", false);
+            $('#new-content').html(data); // load here 
+        })
+        .fail(function(data) {
+            $('#my-info').html(data);
+            //$('#modal-loader').hide();
+        });
+}
+
+
+
+//end functionality to fetch result for
+
+
 //Function to handle students traits
 //Fetch result to add traits by staff
 $("#new-content").on('click', '#fetch-result', function(e) {
@@ -3005,3 +3390,72 @@ function publishedReslt(studentclass, session, term) {
 }
 
 //End published results for admin comments
+
+//Add attendance settings
+$("#new-content").on('click', '#add-attendance-days', function(e) {
+    e.preventDefault();
+    $('#add-attendance-days').text("Adding...").prop("disabled", true);
+    var daysOpen = $("#daysOpen").val();
+    var daysClosed = $("#daysClosed").val();
+    var term = $("#term option:selected").val();
+    var session = $("#session option:selected").val();
+    attendanceSettings(daysOpen, daysClosed, term, session);
+});
+
+//call back function to enroll new student
+function attendanceSettings(daysOpen, daysClosed, term, session) {
+    $.ajax({
+        url: 'addAttendanceSettings.php',
+        type: 'POST',
+        data: { daysOpen: daysOpen, daysClosed: daysClosed, term: term, session: session },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#add-attendance-days').text("Add Settings").prop("disabled", false);
+                $("#my-info").addClass("info");
+                $('#my-info').text("Settings created successfully");
+            } else {
+                $('#add-attendance-days').text("Add Settings").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end add attendance settings
+
+//Add resumption date settings
+//Add attendance settings
+$("#new-content").on('click', '#next-term', function(e) {
+    e.preventDefault();
+    $('#next-term').text("Adding...").prop("disabled", true);
+    var date = $("#r-date").val();
+    //var term = $("#term option:selected").val();
+    //var session = $("#session option:selected").val();
+    nexttermbegins(date);
+});
+
+//call back function to enroll new student
+function nexttermbegins(date) {
+    $.ajax({
+        url: 'addResumptionSettings.php',
+        type: 'POST',
+        data: { date: date },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#next-term').text("Add Resumption Date").prop("disabled", false);
+                $("#my-info").addClass("info");
+                $('#my-info').text("Resumption Date Settings Created Successfully");
+            } else {
+                $('#next-term').text("Add Resumption Date").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end add attendance settings
+
+
+//End resumption date settings

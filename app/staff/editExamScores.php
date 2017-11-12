@@ -5,7 +5,6 @@ use ScoreSheet\dbConnection;
 use ScoreSheet\client;
 use ScoreSheet\student;
 use ScoreSheet\staff;
-use ScoreSheet\jobmanager;
 //use \PDO;
 $dbConnection = new dbConnection();
 $student = new student($dbConnection);
@@ -15,6 +14,7 @@ $staff = new staff($dbConnection);
 $schid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 $staffid = $_SESSION['user_info'][0];
+$staff->staff($staffid,$schid);
 
 $dateCreated = date("Y-m-d");
 

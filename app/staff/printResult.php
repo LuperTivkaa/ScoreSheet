@@ -1,28 +1,30 @@
 <?php
-session_start();
+//session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
 use ScoreSheet\student;
+use ScoreSheet\staff;
 //use \PDO;
 $dbConnection = new dbConnection();
 $student = new student($dbConnection);
+$staff = new staff($dbConnection);
 $client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
-$clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
+$staff->staff($userid,$clientid);
 ?>
 
 <!--Row  to hold some sub menu  -->
 <div class="row">
                     <div class="col-md-12 mt-1">
-                         <h5 class="top-header">Print Result(s)</h6>
+                         <h5 class="top-header">View  Result(s)</h6>
                         <div class="row">
 
                             <div class="col-12">
-                            <label for="studentclass">Select Class</label>
-                            <select class="custom-select  form-control" id="studentclass">
+                            <label for="studclass">Select Class</label>
+                            <select class="custom-select  form-control" id="studclass">
                               <?php
                                 $client->loadClassTeacherClass($userid,$clientid);
                               ?>
@@ -33,7 +35,7 @@ $userid = $_SESSION['user_info'][0];
                             <label for="session">Session</label>
                             <select class="custom-select  form-control" id="session">
                                 <?php
-                                $client->loadSession($clientid);
+                                $staff->ActiveSession($clientid);
                                 ?>
                             </select>
                             </div>
@@ -42,7 +44,7 @@ $userid = $_SESSION['user_info'][0];
                             <label for="term">Term</label>
                             <select class="custom-select  form-control" id="term">
                                 <?php
-                                $client->loadTerm($clientid);
+                                $staff->ActiveTerm($clientid);
                                 ?>
                             </select>
                             </div>

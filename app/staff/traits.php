@@ -1,16 +1,19 @@
 <?php
-session_start();
+//session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
 use ScoreSheet\student;
+use ScoreSheet\staff;
 //use \PDO;
 $dbConnection = new dbConnection();
 $student = new student($dbConnection);
+$staff = new staff($dbConnection);
 $client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
-//$newStaff = new student();
 $userid = $_SESSION['user_info'][0];
+
+$staff->staff($userid,$clientid);
 ?>
 
 <!--Row  to hold some sub menu  -->
@@ -32,7 +35,7 @@ $userid = $_SESSION['user_info'][0];
                             <label for="session">Session</label>
                             <select class="custom-select  form-control" id="session">
                                 <?php
-                                $client->loadSession($clientid);
+                                $staff->activeSession($clientid);
                                 ?>
                             </select>
                             </div>
@@ -41,7 +44,7 @@ $userid = $_SESSION['user_info'][0];
                             <label for="term">Term</label>
                             <select class="custom-select  form-control" id="term">
                                 <?php
-                                $client->loadTerm($clientid);
+                                $staff->activeTerm($clientid);
                                 ?>
                             </select>
                             </div>

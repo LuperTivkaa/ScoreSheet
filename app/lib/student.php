@@ -162,15 +162,16 @@ public function staffSubject($user_id)
   //end staff subjects
 
   //load staff subject by class
-public function staffSubjectByClass($user_id,$classid)
+public function staffSubjectByClass($user_id,$classid,$clientid)
     {
         try {
 
-            $query = "SELECT subjects.sub_id AS SubjectID, subjects.subject_name AS SubjectName FROM subjects INNER JOIN staff_subject_taught ON subjects.sub_id=staff_subject_taught.subject_id WHERE staff_subject_taught.my_id=? AND staff_subject_taught.class_taught=?";
+            $query = "SELECT subjects.sub_id AS SubjectID, subjects.subject_name AS SubjectName FROM subjects INNER JOIN staff_subject_taught ON subjects.sub_id=staff_subject_taught.subject_id WHERE staff_subject_taught.my_id=? AND staff_subject_taught.class_taught=? AND staff_subject_taught.sch_identity=?";
              
                 $this->conn->query($query);
                 $this->conn->bind(1, $user_id, PDO::PARAM_INT);
                 $this->conn->bind(2, $classid, PDO::PARAM_INT);
+                $this->conn->bind(3, $clientid, PDO::PARAM_INT);
                // $this->conn->bind(2, $classid, PDO::PARAM_INT);
                 $myResult = $this->conn->resultset();
                 $output =" "; 
@@ -478,7 +479,55 @@ public function loadUnassignedNumber($clientid,$status='False')
         //END LOAD UN ASSIGNED ADMISION NUMBERS
 
 
+//Add new guardian
+public  function newGuardian($surname,$firstname,$lastname,
+  $occupation,$sex,$contact_add,$mobile,$email,$relationship,
+  $stud_id,$sch_id,$emergency)
+    {
+    // always use try and catch block to write code
+     
+    try{
 
+    //
+                    $sqlStmt = "INSERT INTO student_guardian(surname,firstname,lastname,occupation,
+                    sex,contact_add,mobile,email,relationship,student_id_no,parent_sch_id,emergency)
+                             values (?,?,?,?,?,?,?,?,?,?,?,?)";
+                    $this->conn->query($sqlStmt);
+                    $this->conn->bind(1, $this->surname, PDO::PARAM_STR);
+                    $this->conn->bind(2, $this->firstname, PDO::PARAM_STR);
+                    $this->conn->bind(3, $this->lastname, PDO::PARAM_STR);
+                    $this->conn->bind(4, $this->occupation, PDO::PARAM_STR);
+                    $this->conn->bind(5, $this->sex, PDO::PARAM_STR);
+                    $this->conn->bind(6, $contact_add, PDO::PARAM_STR);
+                    $this->conn->bind(7, $this->mobile, PDO::PARAM_STR);
+                    $this->conn->bind(8, $this->email, PDO::PARAM_STR);
+                    $this->conn->bind(9, $relationship, PDO::PARAM_STR);
+                    $this->conn->bind(10, $stud_id, PDO::PARAM_INT);
+                    $this->conn->bind(11, $sch_id, PDO::PARAM_INT);
+                    $this->conn->bind(12, $emergency, PDO::PARAM_STR);
+                    $this->conn->execute();
+                    //can not fetch result after executing insert query, it will throw general error
+                   // $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >=1)
+                    {
+                      echo "ok";
+                    }
+                    else{
+
+                        echo "Error creating guardian";
+                        }
+
+                   
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//add new guarddian
 
 //Add New Student parent
 public  function newParent($surname,$firstname,$lastname,

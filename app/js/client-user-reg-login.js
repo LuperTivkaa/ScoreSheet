@@ -32,6 +32,38 @@ function newClient(result) {
 // end of new client signup function
 
 
+//Root account code
+
+//========================
+$('#root_Btn').on('click', function(e) {
+    e.preventDefault();
+    $(this).prop("disabled", true);
+    var email = $("#email").val();
+    var username = $("#username").val();
+    var pass = $("#password").val();
+    $.post("./rootAccessSignup.php", { email: email, username: username, pass: pass }).done(rootAccount);
+});
+
+// user login call back
+function rootAccount(result) {
+
+    var data = $.trim(result);
+    if (data === "ok") {
+        $("#root_Btn").prop("disabled", false);
+        window.location.replace("./school_login.php");
+    } else {
+        $("#root_Btn").prop("disabled", false);
+        $("#error-info").addClass("error");
+        $("#error-info").html(data);
+    }
+}
+//===================
+
+
+
+///end root account code
+
+
 
 
 //new client login
@@ -49,7 +81,7 @@ function clientLogin_call(result) {
     var data = $.trim(result);
     if (data === "ok") {
         $("#client-btn").text("Client Login").prop("disabled", false);
-        window.location.replace("app/client/schoolProfile.php");
+        window.location.replace("app/public/root_pass.php");
     } else {
         $("#client-btn").text("Client Login").prop("disabled", false);
         $("#client-login").addClass("error");

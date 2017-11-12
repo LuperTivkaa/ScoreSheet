@@ -9,9 +9,14 @@ use ScoreSheet\printRoutines;
 //use \PDO;
 $dbConnection = new dbConnection();
 $student = new student($dbConnection);
-$client = new client($dbConnection);
 $staff = new staff($dbConnection);
+$client = new client($dbConnection);
 $print = new printRoutines($dbConnection);
+$clientid = $_SESSION['user_info'][4];
+$userid = $_SESSION['user_info'][0];
+
+$staff->staff($userid,$clientid);
+
 
 ?>
 <!DOCTYPE html>
@@ -20,9 +25,9 @@ $print = new printRoutines($dbConnection);
     <meta charset="utf-8">
     <title>ScoreSheet | Result Sheet</title>
     <?php include '../inc/scoresheet-header.php';
-    $schid = $_SESSION['user_info'][4];
+    //$c = $_SESSION['user_info'][4];
 //$newStaff = new student();
-$staffid = $_SESSION['user_info'][0];
+//$userid = $_SESSION['user_info'][0];
     ?>
 
 <body>
@@ -31,7 +36,7 @@ $staffid = $_SESSION['user_info'][0];
 
     <div class="school-profile">
         <?php
-        $print->schoolProfileHeader($schid);
+        $print->schoolProfileHeader($clientid);
         ?>
     </div>
     <!--end school profile div  -->

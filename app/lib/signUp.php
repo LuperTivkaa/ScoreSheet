@@ -153,6 +153,7 @@ public  function client_login($email,$password)
                      //$sess_info[] = $clientid;
                      //$sess_info[] = $user_name;
                      $_SESSION['sess_info'] = $sess_info;
+                     //$_SESSION['user_info'] = $sess_info;
                      echo "ok";
             }
             else
@@ -169,6 +170,65 @@ public  function client_login($email,$password)
          }
 
      } //end of signin function
+
+
+//Client root/initial account
+
+public  function client_root($instid,$email,$username,$password,$editDate,$createDate,$role="3",$status="On")
+ {
+// always use try and catch block to write code
+  try{
+
+// select  a unique client
+    $sql = "SELECT id
+    FROM users WHERE created_By = ?";
+    //this is a prepared statement, it is good to avoid injection
+    //note that variables are named at users discretion, you can name them what you want
+    $this->conn->query($sql);
+    $this->conn->bind(1, $instid, PDO::PARAM_INT);
+    //$this->conn->bind(2, $this->password, PDO::PARAM_STR,12);
+    $myResult = $this->conn->resultset();
+
+    //$sess_info = array();
+
+            if ($this->conn->rowCount() >= 1)
+            {  
+                exit("Root access already created for this client!");
+            }
+            else
+            {
+            $sqlQuery = "INSERT INTO users(email,user_name,password,role,created_By,edited_on,created_on,status) 
+            values (?,?,?,?,?,?,?,?)";
+                            $this->conn->query($sqlQuery);
+                            $this->conn->bind(1, $this->email, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $this->username, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $this->password, PDO::PARAM_STR);
+                            $this->conn->bind(4, $role, PDO::PARAM_INT);
+                            $this->conn->bind(5, $instid, PDO::PARAM_INT);
+                            $this->conn->bind(6, $editDate, PDO::PARAM_STR,100);
+                            $this->conn->bind(7, $createDate, PDO::PARAM_STR);
+                            $this->conn->bind(8, $status, PDO::PARAM_STR,100);
+                            $this->conn->execute();
+                            if ($this->conn->rowCount() == 1)
+                              {
+                              echo "ok";
+                              }
+                              else{
+                                exit("Error creating root access!");
+                              }
+            }
+
+      }
+      catch(Exception $e)
+      {
+      // echo error here
+        //this get an error thrown by the system
+    echo "Error:". $e->getMessage();
+         }
+
+     } //end of signin function
+
+//end client or root account
 
 //=============================================================================
 //Function to log all users in i.e. admin created users

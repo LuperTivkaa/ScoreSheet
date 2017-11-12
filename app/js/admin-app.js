@@ -407,15 +407,18 @@ function createSubject(staff, class_id, subj) {
 
 
 // new institution profile
-$('#sch-profile-btn').on('click', function() {
-    //$(this).text("Submitting, please wait...").prop("disabled", true);
+$("#new-content").on('click', '#sch-profile-btn', function() {
+    $('#sch-profile-btn').text("Creating...").prop("disabled", true);
     var inst_name = $("#institution_name").val();
     var inst_category = $("#institution_category").val();
     var nation = $("#nation").val();
     var state = $("#state").val();
     var lg = $("#lg").val();
     var city = $("#city").val();
-    var address = $("#address").val();
+    var webAdd = $("#webAdd").val();
+    var email = $("#Email").val();
+    var streetAdd = $("#streetAdd").val();
+    var mailAdd = $("#mailAdd").val();
     var mobile = $("#mobile").val();
     $.post("addSchoolProfile.php", {
         inst_name: inst_name,
@@ -424,22 +427,27 @@ $('#sch-profile-btn').on('click', function() {
         state: state,
         lg: lg,
         city: city,
-        address: address,
+        webAdd: webAdd,
+        email: email,
+        streetAdd: streetAdd,
+        mailAdd: mailAdd,
         mobile: mobile
     }).done(createInst);
 });
 //institution profile call back function
 function createInst(response) {
-    $("#register").modal("hide");
-    //get inserted records from the database
 
     var data = $.trim(response);
     if (data === "ok") {
-        window.location.replace("uploadLogo.php");
+        $("#my-info").addClass("info");
+        $("#my-info").text("School Profile Created Successfully");
+        $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
+        // window.location.replace("uploadLogo.php");
     } else {
         //alert("me")
-        $("#profile-info").addClass("error");;
+        $("#profile-info").addClass("error");
         $("#profile-info").html(data);
+        $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
     }
 
 }
@@ -564,7 +572,7 @@ function uploadFiles(event) {
 // Catch the form files
 function uploadLogo(event) {
     //firing ok
-    console.log('Testing the second event handler');
+    //console.log('Testing the second event handler');
     event.stopPropagation(); // Stop stuff happening
     event.preventDefault(); // Totally stop stuff happening
 

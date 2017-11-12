@@ -1,23 +1,24 @@
 body {
-  background-color: #fff;
+  background-color: #f4f6f6;
   font-size: 1em; }
 
 /*
-                            ===================================
-                            LAYOUT STYLES
-                            ==================================*/
+                        ===================================
+                        LAYOUT STYLES
+                        ==================================*/
+.inst-profile-container {
+  margin-top: 70px; }
+
 .image-upload > input {
   display: none; }
 
 .inst-profile li {
-  display: inline-block;
   margin: 0;
-  width: 100%;
-  padding: 12px 0;
-  border-top: 1px solid #D5DDE4;
-  font-size: .9em;
+  padding: 0;
+  list-style-type: none;
+  font-size: .7em;
   font-family: 'Ubuntu';
-  color: #566573; }
+  color: #ec7063; }
 
 .right-menu-header {
   font-family: 'Baloo Chettan';
@@ -25,7 +26,9 @@ body {
   color: #ccd1d1; }
 
 ul li {
-  list-style-type: none;
+  font-size: .7em; }
+
+.declaration p {
   font-size: .7em; }
 
 .headerImage {
@@ -33,16 +36,83 @@ ul li {
   padding: 2px;
   border: 2px solid #99a3a4; }
 
+.profileImage {
+  border-radius: 50%;
+  display: block;
+  padding: 2px;
+  border: 2px solid #99a3a4; }
+
+.alignment {
+  display: block;
+  text-align: center; }
+
+.datatable {
+  border-collapse: collapse; }
+
+.datatable td,
+.datatable th {
+  font-size: .7em; }
+
+.datatable th {
+  text-align: justify; }
+
+.print_Header {
+  margin: 0 auto;
+  display: block;
+  margin-top: 0;
+  padding: 1em 0;
+  border-bottom: 1px solid #abb2b9;
+  background-color: #fff;
+  text-align: center; }
+
 .error {
-  color: #ec7063; }
+  color: #ec7063;
+  text-align: center; }
+
+.alert {
+  margin: auto;
+  display: block;
+  width: 60%; }
 
 .info {
   color: #5499c7;
   text-align: center; }
 
+.modal_bg {
+  background-color: #d1f2eb; }
+
+.output {
+  margin: auto;
+  display: block;
+  border-radius: 7px;
+  width: 60%;
+  margin-bottom: 20px; }
+
+.login-container {
+  background-color: #ffffff;
+  border-radius: 7px;
+  border: 1px solid #1ABC9C;
+  margin-bottom: 20px; }
+
+.login-button {
+  border: 1px solid #1ABC9C;
+  background-color: #ffffff;
+  display: block;
+  margin: 0 auto;
+  border-radius: 7px;
+  height: 40px;
+  margin-bottom: 10px;
+  font-size: 1.4em;
+  font-weight: 300;
+  color: #1f618d;
+  font-family: 'Arsenal'; }
+
 /* ======================
-                            NAVIGATION STYLES
-                            ===========================*/
+                                NAVIGATION STYLES
+                                ===========================*/
+.margin-bottom {
+  margin-bottom: 20px; }
+
 .navbar {
   min-height: 50px;
   margin-bottom: 0;
@@ -50,12 +120,74 @@ ul li {
   background-color: #fff;
   border-bottom: 2px solid #ccd1d1; }
 
+.profile-bar {
+  height: 15%;
+  margin: 0 auto;
+  border-radius: 0;
+  background-color: #f9ebea;
+  border-bottom: 2px solid #ccd1d1; }
+
+.logo {
+  height: 50%;
+  width: 80%; }
+
 a {
   color: #000;
-  font-family: "Abel";
+  font-family: 'Abel';
   font-size: 1.2em;
   text-decoration: none !important; }
 
 a:hover {
   text-decoration: none;
-  color: #808B96; }
+  color: #808b96; }
+
+/*
+.navbar-nav li a, .navbar-brand{
+    padding-top: 6px !important;
+    padding-bottom: 0px !important;
+    height: 33px;
+    color:floralwhite !important;
+}
+*/
+.newsletterJumbo {
+  background: url("../images/loneChild.jpg");
+  background-size: cover; }
+
+.jumb {
+  background-color: #F1948A; }
+
+.intro {
+  color: #ffffff;
+  font-family: 'Finger Paint';
+  font-size: 38px; }
+
+.navbackground {
+  background-color: #ffffff; }
+
+.leadText {
+  font-family: 'Fjalla One';
+  color: #FFFFFF; }
+
+.leadp {
+  font-size: 16px; }
+
+.welcome {
+  color: #ffffff;
+  font-family: 'Fjalla One';
+  font-size: 90px; }
+
+.excite {
+  color: #5499C7;
+  /*color: #F1948A*/
+  font-family: 'Fjalla One'; }
+
+.newtext {
+  color: #5DADE2;
+  /*color: #F1948A*/
+  font-family: 'Just Another Hand';
+  font-size: 14px; }
+
+.social a {
+  font-family: 'Fjalla One';
+  color: #78909C;
+  font-size: 16px; }

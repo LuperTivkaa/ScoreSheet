@@ -12,7 +12,6 @@
   padding: 1em 0; }
   .secondary-nav .secondary-nav-content {
     padding: 1.5px 1.5px 1.5px 1.5px;
-    border-left: 3px solid deepskyblue;
     width: 80%;
     margin: 0 auto; }
     .secondary-nav .secondary-nav-content h4 {
@@ -257,7 +256,7 @@ a:hover {
     .staff-menu li a {
       text-decoration: none !important;
       color: #616a6b;
-      font-size: .85em; }
+      font-size: .65em; }
 
 .image-upload {
   display: block;
@@ -279,17 +278,30 @@ a:hover {
 
 .datatable {
   border: 0.5px solid #e5e7e9;
-  font-family: "Jura";
-  margin-left: 0px; }
+  font-family: "Open Sans";
+  margin-left: 3px; }
   .datatable td {
     border: 1px solid #e5e7e9;
     text-align: left;
-    font-size: .7em;
+    font-size: .6em;
     white-space: nowrap; }
   .datatable th {
     border: 0.5px solid #e5e7e9;
     text-align: left;
-    font-size: .8em; }
+    font-size: .6em; }
+
+.rating-table {
+  border: 0.5px solid #e5e7e9;
+  font-family: "Open Sans"; }
+  .rating-table td {
+    border: 1px solid #e5e7e9;
+    text-align: left;
+    font-size: .4em;
+    white-space: nowrap; }
+  .rating-table th {
+    border: 0.5px solid #e5e7e9;
+    text-align: left;
+    font-size: .4em; }
 
 .transparent-table {
   font-family: "Jura";
@@ -303,38 +315,71 @@ a:hover {
     font-size: .7em; }
 
 .result-content-wrapper {
-  width: 80%;
+  width: 98%;
   margin: 0 auto; }
 
 .school-profile {
-  border-left: 3px solid deepskyblue;
+  display: inline-block;
+  width: 80%;
   text-align: center;
-  margin-bottom: 15px;
-  margin-top: 10px; }
+  margin-top: 10px;
+  margin-right: -7px;
+  vertical-align: top; }
   .school-profile p {
     font-family: "Hind";
-    font-size: .9em;
-    line-height: .9px; }
+    font-size: .6em;
+    line-height: 0.3;
+    margin-bottom: 0px; }
   .school-profile h5 {
     font-family: "Fjalla One";
     color: #000;
-    font-size: 1.7em; }
+    font-size: 1.2em; }
 
 .student-profile {
   border-left: 3px solid deepskyblue;
-  margin-bottom: 15px; }
+  margin-bottom: 10px; }
+
+.result-details-container {
+  border-left: 3px solid deepskyblue;
+  margin-bottom: 10px; }
+
+.school-profile-container {
+  border-left: 3px solid deepskyblue;
+  margin-bottom: 10px; }
+
+.national-emblem {
+  border-left: 3px solid deepskyblue;
+  margin-bottom: 10px;
+  text-align: center;
+  margin-top: 10px;
+  vertical-align: top; }
+  .national-emblem p {
+    font-size: .5em;
+    line-height: 1.3;
+    margin-bottom: 0px; }
+
+.school-avatar-container {
+  display: inline-block;
+  width: 10%;
+  margin-right: -2px;
+  margin-top: 10px;
+  vertical-align: top; }
 
 .item-container {
   width: 100%; }
   .item-container h6 {
     font-family: "Fjalla One";
-    font-size: .7em;
+    font-size: .6em;
     color: #000; }
   .item-container span {
     font-family: "Quicksand";
     color: #000;
-    font-size: .6em;
+    font-size: .5em;
     font-weight: 400; }
+  .item-container .grading-header {
+    font-family: "Fjalla One";
+    font-size: .5em;
+    color: #000; }
 
 .profile-details {
   display: inline-block;
@@ -345,28 +390,37 @@ a:hover {
     margin-top: 5px;
     font-family: "Fjalla One";
     color: #000;
-    font-size: 1.5em; }
+    font-size: 13px; }
 
 .student-avatar {
   display: inline-block;
   width: 10%;
   padding-right: 1em;
-  margin-right: -5px;
   vertical-align: top; }
 
 .colm {
   display: inline-block;
-  width: 13%;
+  width: 11%;
   padding-left: 3px;
   margin-right: -5px; }
   .colm span {
-    margin-top: .6px; }
+    margin-top: .2px; }
+
+.grading-items {
+  display: inline-block;
+  width: 20%;
+  padding-left: 3px;
+  margin-right: -5px; }
+  .grading-items span {
+    margin-top: .6px;
+    color: lightgrey; }
 
 .logo-img {
   width: 60px;
   height: 60px;
-  border-radius: 50%;
-  border: 1px solid #fff; }
+  border-radius: 2px 2px 2px 2px;
+  border: 1px solid #fff;
+  margin-bottom: 4px; }
 
 .avatar-img {
   width: 50px;
@@ -386,15 +440,88 @@ a:hover {
   padding: 3px; }
 
 .result-details {
-  border-left: 3px solid deepskyblue;
-  margin-bottom: 15px; }
+  display: inline-block;
+  width: 80%;
+  margin-right: -7px;
+  padding-left: 0px;
+  vertical-align: top; }
 
-.cognitive-marks {
-  margin-bottom: 15px;
-  border-left: 3px solid deepskyblue; }
+.domain-ratings {
+  display: inline-block;
+  width: 20%;
+  padding-right: 3px;
+  vertical-align: top;
+  margin-top: 7px; }
+
+.traits-items {
+  padding-left: 4px; }
+
+.staff-comments-header {
+  display: block;
+  font-family: "Open Sans";
+  font-size: 11px;
+  font-weight: bold; }
+
+.staff-comments-item {
+  display: block;
+  font-family: "Open Sans";
+  font-size: 10px;
+  font-weight: bold;
+  color: #96a1ac; }
+
+.domain-ratings-header {
+  font-family: "Open Sans";
+  font-size: 8px;
+  font-weight: bolder;
+  text-align: center; }
+
+.category-header {
+  font-family: "Open Sans";
+  font-size: 14px;
+  font-weight: bolder; }
 
 .comments-section {
   border-left: 3px solid deepskyblue; }
+
+.teacher-comments-container {
+  margin-bottom: 10px; }
+
+.principal-comments-container {
+  margin-bottom: 10px; }
+
+.principal-name {
+  display: inline-block;
+  width: 30%;
+  padding: 2px 2px 2px 2px;
+  margin-right: -5px; }
+
+.principal-comments {
+  display: inline-block;
+  width: 40%;
+  padding: 2px 2px 2px 2px;
+  margin-right: -5px; }
+
+.principal-sign {
+  display: inline-block;
+  width: 30%;
+  padding: 2px 2px 2px 2px; }
+
+.class-teacher-name {
+  display: inline-block;
+  width: 30%;
+  padding: 2px 2px 2px 2px;
+  margin-right: -5px; }
+
+.class-teacher-comments {
+  display: inline-block;
+  width: 40%;
+  padding: 2px 2px 2px 2px;
+  margin-right: -5px; }
+
+.class-teacher-sign {
+  display: inline-block;
+  width: 30%;
+  padding: 2px 2px 2px 2px; }
 
 .school-header {
   margin-bottom: 5px;
@@ -408,9 +535,15 @@ a:hover {
       margin-left: 0px; }
 
 .school-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 2px 2px 2px 2px;
+  border: 1px solid #fff; }
+
+.school-logo {
+  width: 50%;
+  border-radius: 2px 2px 2px 2px;
+  text-align: center;
   border: 1px solid #fff; }
 
 .scoresheet-header {
@@ -437,6 +570,9 @@ a:hover {
   display: none; }
 
 .comments-div {
+  display: none; }
+
+.attendance-div {
   display: none; }
 
 .active-trait {
@@ -498,19 +634,12 @@ a:hover {
   padding-left: 2px;
   margin-bottom: 12px; }
   .traits-display li {
-    display: inline-block;
-    padding: 0px;
-    margin-right: 5px; }
-    .traits-display li p {
-      font-size: 11px;
-      color: #000;
-      margin-bottom: 3px;
-      border-bottom: 1.5px solid deepskyblue; }
+    display: block;
+    padding: 0px; }
     .traits-display li span {
-      display: inline-block;
-      font-size: 9px;
-      color: #96a1ac;
-      margin-top: 3px; }
+      font-size: .4em;
+      color: #000;
+      margin-right: 3px; }
 
 .hide-me {
   display: none; }
@@ -529,6 +658,11 @@ a:hover {
     margin: 0 auto; }
     .primary-nav-content h2 {
       font-size: 1em; }
+  .result-content-wrapper {
+    width: 99.5%;
+    margin: 0 auto; }
+  .result-details {
+    margin-right: 1px; }
   .secondary-nav-content {
     width: 95%;
     margin: 0 auto; }

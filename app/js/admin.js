@@ -248,6 +248,73 @@ function newStudent(surname, firstname, lastname, religion, nation, state,
 
 ///////////////////////
 
+//Add student guardian
+
+$("#new-content").on('click', '#add-guardian-info', function(e) {
+    e.preventDefault();
+    $('#add-guardian-info').prop("disabled", true);
+    var studid = $("#student").val();
+    var sn = $("#surname").val();
+    var fn = $("#firstname").val();
+    var ln = $("#lastname").val();
+    var occup = $("#occupation").val();
+    var sex = $("#sex").val();
+    var relationship = $("#relationship").val();
+    var address = $("#cont_add").val();
+    var parentmail = $("#parent-mail").val();
+    var mobile = $("#mobile").val();
+    var emergency = $("#emergency-contact").val();
+    newGuardian(sn, fn, ln, occup, sex, relationship, address, parentmail, mobile, emergency, studid);
+});
+
+//function to add new parent
+function newGuardian(sn, fn, ln, occup, sex, relationship, address, parentmail, mobile, emergency, studid) {
+    $.ajax({
+        url: 'addGuardian.php',
+        type: 'POST',
+        data: {
+            sn: sn,
+            fn: fn,
+            ln: ln,
+            occup: occup,
+            sex: sex,
+            relationship: relationship,
+            address: address,
+            parentmail: parentmail,
+            mobile: mobile,
+            emergency: emergency,
+            studid: studid
+        },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#add-guardian-info').prop("disabled", false);
+                $("#my-info").addClass("info");
+                var studid = $("#student").val();
+                $("#surname").val("");
+                $("#firstname").val("");
+                $("#lastname").val("");
+                $("#occupation").val("");
+                $("#cont_add").val("");
+                $("#parent-mail").val("");
+                $("#mobile").val("");
+                $("#emergency-contact").prop("checked", false);
+                $("#my-info").text("Guardian added successfully");
+                $("#student").empty();
+
+            } else {
+                //alert("me")
+                $('#add-guardian-info').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+
+//end add student guardian
+
 //add new Student parent
 $("#new-content").on('click', '#add-parent-info', function(e) {
     e.preventDefault();

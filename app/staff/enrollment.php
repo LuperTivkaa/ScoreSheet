@@ -1,6 +1,23 @@
+<?php
+//session_start();
+require '../../vendor/autoload.php';
+use ScoreSheet\dbConnection;
+use ScoreSheet\client;
+use ScoreSheet\student;
+use ScoreSheet\staff;
+//use \PDO;
+$dbConnection = new dbConnection();
+$student = new student($dbConnection);
+$client = new client($dbConnection);
+$staff = new staff($dbConnection);
+//$jobmanager = new manager($dbConnection);
+$schid = $_SESSION['user_info'][4];
+//$newStaff = new student();
+$staffid = $_SESSION['user_info'][0];
+$staff->staff($staffid,$schid); 
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <title>ScoreSheet| Academic Routines </title>
@@ -63,9 +80,7 @@
                        <div class="col-md-12 pl-0">
                             <ul class="staff-menu">
                             <li><a class="load-url" href="addEnrollment.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> New Enrollment</a></li>
-                            <li><a class="load-url" href="searchCa.php"><i class="fa fa-bolt fa-fw" aria-hidden="true"></i> Search  CA</a></li>
-                             <li><a class="load-url" href="assessmentSheet.php"><i class="fa fa-tags fa-fw" aria-hidden="true"></i> Scores Sheet</a></li>
-                             
+                            <li><a class="load-url" href="previousEnrollment.php"><i class="fa fa-bolt fa-fw" aria-hidden="true"></i> Previous Students</a></li> 
                             </ul>
                             <hr class="mt-2">                
                        </div>
