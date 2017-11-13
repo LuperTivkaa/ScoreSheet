@@ -153,6 +153,11 @@ $("#new-content").on('click', '.load-new-student', function(e) {
 });
 
 //end  of all new students
+$("#new-content").on('click', '.load-new-guardian', function(e) {
+    $.get("newStudentGuardian.php", function(data) {
+        $("#student").html(data);
+    });
+});
 //=========================================================================
 //CREATE NEW SCHOOL SUBJECT
 
@@ -343,16 +348,16 @@ $("#new-content").on('click', '#assign-subject', function(e) {
     e.preventDefault();
     $('#assign-subject').prop("disabled", true);
     var subj = $('#subject-list option:selected').val();
-    var classid = $('#class option:selected').val();
-    assignSubject(subj, classid);
+    var categoryid = $('#class-category option:selected').val();
+    assignSubject(subj, categoryid);
 });
 
 //call back for assign subject to class
-function assignSubject(subjectName, classid) {
+function assignSubject(subjectid, category) {
     $.ajax({
         url: 'assignSubjectToClass.php',
         type: 'POST',
-        data: { subjectName: subjectName, classid: classid },
+        data: { subjectid: subjectid, category: category },
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
@@ -484,6 +489,7 @@ function getInstProfile() {
 //load subjects on selection of class
 $("#new-content").on('change', '#class', function() {
     var id = $("#class option:selected").val();
+    //alert("its me");
     $.post("listSubjects.php", { id: id }, function(data) {
         $("#subject").html(data);
     });
@@ -1830,6 +1836,7 @@ function viewStaffUser(userid) {
 //Edit exam  modal js
 $('#new-content').on('click', '#editModal', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
 
     var recordid = $(this).data('recordid');
     var editValue = $(this).data('value');
@@ -1839,7 +1846,7 @@ $('#new-content').on('click', '#editModal', function(e) {
     $('#record-id').val(recordid);
 
     $('#modal-list').empty();
-    $('#modal-error').empty();
+    $('#modal_error').empty();
     var modalid = $('#myModal');
     modalid.css('display', 'block');
 });
@@ -1905,6 +1912,7 @@ $('#new-content').on('click', '.prefix-div', function(e) {
 //Funtion to handle edit term
 $('#edit-term').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var mybutton = $(this);
     var termid = $('#record-id').val();
     var term = $('#editterm').val();
@@ -1940,6 +1948,7 @@ function editSchTerm(termid, term) {
 //Function to edit subject
 $('#edit-subject').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var subjectid = $('#record-id').val();
     var subject = $('#editsubject').val();
 
@@ -1974,6 +1983,7 @@ function editSchSubject(subjectid, subject) {
 
 $('#edit-session').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var sessionid = $('#record-id').val();
     var session = $('#editsession').val();
 
@@ -2008,6 +2018,7 @@ function editSchSession(sessionid, session) {
 //Function to edit classes
 $('#edit-class').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var classid = $('#record-id').val();
     var schclass = $('#editclass').val();
 
@@ -2041,9 +2052,10 @@ function editSchClass(classid, schclass) {
 //Function to edit prefix settings
 $('#edit-prefix').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var prefixid = $('#record-id').val();
     var prefix = $('#editprefix').val();
-    alert(prefixid + prefix);
+    //alert(prefixid + prefix);
 
     //var termid = $(this).data('recordid');
     $('#edit-prefix').text('Updating...').prop('disable', true);
@@ -2062,6 +2074,7 @@ function editSchPrefix(prefixid, prefix) {
                 $('#editprefix').val("");
                 $("#modal_error").addClass("info");
                 $("#modal_error").text("Update of prefix settings successful");
+                //$("#modal_error").empty();
             } else {
                 $('#edit-prefix').text('Update Prfeix').prop('disable', false);
                 $("#modal_error").addClass("error");
@@ -2343,18 +2356,18 @@ $("#new-content").on('click', '#new-student-btn', function(e) {
     var dob = $("#datepicker").val();
     var blood_group = $("#blood-group").val();
     var class_adm = $("#class-admitted").val();
-    var arm = $("#arm").val();
+    //var arm = $("#arm").val();
     var session = $("#session").val();
     var adm_type = $("#adm-type").val();
     newStudent(surname, firstname, lastname, religion, nation, state,
         lg, city, add1, add2, mail, mobile, sex, dob,
-        blood_group, class_adm, arm, session, adm_type);
+        blood_group, class_adm, session, adm_type);
 });
 
 //function to add new student
 function newStudent(surname, firstname, lastname, religion, nation, state,
     lg, city, add1, add2, mail, mobile, sex, dob,
-    blood_group, class_adm, arm, session, adm_type) {
+    blood_group, class_adm, session, adm_type) {
     $.ajax({
         url: 'addNewStudent.php',
         type: 'POST',
@@ -2375,7 +2388,6 @@ function newStudent(surname, firstname, lastname, religion, nation, state,
             dob: dob,
             blood_group: blood_group,
             class_adm: class_adm,
-            arm: arm,
             session: session,
             adm_type: adm_type
         },
@@ -2423,7 +2435,7 @@ $("#new-content").on('click', '#add-guardian-info', function(e) {
     var occup = $("#occupation").val();
     var sex = $("#sex").val();
     var relationship = $("#relationship").val();
-    var address = $("#cont_add").val();
+    var address = $("#cont-add").val();
     var parentmail = $("#parent-mail").val();
     var mobile = $("#mobile").val();
     var emergency = $("#emergency-contact").val();
@@ -2489,7 +2501,7 @@ $("#new-content").on('click', '#add-parent-info', function(e) {
     var occup = $("#occupation").val();
     var sex = $("#sex").val();
     var relationship = $("#relationship").val();
-    var address = $("#cont_add").val();
+    var address = $("#cont-add").val();
     var parentmail = $("#parent-mail").val();
     var mobile = $("#mobile").val();
     var emergency = $("#emergency-contact").val();

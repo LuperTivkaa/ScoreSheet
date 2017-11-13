@@ -153,6 +153,11 @@ $("#new-content").on('click', '.load-new-student', function(e) {
 });
 
 //end  of all new students
+$("#new-content").on('click', '.load-new-guardian', function(e) {
+    $.get("newStudentGuardian.php", function(data) {
+        $("#student").html(data);
+    });
+});
 //=========================================================================
 //CREATE NEW SCHOOL SUBJECT
 
@@ -343,16 +348,16 @@ $("#new-content").on('click', '#assign-subject', function(e) {
     e.preventDefault();
     $('#assign-subject').prop("disabled", true);
     var subj = $('#subject-list option:selected').val();
-    var classid = $('#class option:selected').val();
-    assignSubject(subj, classid);
+    var categoryid = $('#class-category option:selected').val();
+    assignSubject(subj, categoryid);
 });
 
 //call back for assign subject to class
-function assignSubject(subjectName, classid) {
+function assignSubject(subjectid, category) {
     $.ajax({
         url: 'assignSubjectToClass.php',
         type: 'POST',
-        data: { subjectName: subjectName, classid: classid },
+        data: { subjectid: subjectid, category: category },
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
@@ -484,6 +489,7 @@ function getInstProfile() {
 //load subjects on selection of class
 $("#new-content").on('change', '#class', function() {
     var id = $("#class option:selected").val();
+    //alert("its me");
     $.post("listSubjects.php", { id: id }, function(data) {
         $("#subject").html(data);
     });

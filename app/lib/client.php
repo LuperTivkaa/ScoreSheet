@@ -899,18 +899,32 @@ public function schHeader($id)
                         foreach($myResult as $row => $key)
                         {
                             $schoolname = $key['SchoolName'];
-                            $logo = $key['Logo'];
-                            $logoPrint = '<li><img src="'.$logo.'" alt="School Logo" class="school-avatar"></li>';    
+                            $logo = $key['Logo'];    
                         }
-                                if(empty($schoolname)){
-                                    $schoolname = "ScoreSheet";
-                                } elseif(empty($logo)){
-                                    $logoPrint = '<li><img src="../images/profile-icon.png" alt="School Logo" class="school-avatar"></>';
-                                }
+                                // if(empty($schoolname) || $schoolname =='Null'){
+                                // $schoolname = "ScoreSheet";
+                                // } elseif(empty($logo) || $logo == 'Null'){
+                                // $logoPrint = '<li><img src="../images/profile-icon.png" alt="School Logo" class="school-avatar"></>';
+                                // } elseif(!empty($logo) ){
+                                // $logoPrint = $logoPrint = '<li><img src="'.$logo.'" alt="School Logo" class="school-avatar"></li>';
+                                // }
+
+                                $logoPrint = $logoPrint = '<li><img src="'.$logo.'" alt="School Logo" class="school-avatar"></li>';
+
                                 $printOutPut.='<ul class="school-header">';
                                 $printOutPut.=$logoPrint;
                                 $printOutPut.='<li><h4>'.$schoolname.'</h4></li>';
                                 $printOutPut.='</ul>';
+                    }
+                    else
+                    {
+                                
+                                $schoolname = "ScoreSheet";
+                                $logoPrint = '<li><img src="../images/profile-icon.png" alt="School Logo" class="school-avatar"></li>';
+                                $printOutPut.='<ul class="school-header">';
+                                $printOutPut.=$logoPrint;
+                                $printOutPut.='<li><h4>'.$schoolname.'</h4></li>';
+                                $printOutPut.='</ul>';    
                     }
                     echo $printOutPut;
             }// End of try catch block
@@ -980,6 +994,36 @@ public function allStaff($client_id)
 
 //End all Staff
 
+//Load approvd staff for assigning subjects
+public function loadApprovedStaff($client_id,$status="On")
+    {
+        try {
+                $query ="SELECT users.id,users.user_name FROM users WHERE created_By=? AND status=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $client_id, PDO::PARAM_INT);
+                 $this->conn->bind(2, $status, PDO::PARAM_STR);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['id'];
+            $username = $key['user_name'];
+          $output .= "<option value=".$ID.">".$username."</option>";
+                
+        }
+       echo $output;
+            }// End of try catch block
+         catch(Exception $e)
+            {
+            echo "Error: Unable to get staff details";
+            }
+   }
+
+
+
+//End load approved staff for assigning subjects
+
 //Get All Staff
 public function loadStaff($client_id)
     {
@@ -1004,7 +1048,7 @@ public function loadStaff($client_id)
             echo "Error: Unable to get staff details";
             }
    }
-   //end load staff functionlist
+   //end load staff function list
 
 
 
@@ -1043,8 +1087,7 @@ public function loadClass($client_id)
 public function loadSubject($class_id,$sch_id)
     {
         try {
-                $query ="SELECT subjects.sub_id,subject_name FROM subjects INNER JOIN class_subject ON 
-                class_subject.subject_id=subjects.sub_id WHERE class_subject.class_id=? AND subjects.my_sch_id=?";
+                $query ="SELECT subjects.sub_id AS subjectID, subjects.subject_name AS SubjectName,class_category_subject.class_category_id AS CatID FROM subjects INNER JOIN class_category_subject ON subjects.sub_id=class_category_subject.subject_id INNER JOIN class ON class.class_categoryid=class_category_subject.class_category_id WHERE class.id=? AND class.my_inst_id=?";
                 $this->conn->query($query);
                 $this->conn->bind(1, $class_id, PDO::PARAM_INT);
                 $this->conn->bind(2, $sch_id, PDO::PARAM_INT);
@@ -1053,8 +1096,8 @@ public function loadSubject($class_id,$sch_id)
         foreach ($myResult as $row => $key) 
         {
             
-            $ID = $key['sub_id'];
-            $subjectname = $key['subject_name'];
+            $ID = $key['subjectID'];
+            $subjectname = $key['SubjectName'];
 
        //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
       //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
@@ -1444,7 +1487,7 @@ public function admissionNumberSettings($clientid)
                     echo $output;
                     }
                     else{
-                        echo "No session found yet!";
+                        echo "No admission prefix setting found yet!";
                     }
                     
         }// End of try catch block
@@ -1537,31 +1580,31 @@ public  function newSubject($subjname,$clientid)
 /*
 method block to assign subject to class
 */
-public  function assignSubject($subject_id,$class_id,$sch_id)
+public  function assignSubject($subject_id,$class_category_id,$sch_id)
   {
   try{
-    //Check to prevent assigning the same subject to a class twice
+    //Check to prevent assigning the same subject to a class category twice
      $query ="SELECT id FROM 
-            class_subject
-            WHERE subject_id=? && class_id=? && school_id=?";
+            class_category_subject
+            WHERE subject_id=? AND class_category_id=? AND school_id=?";
              
                 $this->conn->query($query);
                 $this->conn->bind(1, $subject_id, PDO::PARAM_INT);
-                $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                $this->conn->bind(2, $class_category_id, PDO::PARAM_INT);
                 $this->conn->bind(3, $sch_id, PDO::PARAM_INT);
                 $this->conn->resultset();
                 if ($this->conn->rowCount() >=1)
                 {
-                    exit("This subject has already been added to this class!");
+                    exit("This subject has already been added to this class category!");
                 }
                 else{
                             //insert new subjects  taught by staff 
-                            $sql = "INSERT INTO class_subject(subject_id,
-                            class_id,school_id)
+                            $sql = "INSERT INTO class_category_subject(subject_id,
+                            class_category_id,school_id)
                              values (?,?,?)";
                             $this->conn->query($sql);
                             $this->conn->bind(1, $subject_id, PDO::PARAM_INT);
-                            $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                            $this->conn->bind(2, $class_category_id, PDO::PARAM_INT);
                             $this->conn->bind(3, $sch_id, PDO::PARAM_INT); 
                             $this->conn->execute(); 
                         if ($this->conn->rowCount() == 1) 
@@ -1571,7 +1614,7 @@ public  function assignSubject($subject_id,$class_id,$sch_id)
                         } 
                         else
                         {
-                        echo "Error assigning subject to class";
+                        echo "Error assigning subject to class category";
                       }
                 }     
       }
@@ -2380,9 +2423,8 @@ public function allStaffUsers($clientid)
         {
         try {
 
-                $query ="SELECT users.id AS ID, CONCAT(staff_profile.surname, ', ', staff_profile.middle_name, ' ', staff_profile.lastname) AS FullName, users.status AS Status,institutional_responsibilities.responsibility_name AS Role
+                $query ="SELECT users.id AS ID, users.user_name AS Username, users.status AS Status,institutional_responsibilities.responsibility_name AS Role
                 FROM users
-                INNER JOIN staff_profile ON users.id=staff_profile.user_id 
                 INNER JOIN institutional_responsibilities ON users.role=institutional_responsibilities.id
                 WHERE users.created_By=?";
                     $this->conn->query($query);
@@ -2392,10 +2434,11 @@ public function allStaffUsers($clientid)
                     $output.="<h5 class='top-header mt-2'>All Staff Users</h5><br/>";
                     $output .='<table class="table">';
             $output .='<thead>
-            <tr><th>Name</th><th>Role</th><th>Action</th><th>View</th></tr>
+            <tr><th>UserName</th><th>Role</th><th>Action</th><th>View</th></tr>
             </thead>
             <tbody>';
                     if($myResult){
+                        //CONCAT(staff_profile.surname, ', ', staff_profile.middle_name, ' ', staff_profile.lastname) AS FullName,
                     foreach ($myResult as $row => $key) 
                     {
                          
@@ -2406,7 +2449,7 @@ public function allStaffUsers($clientid)
                         $active_status= '<button type="button"  data-recordid="'.$key['ID'].'" class="not-approvedBtn" id="staffOn">Activate</button>';
                         }
                    
-                    $fullname = $key['FullName'];
+                    $fullname = $key['Username'];
                    // $status = $key['Status'];
                     $role = $key['Role'];
                    

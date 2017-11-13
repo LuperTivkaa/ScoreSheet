@@ -218,6 +218,42 @@ public function loadCASettings()
    }
    //End of CA Settings
 
+   //Load students whose guardian have not been added yet
+public function loadStudentGuardian($client_id)
+    {
+        try {
+
+            $query ="SELECT id, CONCAT(UPPER(surname), ' ', firstName) AS fullname FROM 
+            student_initial WHERE student_initial.id NOT IN 
+            (SELECT student_id_no FROM student_guardian WHERE parent_sch_id=?)";
+             
+                $this->conn->query($query);
+                $this->conn->bind(1, $client_id, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output =" "; 
+        foreach ($myResult as $row => $key) 
+        {
+            
+            $ID = $key['id'];
+            $fullname = $key['fullname'];
+
+          //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+          //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+          $output .= "<option value=".$ID.">".$fullname."</option>";
+                
+        }
+       echo $output;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Unable to get student details";
+        }
+   }
+
+
+
+   //end load students whose guradian have not been added yet
+
 //Get student whose id not found in student parent
 public function loadNewStudent($client_id)
     {
@@ -581,7 +617,7 @@ public  function newParent($surname,$firstname,$lastname,
 
 //Add New Student
 public  function newStudent($surname,$firstname,$lastname,$sex,
-  $class_admtitted,$session_admitted,$adm_type,$class_arm,$date_created,
+  $class_admtitted,$session_admitted,$adm_type,$date_created,
   $createdBy,$permAdd,$contAdd,$email,$sch_id,$country,$state,$city,$lga,
   $religion,$dob,$mobile,$blood,$status='Active')
     {
@@ -594,9 +630,9 @@ public  function newStudent($surname,$firstname,$lastname,$sex,
           //this is code uses the PDO class with its related methods, pls check the PHP documentation for this, just type: PHP PDO
           //There is so much information using the php documentation 
                             $sqlStmt = "INSERT INTO student_initial (surname,firstName,lastName,gender,classAdmitted,sessionAdmitted,
-                            admissionType,class_description,dateCreated,createdBy,perm_home_add,contact_add,
+                            admissionType,dateCreated,createdBy,perm_home_add,contact_add,
                             email,stud_sch_id,nationality,state,city,lga,religion,dateOfBirth,mobile,status_active,blood_group)
-                             values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                             values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $this->surname, PDO::PARAM_STR,100);
                             $this->conn->bind(2, $this->firstname, PDO::PARAM_STR,100);
@@ -605,22 +641,21 @@ public  function newStudent($surname,$firstname,$lastname,$sex,
                             $this->conn->bind(5, $class_admtitted, PDO::PARAM_STR);
                             $this->conn->bind(6, $session_admitted, PDO::PARAM_STR,100);
                             $this->conn->bind(7, $adm_type, PDO::PARAM_STR,100);
-                            $this->conn->bind(8, $class_arm, PDO::PARAM_STR,100);
-                            $this->conn->bind(9, $date_created, PDO::PARAM_INT); 
-                            $this->conn->bind(10, $createdBy, PDO::PARAM_STR);
-                            $this->conn->bind(11, $permAdd, PDO::PARAM_STR);
-                            $this->conn->bind(12, $contAdd, PDO::PARAM_STR,100);
-                            $this->conn->bind(13, $this->email, PDO::PARAM_STR,100);
-                            $this->conn->bind(14, $sch_id, PDO::PARAM_STR,100);
-                            $this->conn->bind(15, $this->country, PDO::PARAM_INT); 
-                            $this->conn->bind(16, $this->state, PDO::PARAM_STR);
-                            $this->conn->bind(17, $this->city, PDO::PARAM_STR);
-                            $this->conn->bind(18, $this->lga, PDO::PARAM_STR,100);
-                            $this->conn->bind(19, $this->religion, PDO::PARAM_STR,100);
-                            $this->conn->bind(20, $dob, PDO::PARAM_STR,100);
-                            $this->conn->bind(21, $this->mobile, PDO::PARAM_INT); 
-                            $this->conn->bind(22, $status, PDO::PARAM_STR);
-                            $this->conn->bind(23, $blood, PDO::PARAM_STR);
+                            $this->conn->bind(8, $date_created, PDO::PARAM_INT); 
+                            $this->conn->bind(9, $createdBy, PDO::PARAM_STR);
+                            $this->conn->bind(10, $permAdd, PDO::PARAM_STR);
+                            $this->conn->bind(11, $contAdd, PDO::PARAM_STR,100);
+                            $this->conn->bind(12, $this->email, PDO::PARAM_STR,100);
+                            $this->conn->bind(13, $sch_id, PDO::PARAM_STR,100);
+                            $this->conn->bind(14, $this->country, PDO::PARAM_INT); 
+                            $this->conn->bind(15, $this->state, PDO::PARAM_STR);
+                            $this->conn->bind(16, $this->city, PDO::PARAM_STR);
+                            $this->conn->bind(17, $this->lga, PDO::PARAM_STR,100);
+                            $this->conn->bind(18, $this->religion, PDO::PARAM_STR,100);
+                            $this->conn->bind(19, $dob, PDO::PARAM_STR,100);
+                            $this->conn->bind(20, $this->mobile, PDO::PARAM_INT); 
+                            $this->conn->bind(21, $status, PDO::PARAM_STR);
+                            $this->conn->bind(22, $blood, PDO::PARAM_STR);
                             
                             $this->conn->execute(); 
 
@@ -646,7 +681,7 @@ public  function newStudent($surname,$firstname,$lastname,$sex,
 
 
 //ADD ADMISSION NUMBER PERFIX SETTINGS
-public  function addPrefixSettings($name,$seperator,$sch_id,$addedby,$added_date,$edited_date,$status='Active')
+public  function addPrefixSettings($name,$sch_id,$addedby,$added_date,$edited_date,$status='Active')
   {
    // always use try and catch block to write code
    try{

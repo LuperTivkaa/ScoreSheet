@@ -14,7 +14,8 @@ $staff = new staff($dbConnection);
 
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
-$staff->adminUser($userid,$clientid);
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$clientid);
 
 $dateCreated = date("Y-m-d");
 
@@ -37,7 +38,7 @@ $sex = filter_input(INPUT_POST, "sex", FILTER_SANITIZE_STRING);
 $dob = filter_input(INPUT_POST, "dob", FILTER_SANITIZE_STRING);
 $blood_group = filter_input(INPUT_POST, "blood_group", FILTER_SANITIZE_STRING);
 $class_adm = filter_input(INPUT_POST, "class_adm", FILTER_SANITIZE_NUMBER_INT);
-$arm = filter_input(INPUT_POST, "arm", FILTER_SANITIZE_NUMBER_INT);
+//$arm = filter_input(INPUT_POST, "arm", FILTER_SANITIZE_NUMBER_INT);
 $session = filter_input(INPUT_POST, "session", FILTER_SANITIZE_NUMBER_INT);
 $adm_type = filter_input(INPUT_POST, "adm_type", FILTER_SANITIZE_STRING);
 
@@ -88,7 +89,7 @@ $dob = $student->getDob();
 $student->setBloodGroup($blood_group);
 $blood = $student->getBloodGroup();
 
-$student->newStudent($surn,$fn,$ln,$sex,$class_adm,$session,$adm_type,$arm,$dateCreated,
+$student->newStudent($surn,$fn,$ln,$sex,$class_adm,$session,$adm_type,$dateCreated,
 	$userid,$perm_add,$cont_add,$mail,$clientid,$nation,$state,$city,$lg,$rel,$dob,$mobile,$blood);
     
 }

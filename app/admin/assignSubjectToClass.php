@@ -14,21 +14,22 @@ $staff = new staff($dbConnection);
 
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
-$staff->adminUser($userid,$clientid);
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$clientid);
 //$dateCreated = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 //$regno = $_SESSION['ID'];
-$subject = filter_input(INPUT_POST, "subjectName", FILTER_SANITIZE_STRING);
-$class = filter_input(INPUT_POST, "classid", FILTER_SANITIZE_STRING);
+$subjectid = filter_input(INPUT_POST, "subjectid",FILTER_SANITIZE_NUMBER_INT);
+$categoryid = filter_input(INPUT_POST, "category", FILTER_SANITIZE_NUMBER_INT);
 //$role = filter_input(INPUT_POST, "role", FILTER_SANITIZE_STRING);
 
-if(empty($subject && $class)){
+if(empty($subjectid && $categoryid)){
 	exit("Please select appropriate datasets!");
 }
 
-$client->assignSubject($subject,$class,$clientid);
+$client->assignSubject($subjectid,$categoryid,$clientid);
     
 }
 else

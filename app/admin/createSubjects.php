@@ -1,5 +1,5 @@
 <?php 
-//session_start();
+session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
@@ -14,7 +14,8 @@ $staff = new staff($dbConnection);
 
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
-$staff->adminUser($userid,$clientid);
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$clientid);
 //echo $clientObj->loadStaff($clientid);
 ?>
 
@@ -36,7 +37,7 @@ $staff->adminUser($userid,$clientid);
               <hr>
               <div class="row">
               <div class="col-md-12 mb-3">
-              <h5 class="top-header text-xs-center mt-3">Add Subject to Class</h5><small>Select subject and specify class to add subject to. Click <i class="fa fa-refresh fa-fw reload" aria-hidden="true"></i> to load subjects.</small>
+              <h5 class="top-header text-xs-center mt-3">Add Subject to Class Category</h5><small>Select subject and specify class to add subject to. Click <i class="fa fa-refresh fa-fw reload" aria-hidden="true"></i> to load subjects.</small>
               </div>
               </div>
 
@@ -50,14 +51,14 @@ $staff->adminUser($userid,$clientid);
 
               <div class="form-group col-md-6">
                 
-                 <label for="class">Select Class</label>
-                <select class="custom-select form-control" id="class">
+                 <label for="class-category">Select Class Category</label>
+                <select class="custom-select form-control" id="class-category">
                 <?php 
-                    $client->loadClass($clientid);
+                    $client->classCategory($clientid);
                   ?>
                 </select>
               </div>
               
               </div>
-              <button class="submit btn btn-primary" id="assign-subject">Assign Class Subject</button>
+              <button class="submit btn btn-primary" id="assign-subject">Add Subject Category</button>
             </div>

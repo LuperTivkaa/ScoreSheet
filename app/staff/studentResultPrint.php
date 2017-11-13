@@ -12,12 +12,6 @@ $student = new student($dbConnection);
 $staff = new staff($dbConnection);
 $client = new client($dbConnection);
 $print = new printRoutines($dbConnection);
-$clientid = $_SESSION['user_info'][4];
-$userid = $_SESSION['user_info'][0];
-
-$staff->staff($userid,$clientid);
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +22,11 @@ $staff->staff($userid,$clientid);
     //$c = $_SESSION['user_info'][4];
 //$newStaff = new student();
 //$userid = $_SESSION['user_info'][0];
+$clientid = $_SESSION['user_info'][4];
+$userid = $_SESSION['user_info'][0];
+
+$myroleid = $_SESSION['user_info'][2];
+$staff->staffUser($myroleid,$clientid);
     ?>
 
 <body>

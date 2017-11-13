@@ -15,7 +15,8 @@ $print = new printRoutines($dbConnection);
 $schid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 $staffid = $_SESSION['user_info'][0];
-$staff->staff($staffid,$schid);
+$myroleid = $_SESSION['user_info'][2];
+$staff->staffUser($myroleid,$schid);
 if ($_SERVER["REQUEST_METHOD"]=="GET")
 {
 //$regno = $_SESSION['ID'];

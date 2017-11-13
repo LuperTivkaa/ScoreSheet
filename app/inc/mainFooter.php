@@ -9,8 +9,8 @@
 <hr>
 <div class="row py-2 text-muted">
   <div class="col-md-6 col-xl-5">
-    <p><strong>About Facile</strong></p>
-    <p>Facile is a school management software that optimizes the day to day running of your school routine operations. It is developed and maintained by Lonax IT Technologies.</p>
+    <p><strong>About ScoreSheet</strong></p>
+    <p>ScoreSheet is a school management cloud based web app  that optimizes the day to day running of your school routine operations. It is developed and maintained by Trix Consults.</p>
   </div>
   <div class="col-md-6 col-xl-5 offset-xl-2">
     <p><strong>Stay up-to-date with latest news</strong></p>
@@ -39,13 +39,13 @@
       <div class="col-md-4">
       <h3 class="mb-2 leadText"><i class="fa fa-map-marker" aria-hidden="true"></i>
 Address</h3>
-      <p class="lead leadText leadp text-justify address">Lonax IT Solutions<br>
+      <p class="lead leadText leadp text-justify address">Trix Consults<br>
       Eredivise Building, 2nd floor,<br>
       Township Road,<br>
       Abuja, Nigeria<br>
       01-2909499<br>
-      Mail: info@lonax-it.com<br>
-      Web: www.lonax-it.com</p>
+      Mail: info@trixconsults.com<br>
+      Web: www.trixconsults.com</p>
       </div>
 
       <div class="col-md-4">
@@ -56,7 +56,7 @@ Address</h3>
             <li><i class="fa-li fa fa-info fa-fw" aria-hidden="true"></i><a href="about.php">About Us</a></li>
             <li><i class="fa-li fa fa-university fa-fw" aria-hidden="true"></i><a href="depts.php">Academics</a></li>
             <!-- <li><i class="fa-li fa fa-user-plus fa-fw" aria-hidden="true"></i><a href="">Prospective Students</a></li> -->
-            <li><i class="fa-li fa fa-anchor fa-fw" aria-hidden="true"></i><a href="http://portal.nkstchtmkar.org" target="_blank">Portal</a></li>
+            <li><i class="fa-li fa fa-anchor fa-fw" aria-hidden="true"></i><a href="" target="_blank"></a></li>
           </ul> 
 
       </div>

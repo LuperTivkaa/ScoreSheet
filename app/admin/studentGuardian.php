@@ -1,5 +1,5 @@
 <?php 
-//session_start();
+session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
@@ -14,7 +14,8 @@ $staff = new staff($dbConnection);
 
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
-$staff->adminUser($userid,$clientid);
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$clientid);
 ?>
 
 <!--Content container  -->
@@ -39,7 +40,7 @@ $staff->adminUser($userid,$clientid);
                  <label for="student">Select Student</label>
                  <select class="custom-select form-control" id="student">
                  </select> 
-                 <small>Click <i class="fa fa-refresh fa-fw load-new-student" aria-hidden="true"></i> to load new student whose parent details have not been added yet!.</small>
+                 <small>Click <i class="fa fa-refresh fa-fw load-new-guardian" aria-hidden="true"></i> to load new student whose guardian details have not been added yet!.</small>
               </div>
     </div>
 
@@ -140,7 +141,7 @@ $staff->adminUser($userid,$clientid);
                 </div>
 
                 <div class="form-group col-md-12">
-                    <label for="cont_add">Residential/Contact Address:</label>
+                    <label for="cont-add">Residential/Contact Address:</label>
                     <input type="text" class="form-control" id="cont-add" name="cont-add" placeholder="Contact Address">  
                 </div>
 

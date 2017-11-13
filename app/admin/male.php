@@ -15,5 +15,6 @@ $staff = new staff($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
 $staff->adminUser($userid,$clientid);
-$client->getMaleStaff($clientid);
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$clientid);
     

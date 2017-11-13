@@ -13,7 +13,8 @@ $client = new client($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 $userid = $_SESSION['user_info'][0];
-$staff->staff($userid,$clientid);
+$myroleid = $_SESSION['user_info'][2];
+$staff->staffUser($myroleid,$clientid);
 $data = array();
 
 //function to get file extension

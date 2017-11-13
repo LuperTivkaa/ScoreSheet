@@ -1,145 +1,179 @@
 body {
-  background-color: #f4f6f6;
-  font-size: 1em; }
+    background-color: #f4f6f6;
+    font-size: 1em;
+}
+
 
 /*
                         ===================================
                         LAYOUT STYLES
                         ==================================*/
-.inst-profile-container {
-  margin-top: 70px; }
 
-.image-upload > input {
-  display: none; }
+.inst-profile-container {
+    margin-top: 70px;
+}
+
+.image-upload>input {
+    display: none;
+}
 
 .inst-profile li {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-  font-size: .7em;
-  font-family: 'Ubuntu';
-  color: #ec7063; }
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    font-size: .7em;
+    font-family: 'Ubuntu';
+    color: #ec7063;
+}
 
 .right-menu-header {
-  font-family: 'Baloo Chettan';
-  /*text-decoration: underline solid #ccd1d1;*/
-  color: #ccd1d1; }
+    font-family: 'Baloo Chettan';
+    /*text-decoration: underline solid #ccd1d1;*/
+    color: #ccd1d1;
+}
 
 ul li {
-  font-size: .7em; }
+    font-size: .7em;
+}
 
 .declaration p {
-  font-size: .7em; }
+    font-size: .7em;
+}
 
 .headerImage {
-  border-radius: 50%;
-  padding: 2px;
-  border: 2px solid #99a3a4; }
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    padding: 1px;
+    border: 1px solid #99a3a4;
+}
 
 .profileImage {
-  border-radius: 50%;
-  display: block;
-  padding: 2px;
-  border: 2px solid #99a3a4; }
+    border-radius: 50%;
+    display: block;
+    padding: 2px;
+    border: 2px solid #99a3a4;
+}
 
 .alignment {
-  display: block;
-  text-align: center; }
+    display: block;
+    text-align: center;
+}
 
 .datatable {
-  border-collapse: collapse; }
+    border-collapse: collapse;
+}
 
 .datatable td,
 .datatable th {
-  font-size: .7em; }
+    font-size: .7em;
+}
 
 .datatable th {
-  text-align: justify; }
+    text-align: justify;
+}
 
 .print_Header {
-  margin: 0 auto;
-  display: block;
-  margin-top: 0;
-  padding: 1em 0;
-  border-bottom: 1px solid #abb2b9;
-  background-color: #fff;
-  text-align: center; }
+    margin: 0 auto;
+    display: block;
+    margin-top: 0;
+    padding: 1em 0;
+    border-bottom: 1px solid #abb2b9;
+    background-color: #fff;
+    text-align: center;
+}
 
 .error {
-  color: #ec7063;
-  text-align: center; }
+    color: #ec7063;
+    text-align: center;
+}
 
 .alert {
-  margin: auto;
-  display: block;
-  width: 60%; }
+    margin: auto;
+    display: block;
+    width: 60%;
+}
 
 .info {
-  color: #5499c7;
-  text-align: center; }
+    color: #5499c7;
+    text-align: center;
+}
 
 .modal_bg {
-  background-color: #d1f2eb; }
+    background-color: #d1f2eb;
+}
 
 .output {
-  margin: auto;
-  display: block;
-  border-radius: 7px;
-  width: 60%;
-  margin-bottom: 20px; }
+    margin: auto;
+    display: block;
+    border-radius: 7px;
+    width: 60%;
+    margin-bottom: 20px;
+}
 
 .login-container {
-  background-color: #ffffff;
-  border-radius: 7px;
-  border: 1px solid #1ABC9C;
-  margin-bottom: 20px; }
+    background-color: #ffffff;
+    border-radius: 7px;
+    border: 1px solid #1ABC9C;
+    margin-bottom: 20px;
+}
 
 .login-button {
-  border: 1px solid #1ABC9C;
-  background-color: #ffffff;
-  display: block;
-  margin: 0 auto;
-  border-radius: 7px;
-  height: 40px;
-  margin-bottom: 10px;
-  font-size: 1.4em;
-  font-weight: 300;
-  color: #1f618d;
-  font-family: 'Arsenal'; }
+    border: 1px solid #1ABC9C;
+    background-color: #ffffff;
+    display: block;
+    margin: 0 auto;
+    border-radius: 7px;
+    height: 40px;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+    font-weight: 300;
+    color: #1f618d;
+    font-family: 'Arsenal';
+}
+
 
 /* ======================
                                 NAVIGATION STYLES
                                 ===========================*/
+
 .margin-bottom {
-  margin-bottom: 20px; }
+    margin-bottom: 20px;
+}
 
 .navbar {
-  min-height: 50px;
-  margin-bottom: 0;
-  border-radius: 0;
-  background-color: #fff;
-  border-bottom: 2px solid #ccd1d1; }
+    min-height: 50px;
+    margin-bottom: 0;
+    border-radius: 0;
+    background-color: #fff;
+    border-bottom: 2px solid #ccd1d1;
+}
 
 .profile-bar {
-  height: 15%;
-  margin: 0 auto;
-  border-radius: 0;
-  background-color: #f9ebea;
-  border-bottom: 2px solid #ccd1d1; }
+    height: 15%;
+    margin: 0 auto;
+    border-radius: 0;
+    background-color: #f9ebea;
+    border-bottom: 2px solid #ccd1d1;
+}
 
 .logo {
-  height: 50%;
-  width: 80%; }
+    height: 50%;
+    width: 80%;
+}
 
 a {
-  color: #000;
-  font-family: 'Abel';
-  font-size: 1.2em;
-  text-decoration: none !important; }
+    color: #000;
+    font-family: 'Abel';
+    font-size: 1.2em;
+    text-decoration: none !important;
+}
 
 a:hover {
-  text-decoration: none;
-  color: #808b96; }
+    text-decoration: none;
+    color: #808b96;
+}
+
 
 /*
 .navbar-nav li a, .navbar-brand{
@@ -149,45 +183,56 @@ a:hover {
     color:floralwhite !important;
 }
 */
+
 .newsletterJumbo {
-  background: url("../images/loneChild.jpg");
-  background-size: cover; }
+    background: url("../images/loneChild.jpg");
+    background-size: cover;
+}
 
 .jumb {
-  background-color: #F1948A; }
+    background-color: #F1948A;
+}
 
 .intro {
-  color: #ffffff;
-  font-family: 'Finger Paint';
-  font-size: 38px; }
+    color: #ffffff;
+    font-family: 'Finger Paint';
+    font-size: 38px;
+}
 
 .navbackground {
-  background-color: #ffffff; }
+    background-color: #ffffff;
+}
 
 .leadText {
-  font-family: 'Fjalla One';
-  color: #FFFFFF; }
+    font-family: 'Fjalla One';
+    color: #FFFFFF;
+}
 
 .leadp {
-  font-size: 16px; }
+    font-size: 16px;
+}
 
 .welcome {
-  color: #ffffff;
-  font-family: 'Fjalla One';
-  font-size: 90px; }
+    color: #ffffff;
+    font-family: 'Fjalla One';
+    font-size: 90px;
+}
 
 .excite {
-  color: #5499C7;
-  /*color: #F1948A*/
-  font-family: 'Fjalla One'; }
+    color: #5499C7;
+    /*color: #F1948A*/
+    font-family: 'Fjalla One';
+}
 
 .newtext {
-  color: #5DADE2;
-  /*color: #F1948A*/
-  font-family: 'Just Another Hand';
-  font-size: 14px; }
+    color: #5DADE2;
+    /*color: #F1948A*/
+    font-family: 'Just Another Hand';
+    font-size: 14px;
+}
 
 .social a {
-  font-family: 'Fjalla One';
-  color: #78909C;
-  font-size: 16px; }
+    font-family: 'Fjalla One';
+    color: #78909C;
+    font-size: 16px;
+}

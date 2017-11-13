@@ -10,18 +10,19 @@ $dbConnection = new dbConnection();
 $student = new student($dbConnection);
 $staff = new staff($dbConnection);
 $client = new client($dbConnection);
-$clientid = $_SESSION['user_info'][4];
-//$newStaff = new student();
-$userid = $_SESSION['user_info'][0];
-
-$staff->staff($userid,$clientid); 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <title>ScoreSheet| Staff </title>
-    <?php include '../inc/scoresheet-header.php';?>
+    <?php include '../inc/scoresheet-header.php';
+    $clientid = $_SESSION['user_info'][4];
+    //$newStaff = new student();
+    $userid = $_SESSION['user_info'][0];
+    $myroleid = $_SESSION['user_info'][2];
+    $staff->staffUser($myroleid,$clientid);
+    ?>
 
     <body>
         <div class="wrap">
@@ -42,18 +43,17 @@ $staff->staff($userid,$clientid);
                        <div class="col-md-4">
                                 <?php 
                                 //session_start();
-                                require '../../vendor/autoload.php';
-                                use ScoreSheet\dbConnection;
-                                use ScoreSheet\client;
-                                use ScoreSheet\student;
-                                use ScoreSheet\staff;
-                                //use \PDO;
-                                $dbConnection = new dbConnection();
-                                $student = new student($dbConnection);
-                                $client = new client($dbConnection);
-                                $staff = new staff($dbConnection);
-                                $clientid = $_SESSION['user_info'][4];
-                                $userid = $_SESSION['user_info'][0];
+                                // require '../../vendor/autoload.php';
+                                // use ScoreSheet\dbConnection;
+                                // use ScoreSheet\client;
+                                // use ScoreSheet\student;
+                                // use ScoreSheet\staff;
+                                // //use \PDO;
+                                // $dbConnection = new dbConnection();
+                                // $student = new student($dbConnection);
+                                // $client = new client($dbConnection);
+                                // $staff = new staff($dbConnection);
+                               
                                 $staff->staffProfileCard($clientid,$userid);
                                 ?>
                        </div>
@@ -62,7 +62,7 @@ $staff->staff($userid,$clientid);
                             <ul class="staff-menu">
                             <li><a class="load-url" href="newStaff.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Profile</a></li>
                             <li><a class="load-url" href="staffQualification.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Academic Qualifications</a></li>
-                             <li><a class="load-url" href="student-list.php"><i class="fa fa-eye fa-fw" aria-hidden="true"></i> Profile Preview</a></li>
+                             <li><a class="load-url" href="staff-preview.php"><i class="fa fa-eye fa-fw" aria-hidden="true"></i> Profile Preview</a></li>
                             </ul>
                             <hr class="mt-2">
                        <div id="Staff-info">

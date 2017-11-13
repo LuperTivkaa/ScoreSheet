@@ -14,6 +14,8 @@ $staff = new staff($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 $userid = $_SESSION['user_info'][0];
-$staff->clientUser($userid,$clientid);
+$myroleid = $_SESSION['user_info'][2];
+$staff->clientUser($myroleid,$clientid);
+
 $client->getMaleStaff($clientid);
     

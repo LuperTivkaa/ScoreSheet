@@ -11,10 +11,6 @@ $student = new student($dbConnection);
 $client = new client($dbConnection);
 $staff = new staff($dbConnection);
 //$jobmanager = new manager($dbConnection);
-$schid = $_SESSION['user_info'][4];
-//$newStaff = new student();
-$staffid = $_SESSION['user_info'][0];
-$staff->adminUser($staffid,$schid);
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +19,14 @@ $staff->adminUser($staffid,$schid);
 <head>
     <meta charset="utf-8">
     <title>ScoreSheet| Academic Settings Manager</title>
-    <?php include '../inc/scoresheet-header.php';?>
+    <?php include '../inc/scoresheet-header.php';
+    $schid = $_SESSION['user_info'][4];
+//$newStaff = new student();
+$staffid = $_SESSION['user_info'][0];
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$schid);
+    
+    ?>
 
     <body>
         <div class="wrap">

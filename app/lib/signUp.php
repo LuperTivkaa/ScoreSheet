@@ -234,7 +234,67 @@ public  function client_root($instid,$email,$username,$password,$editDate,$creat
 //Function to log all users in i.e. admin created users
 //=============================================================================
 //log users and direct to the appropriate module
-public  function user_login($email,$password,$status="On")
+function user_login($email,$password,$status="On")
+ {
+    //try and catch block
+  try{
+
+    //select  a unique client
+    $sql = "SELECT users.id AS Myid,
+    users.user_name AS username,
+    institutional_responsibilities.id AS roleID,
+    institutional_responsibilities.responsibility_name AS rolename,
+    client_signup.id AS schID
+    FROM users INNER JOIN institutional_responsibilities ON users.role=institutional_responsibilities.id
+    INNER JOIN client_signup ON users.created_By=client_signup.id 
+    WHERE users.email = ? AND users.password =? AND users.status=?";
+    $this->conn->query($sql);
+    $this->conn->bind(1, $this->email, PDO::PARAM_STR,100);
+    $this->conn->bind(2, $this->password, PDO::PARAM_STR,100);
+    $this->conn->bind(3, $status, PDO::PARAM_STR,100);
+    $user_info = array();
+    $myLoginObject = array();
+    $myResult = $this->conn->resultset();
+    $myLoginObject=$myResult;
+
+            if ($this->conn->rowCount() ==1)
+            {
+
+              foreach ($myResult as $row => $key)
+                {
+                //loop through the resultset and get the values and store in variables
+                $user_id = $key['Myid'];
+                $username = $key['username'];
+                $roleid = $key['roleID'];
+                $rolename = $key['rolename'];
+                $schid = $key['schID'];
+               // $schoolname = $key['schoolname'];
+                }
+                    //create a session
+                    session_start();
+                    array_push($user_info, $user_id,$username,$roleid,$rolename,$schid);
+                    $_SESSION['user_info'] = $user_info;
+                    //$logInfo =$_SESSION['user_info'];
+                    echo json_encode($myLoginObject);
+            }
+            else
+            {
+            echo "Bad Login";
+            }
+
+      }
+      catch(Exception $e)
+      {
+      // echo error here
+      //this get an error thrown by the system
+      echo "Error:". $e->getMessage();
+      }
+
+     } //end of user login ffunction
+
+
+//get school name in session
+function schoolProfileName($email,$password,$status="On")
  {
     //try and catch block
   try{
@@ -249,11 +309,11 @@ public  function user_login($email,$password,$status="On")
     FROM users INNER JOIN institutional_responsibilities ON users.role=institutional_responsibilities.id
     INNER JOIN client_signup ON users.created_By=client_signup.id INNER JOIN institutional_signup ON
     users.created_By=institutional_signup.client_id
-    WHERE users.email = ? && users.password =?";
+    WHERE users.email = ? AND users.password =? AND status=?";
     $this->conn->query($sql);
     $this->conn->bind(1, $this->email, PDO::PARAM_STR,12);
     $this->conn->bind(2, $this->password, PDO::PARAM_STR,12);
-    $this->conn->bind(2, $status, PDO::PARAM_STR,12);
+    $this->conn->bind(3, $status, PDO::PARAM_STR,12);
     $user_info = array();
     $myLoginObject = array();
     $myResult = $this->conn->resultset();
@@ -294,4 +354,78 @@ public  function user_login($email,$password,$status="On")
 
      } //end of user login ffunction
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
+
+
+

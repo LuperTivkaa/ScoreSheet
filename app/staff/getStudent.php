@@ -13,7 +13,8 @@ $staff = new staff($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 $staffid = $_SESSION['user_info'][0];
-$staff->staff($staffid,$clientid);
+$myroleid = $_SESSION['user_info'][2];
+$staff->staffUser($myroleid,$clientid);
 
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")

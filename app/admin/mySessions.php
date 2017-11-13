@@ -14,7 +14,8 @@ $staff = new staff($dbConnection);
 
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
-$staff->adminUser($userid,$clientid);
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$clientid);
 
 //TODO: Create this  function in Client class
 $client->allSessions($clientid);

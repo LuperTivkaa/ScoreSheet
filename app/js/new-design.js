@@ -1152,6 +1152,7 @@ function viewStaffUser(userid) {
 //Edit exam  modal js
 $('#new-content').on('click', '#editModal', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
 
     var recordid = $(this).data('recordid');
     var editValue = $(this).data('value');
@@ -1161,7 +1162,7 @@ $('#new-content').on('click', '#editModal', function(e) {
     $('#record-id').val(recordid);
 
     $('#modal-list').empty();
-    $('#modal-error').empty();
+    $('#modal_error').empty();
     var modalid = $('#myModal');
     modalid.css('display', 'block');
 });
@@ -1227,6 +1228,7 @@ $('#new-content').on('click', '.prefix-div', function(e) {
 //Funtion to handle edit term
 $('#edit-term').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var mybutton = $(this);
     var termid = $('#record-id').val();
     var term = $('#editterm').val();
@@ -1262,6 +1264,7 @@ function editSchTerm(termid, term) {
 //Function to edit subject
 $('#edit-subject').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var subjectid = $('#record-id').val();
     var subject = $('#editsubject').val();
 
@@ -1296,6 +1299,7 @@ function editSchSubject(subjectid, subject) {
 
 $('#edit-session').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var sessionid = $('#record-id').val();
     var session = $('#editsession').val();
 
@@ -1330,6 +1334,7 @@ function editSchSession(sessionid, session) {
 //Function to edit classes
 $('#edit-class').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var classid = $('#record-id').val();
     var schclass = $('#editclass').val();
 
@@ -1363,9 +1368,10 @@ function editSchClass(classid, schclass) {
 //Function to edit prefix settings
 $('#edit-prefix').on('click', function(e) {
     e.preventDefault();
+    //$("#modal_error").empty();
     var prefixid = $('#record-id').val();
     var prefix = $('#editprefix').val();
-    alert(prefixid + prefix);
+    //alert(prefixid + prefix);
 
     //var termid = $(this).data('recordid');
     $('#edit-prefix').text('Updating...').prop('disable', true);
@@ -1384,6 +1390,7 @@ function editSchPrefix(prefixid, prefix) {
                 $('#editprefix').val("");
                 $("#modal_error").addClass("info");
                 $("#modal_error").text("Update of prefix settings successful");
+                //$("#modal_error").empty();
             } else {
                 $('#edit-prefix').text('Update Prfeix').prop('disable', false);
                 $("#modal_error").addClass("error");

@@ -180,18 +180,18 @@ $("#new-content").on('click', '#new-student-btn', function(e) {
     var dob = $("#datepicker").val();
     var blood_group = $("#blood-group").val();
     var class_adm = $("#class-admitted").val();
-    var arm = $("#arm").val();
+    //var arm = $("#arm").val();
     var session = $("#session").val();
     var adm_type = $("#adm-type").val();
     newStudent(surname, firstname, lastname, religion, nation, state,
         lg, city, add1, add2, mail, mobile, sex, dob,
-        blood_group, class_adm, arm, session, adm_type);
+        blood_group, class_adm, session, adm_type);
 });
 
 //function to add new student
 function newStudent(surname, firstname, lastname, religion, nation, state,
     lg, city, add1, add2, mail, mobile, sex, dob,
-    blood_group, class_adm, arm, session, adm_type) {
+    blood_group, class_adm, session, adm_type) {
     $.ajax({
         url: 'addNewStudent.php',
         type: 'POST',
@@ -212,7 +212,6 @@ function newStudent(surname, firstname, lastname, religion, nation, state,
             dob: dob,
             blood_group: blood_group,
             class_adm: class_adm,
-            arm: arm,
             session: session,
             adm_type: adm_type
         },
@@ -260,7 +259,7 @@ $("#new-content").on('click', '#add-guardian-info', function(e) {
     var occup = $("#occupation").val();
     var sex = $("#sex").val();
     var relationship = $("#relationship").val();
-    var address = $("#cont_add").val();
+    var address = $("#cont-add").val();
     var parentmail = $("#parent-mail").val();
     var mobile = $("#mobile").val();
     var emergency = $("#emergency-contact").val();
@@ -326,7 +325,7 @@ $("#new-content").on('click', '#add-parent-info', function(e) {
     var occup = $("#occupation").val();
     var sex = $("#sex").val();
     var relationship = $("#relationship").val();
-    var address = $("#cont_add").val();
+    var address = $("#cont-add").val();
     var parentmail = $("#parent-mail").val();
     var mobile = $("#mobile").val();
     var emergency = $("#emergency-contact").val();

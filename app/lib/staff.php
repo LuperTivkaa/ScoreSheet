@@ -4403,7 +4403,7 @@ function adminUser($userid,$schid)
     
     switch(TRUE)
     {
-      case($userid == 2 || $userid == 3):
+      case($userid == 2):
     
       break;
 
@@ -4446,10 +4446,11 @@ function clientUser($userid,$schid)
     {
       case($userid == 3):
     
+    
       break;
 
       default:
-      session_start();
+      //session_start();
       session_destroy();
       header("location:../../index.php");
       break;

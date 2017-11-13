@@ -91,7 +91,7 @@ include 'app/inc/mainHeader.php';
                             
                             <div class="card-block">
                               <h4 class="card-title excite">Responsive Design</h4>
-                              <p class="card-text">Facile is designed with the concept of mobile first, which means Facile scales well on different screen sizes.</p>
+                              <p class="card-text">ScoreSheet is designed with the concept of mobile first, which means the web app scales well on different screen sizes.</p>
                             </div>
                           </div>
                 </div>
@@ -101,7 +101,7 @@ include 'app/inc/mainHeader.php';
                             
                             <div class="card-block">
                               <h4 class="card-title excite">Great And Flexible Pricing</h4>
-                              <p class="card-text">Facile offers flexible pricing schemes that meet your needs whatever your budget.</p>
+                              <p class="card-text">ScoreSheet offers flexible pricing schemes that meet your needs whatever your budget.</p>
                             </div>
                           </div>
                 </div>
@@ -111,7 +111,7 @@ include 'app/inc/mainHeader.php';
                             
                             <div class="card-block">
                               <h4 class="card-title excite">Secure And Reliable</h4>
-                              <p class="card-text">Facile store its data in a secure environment and is developed based on industry best web security standards.</p>
+                              <p class="card-text">ScoreSheet store its data in a secure environment and is developed based on industry best web security standards.</p>
                             </div>
                           </div>
                 </div>
@@ -145,7 +145,7 @@ include 'app/inc/mainHeader.php';
       
 
         <h1 id="modules" class="dispaly-4 text-xs-center my-3 leadText">ScoreSheet Modules</h1>
-        <p class="lead text-xs-center">ScoreSheet is engineered to ease institutional management by Staff, Students and Admministors. The App is made up of modules that help you manage your school needs stargting from admission to examination reporting. Please register for a free account and start enjoying the benefits of Facile<br>
+        <p class="lead text-xs-center">ScoreSheet is engineered to ease institutional management by Staff, Students and Admministors. The App is made up of modules that help you manage your school needs stargting from admission to examination reporting. Please register for a free account and start enjoying the benefits of ScoreSheet<br>
         <button type="button" class="btn btn-outline-info btn-lg d-block mx-auto my-3" id="signup">Register for free</button></p>
         
          
@@ -175,11 +175,11 @@ include 'app/inc/mainHeader.php';
             <div class="testimonial">
                 <!--Avatar-->
                 <div class="avatar">
-                    <img src="images/sky.jpg" height="80" width="80" class="headerImage">
+                    <img src="./app/images/sky.jpg" height="80" width="80" class="headerImage">
                 </div>
 
                 <!--Content-->
-                <h4 class="testimonial-name">Akpah, Yimam</h4>
+                <h4 class="testimonial-name">Akpah, Yiman</h4>
                 <h6 class="testimonial-note">Principal, SKY GIfted Academy, Gboko</h6>
                 <p class="testimonial-text"><i class="fa fa-quote-left"></i> Since we started using ScoreSheet to manage our school, we have seen enhanced productivity and the ease of preparing academic reports has got easier and fascinating. Its a great tool indeed.</p>
             </div>

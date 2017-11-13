@@ -12,10 +12,7 @@ $student = new student($dbConnection);
 $client = new client($dbConnection);
 $staff = new staff($dbConnection);
 $print = new printRoutines($dbConnection);
-$schid = $_SESSION['user_info'][4];
-//$newStaff = new student();
-$staffid = $_SESSION['user_info'][0];
-$staff->staff($staffid,$schid);
+
 if ($_SERVER["REQUEST_METHOD"]=="GET")
 {
 //$regno = $_SESSION['ID'];
@@ -40,6 +37,11 @@ else
     //$schid = $_SESSION['user_info'][4];
 //$newStaff = new student();
 //$staffid = $_SESSION['user_info'][0];
+$schid = $_SESSION['user_info'][4];
+//$newStaff = new student();
+$staffid = $_SESSION['user_info'][0];
+$myroleid = $_SESSION['user_info'][2];
+$staff->staffUser($myroleid,$schid);
     ?>
 
 <body>

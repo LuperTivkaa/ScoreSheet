@@ -7,7 +7,7 @@
     
 </script>
            <?php 
-//session_start();
+session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
@@ -20,7 +20,8 @@ $client = new client($dbConnection);
 $staff = new staff($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 $staffid = $_SESSION['user_info'][0];
-$staff->staff($staffid,$clientid);
+$myroleid = $_SESSION['user_info'][2];
+$staff->staffUser($myroleid,$clientid);
 ?>
 
 <div class="row mb-3">

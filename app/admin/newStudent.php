@@ -6,8 +6,8 @@
   });
     
 </script>
-           <?php 
-//session_start();
+<?php 
+session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
@@ -22,9 +22,9 @@ $staff = new staff($dbConnection);
 
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
-$staff->adminUser($userid,$clientid);
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$clientid);
 ?>
-
 <div class="container pt-2 mt-3">
 
   <!--Other row for heading  -->

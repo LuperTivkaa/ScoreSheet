@@ -1,5 +1,5 @@
 <?php 
-//session_start();
+session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
@@ -14,7 +14,8 @@ $staff = new staff($dbConnection);
 
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
-$staff->adminUser($userid,$clientid);
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$clientid);
 
 //echo $clientObj->loadStaff($clientid);
 ?>
@@ -26,7 +27,7 @@ $staff->adminUser($userid,$clientid);
                  <label for="staff">Select Staff</label>
                 <select class="custom-select form-control" id="staff">
                 <?php 
-                    $client->loadStaff($clientid);
+                    $client->loadApprovedStaff($clientid);
                   ?>
                 </select> 
               </div>

@@ -7,7 +7,7 @@
     
 </script>
            <?php 
-//session_start();
+session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
@@ -22,7 +22,8 @@ $staff = new staff($dbConnection);
 
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
-$staff->adminUser($userid,$clientid);
+$roleid = $_SESSION['user_info'][2];
+$staff->adminUser($roleid,$clientid);
 ?>
 
 <!--Content container  -->
@@ -51,7 +52,7 @@ $staff->adminUser($userid,$clientid);
 
                                     <div class="form-group image-upload">
 
-                                    <label for="logo-file">
+                                    <label for="image-file">
 
                                     <i class="fa fa fa-camera fa-5x"></i>
 
