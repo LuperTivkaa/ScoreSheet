@@ -4403,7 +4403,7 @@ function adminUser($userid,$schid)
     
     switch(TRUE)
     {
-      case($userid == 2):
+      case($userid == 2 || $userid == 3):
     
       break;
 
