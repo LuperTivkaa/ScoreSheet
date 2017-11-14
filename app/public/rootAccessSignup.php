@@ -1,7 +1,7 @@
 <?php
 session_start();
 require '../../vendor/autoload.php';
-require_once '../../vendor/fzaninotto/Faker/src/autoload.php';
+//require_once '../../vendor/fzaninotto/Faker/src/autoload.php';
 use ScoreSheet\dbConnection;
 use ScoreSheet\client;
 use ScoreSheet\signUp;
