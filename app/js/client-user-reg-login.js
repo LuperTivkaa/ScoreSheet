@@ -1,63 +1,145 @@
 //============================================================
 //This section of the code handles client sign up, login and user login
 //new client sign up
-$('#new-signup-btn').on('click', function() {
-    $(this).text("Creating account, please wait...").prop("disabled", true);
+// $('#new-signup-btn').on('click', function() {
+//     $(this).text("Creating account, please wait...").prop("disabled", true);
+//     var user_name = $("#username").val();
+//     var email = $("#signup-email").val();
+//     var password = $("#signup-pass").val();
+//     console.log(user_name + email + password);
+//     $.post("app/public/inst_signup.php", { user_name: user_name, email: email, password: password }).done(newClient);
+
+// });
+// // new client signup call back function
+// function newClient(result) {
+
+//     var data = $.trim(result);
+//     if (data === "ok") {
+//         $("#new-signup-btn").text("Sign Up!").prop("disabled", false);
+//         $("#username").val("");
+//         $("#signup-email").val("");
+//         $("#signup-pass").val("");
+//         //reidrect to the client login page
+//         $("#client-signup").addClass("success-msg");
+//         $("#client-signup").html('Your account has been created successfully, login now to continue!');
+//         //window.location.replace("clients/login.php");
+//     } else {
+
+//         $("#new-signup-btn").text("Sign Up!").prop("disabled", false);
+//         $("#client-signup").addClass("error");
+//         $("#client-signup").html(data);
+//     }
+// }
+// // end of new client signup function
+
+//===============================================================================================================
+//NEW CLIENT SIGNUP
+$("#new-signup-btn").on('click', function(e) {
+    e.preventDefault();
+    //alert("Me too");
+    $('#new-signup-btn').text("Creating account, please wait...").prop("disabled", true);
     var user_name = $("#username").val();
     var email = $("#signup-email").val();
     var password = $("#signup-pass").val();
-    $.post("app/public/inst_signup.php", { user_name: user_name, email: email, password: password }).done(newClient);
+
+
+    clientSign(user_name, email, password);
 
 });
-// new client signup call back function
-function newClient(result) {
 
-    var data = $.trim(result);
-    if (data === "ok") {
-        $("#new-signup-btn").text("Sign Up!").prop("disabled", false);
-        $("#username").val("");
-        $("#signup-email").val("");
-        $("#signup-pass").val("");
-        //reidrect to the client login page
-        $("#client-signup").addClass("success-msg");
-        $("#client-signup").html('Your account has been created successfully, login now to continue!');
-        //window.location.replace("clients/login.php");
-    } else {
-
-        $("#new-signup-btn").text("Sign Up!").prop("disabled", false);
-        $("#client-signup").addClass("error");
-        $("#client-signup").html(data);
-    }
+//call back function to add number of days student attended school
+function clientSign(user, mail, pass) {
+    $.ajax({
+        url: 'app/public/inst_signup.php',
+        type: 'POST',
+        data: { user: user, mail: mail, pass: pass },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $("#new-signup-btn").text("Sign Up!").prop("disabled", false);
+                $("#username").val("");
+                $("#signup-email").val("");
+                $("#signup-pass").val("");
+                //reidrect to the client login page
+                $("#client-signup").addClass("success-msg");
+                $("#client-signup").html('Your account has been created successfully, login now to continue!');
+            } else {
+                $("#new-signup-btn").text("Sign Up!").prop("disabled", false);
+                $("#client-signup").addClass("error");
+                $("#client-signup").html(data);
+            }
+        },
+    });
 }
-// end of new client signup function
+
+//END NEW CLIENT SIGN UP
+//===============================================================================================================
+
+//==============================================================================================================
+//CREATE NEW ROOT ACCOUNT
+$("#root_Btn").on('click', function(e) {
+    e.preventDefault();
+    //alert("Me too");
+    $('#root_Btn').text("Creating account, please wait...").prop("disabled", true);
+    var email = $("#email").val();
+    var username = $("#username").val();
+    var pass = $("#password").val();
+    rootAccount(email, username, pass);
+
+});
+
+//call baack for root account
+function rootAccount(email, username, pass) {
+    $.ajax({
+        url: './rootAccessSignup.php',
+        type: 'POST',
+        data: { email: email, username: username, pass: pass },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $("#root_Btn").text('Create Root Account').prop("disabled", false);
+                window.location.replace("./school_login.php");
+                // $("#client-signup").addClass("success-msg");
+                // $("#client-signup").html('Your account has been created successfully, login now to continue!');
+            } else {
+                $("#root_Btn").text('Create Root Account').prop("disabled", false);
+                $("#error-info").addClass("error");
+                $("#error-info").html(data);
+            }
+        },
+    });
+}
+
+//END CREATE NEW ROOT ACCOUNT
+//===============================================================================================================
 
 
 //Root account code
 
 //========================
-$('#root_Btn').on('click', function(e) {
-    e.preventDefault();
-    $(this).prop("disabled", true);
-    var email = $("#email").val();
-    var username = $("#username").val();
-    var pass = $("#password").val();
-    $.post("./rootAccessSignup.php", { email: email, username: username, pass: pass }).done(rootAccount);
-});
+// $('#root_Btn').on('click', function(e) {
+//     e.preventDefault();
+//     $('#root_Btn').text('Processing...').prop("disabled", true);
+//     var email = $("#email").val();
+//     var username = $("#username").val();
+//     var pass = $("#password").val();
+//     $.post("./rootAccessSignup.php", { email: email, username: username, pass: pass }).done(rootAccount);
+// });
 
-// user login call back
-function rootAccount(result) {
+// // user login call back
+// function rootAccount(result) {
 
-    var data = $.trim(result);
-    if (data === "ok") {
-        $("#root_Btn").prop("disabled", false);
-        window.location.replace("./school_login.php");
-    } else {
-        $("#root_Btn").prop("disabled", false);
-        $("#error-info").addClass("error");
-        $("#error-info").html(data);
-    }
-}
-//===================
+//     var data = $.trim(result);
+//     if (data === "ok") {
+//         $("#root_Btn").prop("disabled", false);
+//         window.location.replace("./school_login.php");
+//     } else {
+//         $("#root_Btn").prop("disabled", false);
+//         $("#error-info").addClass("error");
+//         $("#error-info").html(data);
+//     }
+// }
+// //===================
 
 
 
