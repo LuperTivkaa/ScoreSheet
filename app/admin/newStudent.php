@@ -74,7 +74,7 @@ $staff->adminUser($roleid,$clientid);
               </div>
 
             <div class="form-group col-md-12">
-                <label for="mobile">Mobile:</label>
+                <label for="mobile">Mobile [Optional]:</label>
                 <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Mobile"> 
             </div>
 
@@ -118,7 +118,7 @@ $staff->adminUser($roleid,$clientid);
      <div class="col-md-4">
 
               <div class="form-group col-md-12">
-                 <label for="lastname">Last Name:</label>
+                 <label for="lastname">Last Name [Optional]:</label>
                 <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Lastname"> 
               </div>
 
@@ -148,6 +148,8 @@ $staff->adminUser($roleid,$clientid);
                 <select class="custom-select form-control" id="blood-group" name="blood-group">
                       <option>A+</option>
                       <option>A-</option>
+                      <option>AB</option>
+                      <option>B+</option>
                       <option>O+</option>
                       <option>O-</option>                          
                     </select> 

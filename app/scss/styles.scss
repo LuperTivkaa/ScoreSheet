@@ -1,0 +1,296 @@
+                    // import partials
+                    @import 'partials/newDesignVariables';
+                    @import 'partials/newMixins';
+                    //===========================================================
+                    //BODY AND GLOBAL STYLES
+                    //==========================================================
+                    * {
+                        margin: 0 auto;
+                        box-sizing: border-box;
+                        //background-color: #eaeded;
+                    }
+                    
+                    //===============================================
+                    // LAYOUT
+                    //===============================================
+                    //header wrapper class
+                    .main-nav {
+                        @include center-content;
+                    }
+                    
+                    .secondary-nav {
+                        background-color: $secondary-nav;
+                        height: 50px;
+                        padding: 1em 0;
+                        .secondary-nav-content {
+                            padding: 1.5px 1.5px 1.5px 1.5px;
+                            @include center-content;
+                            h4 {
+                                font-family: $font-primary;
+                                font-size: 1em;
+                                margin-top: 3px;
+                            }
+                        }
+                    }
+                    
+                    .primary-nav {
+                        background-color: $primary-dark-profile;
+                        color: $primary-nav-color;
+                        padding: 1px 1px 1px 1px;
+                        .primary-nav-content {
+                            padding: 1.5px 1.5px 1.5px 1.5px;
+                            @include center-content;
+                            ul {
+                                margin-bottom: 0;
+                                li {
+                                    font-family: $font-secondary;
+                                    font-size: .75em;
+                                    font-weight: bold;
+                                }
+                            }
+                            h2 {
+                                font-family: $font-primary;
+                                font-size: 1.7em;
+                            }
+                        }
+                    }
+                    
+                    .menu-nav {
+                        padding: .5em 0;
+                        margin-bottom: 2px;
+                        background-color: $secondary-nav;
+                        .menu-nav-content {
+                            background-color: $secondary-nav;
+                            @include center-content;
+                        }
+                    }
+                    
+                    .menu-nav-list {
+                        padding-left: 0;
+                        li {
+                            display: inline-block;
+                            font-family: $font-secondary;
+                            list-style-type: none;
+                            padding: 3px 3px 3px 3px;
+                            a {
+                                text-decoration: none !important;
+                                color: $nav-link-color;
+                                font-size: .85em;
+                            }
+                        }
+                    }
+                    
+                    .container {
+                        @include center-content;
+                    }
+                    
+                    .primary-nav-content {
+                        display: flex;
+                        justify-content: space-between
+                    }
+                    
+                    .primary-link {
+                        display: flex;
+                        margin-right: 0;
+                        li {
+                            margin: 0 0.65em;
+                            list-style-type: none;
+                            padding: 3px 0 3px 0;
+                            a {
+                                text-decoration: none;
+                            }
+                        }
+                    }
+                    
+                    .site-name {
+                        margin-left: 0;
+                    }
+                    
+                    .wrap {
+                        min-height: calc(100vh - 40px);
+                    }
+                    
+                    .footer {
+                        text-align: center;
+                        margin-bottom: 0;
+                        height: 40px;
+                        display: none;
+                        p {
+                            margin-bottom: 0;
+                            padding: 2px;
+                        }
+                    }
+                    
+                    //=========================================================
+                    //MISCELLENOUS
+                    //========================================================
+                    h1 {
+                        font-size: 1.5em;
+                        display: inline-block;
+                        .intro & {
+                            margin: 90px 0px 70px 0px;
+                            //border-bottom: 2px $base solid;
+                            padding: 0px 0px 4px 0px;
+                            font-size: .90em;
+                        }
+                    }
+                    
+                    p {
+                        font-size: 1em;
+                        color: $black;
+                        .intro & {
+                            font-size: .75em;
+                        }
+                    }
+                    
+                    .user-profile-image {
+                        width: 18px;
+                        height: 20px;
+                        border-radius: 2px;
+                    }
+                    
+                    // Drop down menu styles
+                    /* Dropdown Button */
+                    
+                    .dropbtn {
+                        padding: 3px 3px 3px 0;
+                        border: none;
+                    }
+                    /* Dropdown button on hover & focus */
+                    
+                    // .dropbtn:hover,
+                    // .dropbtn:focus {
+                    //     background-color: #3e8e41;
+                    // }
+                    /* The container <div> - needed to position the dropdown content */
+                    
+                    .dropdown {
+                        position: relative;
+                        display: inline-block;
+                    }
+                    /* Dropdown Content (Hidden by Default) */
+                    
+                    .dropdown-content {
+                        display: none;
+                        position: absolute;
+                        background-color: $drop-down-content-color;
+                        min-width: 160px;
+                        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+                        z-index: 1;
+                    }
+                    /* Links inside the dropdown */
+                    
+                    .dropdown-content a {
+                        color: $black;
+                        padding: 12px 16px;
+                        text-decoration: none;
+                        display: block;
+                    }
+                    /* Change color of dropdown links on hover */
+                    
+                    .dropdown-content a:hover {
+                        background-color: $drop-down-hover-color;
+                    }
+                    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+                    
+                    .show {
+                        display: block;
+                    }
+                    
+                    //=====================
+                    //================================================================
+                    //MEDIA QUERIES
+                    //================================================================
+                    //mobile devices extra small and small devices
+                    @media (max-width: 767px) {
+                        @include small-device;
+                        .primary-nav-content {
+                            @include small-device-center-content;
+                            h2 {
+                                font-size: 1em;
+                            }
+                        }
+                        .secondary-nav-content {
+                            @include small-device-center-content;
+                        }
+                        .menu-nav-content {
+                            @include small-device-center-content;
+                            li {
+                                font-size: .9em;
+                            }
+                        }
+                        .container {
+                            @include small-device-center-content;
+                        }
+                    }
+                    
+                    @media (max-width:991px) {
+                        @include tablet-device;
+                        .primary-nav-content {
+                            @include small-device-center-content;
+                            h2 {
+                                font-size: 1.9em;
+                            }
+                        }
+                        .secondary-nav-content {
+                            @include tablet-device-center-content;
+                            h2 {
+                                font-size: 1.2em;
+                            }
+                        }
+                        .menu-nav-content {
+                            @include tablet-device-center-content;
+                            li {
+                                font-size: .97em;
+                            }
+                        }
+                        .container {
+                            @include tablet-device-center-content;
+                        }
+                    }
+                    
+                    // @include small-device;
+                    // .primary-nav-content {
+                    //     @include small-device-center-content;
+                    // }
+                    // .main-nav-content {
+                    //     @include small-device-center-content;
+                    // }
+                    // .secondary-nav-content {
+                    //     @include small-device-center-content;
+                    // }
+                    // .primary-col {
+                    //     @include small-device-center-content;
+                    //     @include small-device-primary-col;
+                    // }
+                    // .container {
+                    //     @include small-device-center-content;
+                    // }
+                    //Media query ranges
+                    /* Desktops and laptops ----------- */
+                    
+                    // @media only screen and (max-width: 1824px) {
+                    // }
+                    // /* iPads (landscape) ----------- */
+                    // @media only screen and (max-width: 1224px) {
+                    // }
+                    // /* iPads (portrait) ----------- */
+                    // @media only screen and (max-width: 1024px) {
+                    // }
+                    // /* Smartphones (landscape) ----------- */
+                    // @media only screen and (max-width: 768px) {
+                    // }
+                    // /* Big smartphones (portrait) (ie: Galaxy 3 has 360)*/
+                    // @media only screen and (max-width: 640px) {
+                    // }
+                    // /* Smartphones (portrait) (ie: Galaxy 1) */
+                    // @media only screen and (max-width: 321px) {
+                    // }
+                    //styles apply to larger screen
+                    .primary-col {
+                        @include primary-col;
+                    }
+                    
+                    .secondary-col {
+                        @include secondary-col;
+                    }

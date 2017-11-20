@@ -9,6 +9,7 @@ $("#new-content").on('click', '#add-session', function(e) {
     addSession(session);
 });
 
+
 //function to add new staff call back
 function addSession(session) {
     $.ajax({

@@ -23,6 +23,15 @@
     margin: 0 auto;
 }
 
+@mixin secondary-column-content {
+    width: 95%;
+    margin: 0 auto;
+    background-color: $general;
+    padding: .9px .9px .9px .9px;
+    margin-bottom: 7px;
+    margin-top: 7px;
+}
+
 @mixin container-styles {
     border-left: 3px solid deepskyblue;
     margin-bottom: 10px;
@@ -51,20 +60,22 @@
 }
 
 @mixin primary-col {
+    background-color: $col-bg;
     display: inline-block;
     width: 80%;
     vertical-align: top;
-    margin-right: -6px;
+    margin-right: -5px;
     padding-right: 2px;
-    padding-left: 12px;
+    padding-left: 0px;
 }
 
 @mixin secondary-col {
+    background-color: $col-bg;
     display: inline-block;
     width: 20%;
     vertical-align: top;
-    padding-left: 2px;
-    padding-top: 1em 0;
+    padding-left: 1px;
+    //padding-top: 2px 2px;
 }
 
 //================================================

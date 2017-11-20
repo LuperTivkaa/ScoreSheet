@@ -21,7 +21,7 @@ $staff->adminUser($roleid,$clientid);
               <!-- create fee items -->
               <div id="fee-item-container">
 
-              <h5 class="top-header ">Create New Class</h5>
+              <h5 class="top-header ">CA Scores Settings</h5>
               <div class="row">
 
             <div class="form-group col-md-6">

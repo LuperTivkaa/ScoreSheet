@@ -107,8 +107,9 @@
                                 @include aux-menu-content;
                                 padding-left: 0;
                                 background-color: $aux-bg-color;
-                                border-radius: 2px;
-                                height: 60px;
+                                border-radius: 1px;
+                                margin-bottom: 2px;
+                                //height: 60px;
                                 h6 {
                                     font-family: $sub-menu-font;
                                     color: $primary-nav;
@@ -155,7 +156,7 @@
                             }
                             
                             //=========================================================
-                            //MISCELLENOUS
+                            //MISCELLENOUS AND SECONDARY COLMUN STYLES
                             //========================================================
                             .display-list {
                                 display: inline-block;
@@ -168,12 +169,41 @@
                                 color: #566573;
                             }
                             
+                            .class-stats {
+                                @include secondary-column-content;
+                                height: 80px;
+                            }
+                            
+                            .best-wishes {
+                                @include secondary-column-content;
+                                height: 170px;
+                                overflow: auto;
+                            }
+                            
+                            .current-settings {
+                                @include secondary-column-content;
+                                height: 80px;
+                            }
+                            
+                            .class-student-list {
+                                @include secondary-column-content;
+                                height: 170px;
+                                overflow: auto;
+                            }
+                            
+                            .my-staff-list {
+                                @include secondary-column-content;
+                                height: 170px;
+                                overflow: auto;
+                            }
+                            
                             .headings {
-                                font-family: $font-primary;
+                                font-family: $result-font1;
                                 /*text-decoration: underline solid #ccd1d1;*/
                                 color: $header;
-                                font-size: .85em;
+                                font-size: .8em;
                                 margin-top: .9em;
+                                font-weight: bolder
                             }
                             
                             .top-header {
@@ -259,7 +289,7 @@
                             .card {
                                 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
                                 max-width: 300px;
-                                margin: auto;
+                                margin: 0 auto;
                                 text-align: center;
                                 a {
                                     text-decoration: none;
@@ -286,8 +316,21 @@
                                 background-color: $primary-dark-profile;
                             }
                             
-                            card-container {
+                            .card-container {
                                 padding: 0 16px;
+                                h6 {
+                                    font-family: $font-primary;
+                                    color: $color-secondary;
+                                    margin-top: 10px;
+                                    font-size: .95em;
+                                }
+                            }
+                            
+                            .staff-profile-header {
+                                font-family: $font-primary;
+                                color: $color-secondary;
+                                margin-top: 10px;
+                                font-size: .92em;
                             }
                             
                             .title {
@@ -449,6 +492,26 @@
                                     font-family: $font-primary;
                                     color: $black;
                                     font-size: 1.2em;
+                                }
+                            }
+                            
+                            .preview-list-container {
+                                padding-top: 2px;
+                                padding-left: 0px;
+                                li {
+                                    margin: 0;
+                                    padding: 0;
+                                    font-size: 1em;
+                                    font-family: $font-secondary;
+                                    color: $primary-nav;
+                                    border-bottom: .9px solid $nav-link-color;
+                                    line-height: 3;
+                                    list-style-type: none;
+                                    span {
+                                        font-family: $font-primary;
+                                        color: $nav-link-color;
+                                        font-size: 1.3em;
+                                    }
                                 }
                             }
                             
@@ -700,12 +763,86 @@
                                 }
                             }
                             
+                            //styles for gmail like avatars
+                            //list box  styles div container for table
+                            .list_box {
+                                width: 600px;
+                                margin: 0 auto;
+                                margin-top: 40px;
+                            }
+                            
+                            .list_box table {
+                                width: 100%;
+                                margin: 0px;
+                                padding: 0px;
+                                font-size: 14px;
+                                border: 1px solid #e7e7e7;
+                            }
+                            
+                            .list_box table thead tr {
+                                background-color: #305891;
+                            }
+                            
+                            .list_box table thead tr th {
+                                padding: 7px 5px;
+                                color: #fff;
+                                font-weight: normal;
+                                text-align: left;
+                            }
+                            
+                            .list_box table tbody tr td {
+                                padding: 5px;
+                                color: #000;
+                                font-weight: normal;
+                            }
+                            
+                            .list_box table tbody tr:nth-child(even) {
+                                background-color: #F5F5F5;
+                            }
+                            
+                            .icon_div {
+                                width: 100%;
+                                clear: both;
+                                height: 40px;
+                            }
+                            
+                            .user_icon {
+                                border-radius: 50%;
+                                text-align: center;
+                                color: #fff;
+                                padding: 15px;
+                                text-transform: uppercase;
+                                position: absolute;
+                            }
+                            
+                            .img_icon {
+                                border-radius: 50%;
+                                height: 40px;
+                                width: 40px;
+                                //text-align: center;
+                                ///color: #fff;
+                                padding: 1px 1px 1px 1px;
+                                //text-transform: uppercase;
+                                //position: absolute;
+                            }
+                            
+                            //End list box styles
+                            //avatar dfor school logo
                             .school-avatar {
                                 width: 40px;
                                 height: 40px;
                                 border-radius: 2px 2px 2px 2px;
                                 //text-align: center;
-                                border: 1px solid $general;
+                                border: 1px solid $color-primary;
+                            }
+                            
+                            //subject teachers avatar
+                            .small-avatar {
+                                width: 30px;
+                                height: 30px;
+                                border-radius: 2px 2px 2px 2px;
+                                //text-align: center;
+                                border: 1px solid $color-primary;
                             }
                             
                             .school-logo {
@@ -884,14 +1021,63 @@
                                 .wrapper {
                                     @include small-device-center-content;
                                 }
+                                .primary-nav-content {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    flex-direction: column;
+                                }
+                                .aux-menu {
+                                    @include aux-menu-content;
+                                    padding-left: 0;
+                                    background-color: $aux-bg-color;
+                                    //height: 60px;
+                                    h6 {
+                                        font-family: $sub-menu-font;
+                                        color: $primary-nav;
+                                        font-size: .75em;
+                                        margin: 2px 0 0 2px;
+                                        padding: 2px 2px 2px 2px;
+                                        display: inline-block;
+                                        border-bottom: 1.5px solid $sub-menu-color;
+                                    }
+                                    ul {
+                                        padding-left: 0;
+                                        margin-bottom: 2px;
+                                        li {
+                                            display: block;
+                                            font-family: $font-secondary;
+                                            list-style-type: none;
+                                            padding: 1.5px 1.5px 1.5px 1.5px;
+                                            a {
+                                                text-decoration: none !important;
+                                                color: $nav-link-color;
+                                                font-size: .65em;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             
+                            //end media query for 767px
                             @media (max-width:991px) {
                                 @include tablet-device;
                                 .primary-nav-content {
                                     @include small-device-center-content;
                                     h2 {
                                         font-size: 1.9em;
+                                    }
+                                }
+                                .primary-link {
+                                    display: flex;
+                                    margin-right: 0;
+                                    padding-left: 0px;
+                                    li {
+                                        margin: 0 0.65em;
+                                        list-style-type: none;
+                                        padding: 3px 0 3px 0;
+                                        a {
+                                            text-decoration: none;
+                                        }
                                     }
                                 }
                                 .secondary-nav-content {
@@ -909,8 +1095,54 @@
                                 .wrapper {
                                     @include tablet-device-center-content;
                                 }
+                                .menu-nav-list {
+                                    padding-left: 0;
+                                    li {
+                                        display: inline-block;
+                                        font-family: $font-secondary;
+                                        list-style-type: none;
+                                        padding: 3px 3px 3px 3px;
+                                        a {
+                                            text-decoration: none !important;
+                                            color: $nav-link-color;
+                                            font-size: .85em;
+                                        }
+                                    }
+                                }
+                                .aux-menu {
+                                    @include aux-menu-content;
+                                    padding-left: 0;
+                                    background-color: $aux-bg-color;
+                                    border-radius: 2px;
+                                    //height: 60px;
+                                    h6 {
+                                        font-family: $sub-menu-font;
+                                        color: $primary-nav;
+                                        font-size: .75em;
+                                        margin: 2px 0 0 2px;
+                                        padding: 2px 2px 2px 2px;
+                                        display: inline-block;
+                                        border-bottom: 1.5px solid $sub-menu-color;
+                                    }
+                                    ul {
+                                        padding-left: 0;
+                                        margin-bottom: 0;
+                                        li {
+                                            display: inline-block;
+                                            font-family: $font-secondary;
+                                            list-style-type: none;
+                                            padding: 1.5px 1.5px 1.5px 1.5px;
+                                            a {
+                                                text-decoration: none !important;
+                                                color: $nav-link-color;
+                                                font-size: .65em;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             
+                            //end media query for max 991px
                             // @include small-device;
                             // .primary-nav-content {
                             //     @include small-device-center-content;

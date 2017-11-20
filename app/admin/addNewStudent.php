@@ -50,8 +50,8 @@ $surn = $student->getSurname();
 $student->setFirstname($firstname);
 $fn = $student->getFirstname();
 
-$student->setLastname($lastname);
-$ln = $student->getLastname();
+// $student->setLastname($lastname);
+// $ln = $student->getLastname();
 
 $student->setReligion($religion);
 $rel = $student->getReligion();
@@ -77,8 +77,8 @@ $perm_add = $student->getAddress();
 $student->setEmail($mail);
 $mail = $student->getEmail();
 
-$student->setMobile($mobile);
-$mobile = $student->getMobile();
+// $student->setMobile($mobile);
+// $mobile = $student->getMobile();
 
 $student->setGender($sex);
 $sex = $student->getGender();
@@ -89,7 +89,7 @@ $dob = $student->getDob();
 $student->setBloodGroup($blood_group);
 $blood = $student->getBloodGroup();
 
-$student->newStudent($surn,$fn,$ln,$sex,$class_adm,$session,$adm_type,$dateCreated,
+$student->newStudent($surn,$fn,$lastname,$sex,$class_adm,$session,$adm_type,$dateCreated,
 	$userid,$perm_add,$cont_add,$mail,$clientid,$nation,$state,$city,$lg,$rel,$dob,$mobile,$blood);
     
 }

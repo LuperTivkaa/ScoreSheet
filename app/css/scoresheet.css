@@ -81,8 +81,8 @@
   margin: 0 auto;
   padding-left: 0;
   background-color: #d4e6f1;
-  border-radius: 2px;
-  height: 60px; }
+  border-radius: 1px;
+  margin-bottom: 2px; }
   .aux-menu h6 {
     font-family: "Raleway";
     color: #17202a;
@@ -129,12 +129,61 @@
   font-family: "Fjalla One";
   color: #566573; }
 
+.class-stats {
+  width: 95%;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: .9px .9px .9px .9px;
+  margin-bottom: 7px;
+  margin-top: 7px;
+  height: 80px; }
+
+.best-wishes {
+  width: 95%;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: .9px .9px .9px .9px;
+  margin-bottom: 7px;
+  margin-top: 7px;
+  height: 170px;
+  overflow: auto; }
+
+.current-settings {
+  width: 95%;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: .9px .9px .9px .9px;
+  margin-bottom: 7px;
+  margin-top: 7px;
+  height: 80px; }
+
+.class-student-list {
+  width: 95%;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: .9px .9px .9px .9px;
+  margin-bottom: 7px;
+  margin-top: 7px;
+  height: 170px;
+  overflow: auto; }
+
+.my-staff-list {
+  width: 95%;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: .9px .9px .9px .9px;
+  margin-bottom: 7px;
+  margin-top: 7px;
+  height: 170px;
+  overflow: auto; }
+
 .headings {
-  font-family: "Fjalla One";
+  font-family: "Quicksand";
   /*text-decoration: underline solid #ccd1d1;*/
   color: #ccd1d1;
-  font-size: .85em;
-  margin-top: .9em; }
+  font-size: .8em;
+  margin-top: .9em;
+  font-weight: bolder; }
 
 .top-header {
   font-family: "Fjalla One";
@@ -198,7 +247,7 @@ p {
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   max-width: 300px;
-  margin: auto;
+  margin: 0 auto;
   text-align: center; }
   .card a {
     text-decoration: none;
@@ -221,8 +270,19 @@ p {
   height: 40%;
   background-color: black; }
 
-card-container {
+.card-container {
   padding: 0 16px; }
+  .card-container h6 {
+    font-family: "Fjalla One";
+    color: #613c69;
+    margin-top: 10px;
+    font-size: .95em; }
+
+.staff-profile-header {
+  font-family: "Fjalla One";
+  color: #613c69;
+  margin-top: 10px;
+  font-size: .92em; }
 
 .title {
   color: grey;
@@ -334,6 +394,23 @@ a:hover {
     font-family: "Fjalla One";
     color: #000;
     font-size: 1.2em; }
+
+.preview-list-container {
+  padding-top: 2px;
+  padding-left: 0px; }
+  .preview-list-container li {
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+    font-family: "Open Sans";
+    color: #17202a;
+    border-bottom: 0.9px solid #616a6b;
+    line-height: 3;
+    list-style-type: none; }
+    .preview-list-container li span {
+      font-family: "Fjalla One";
+      color: #616a6b;
+      font-size: 1.3em; }
 
 .student-profile {
   border-left: 3px solid deepskyblue;
@@ -534,11 +611,65 @@ a:hover {
       font-size: 1em;
       margin-left: 0px; }
 
+.list_box {
+  width: 600px;
+  margin: 0 auto;
+  margin-top: 40px; }
+
+.list_box table {
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  font-size: 14px;
+  border: 1px solid #e7e7e7; }
+
+.list_box table thead tr {
+  background-color: #305891; }
+
+.list_box table thead tr th {
+  padding: 7px 5px;
+  color: #fff;
+  font-weight: normal;
+  text-align: left; }
+
+.list_box table tbody tr td {
+  padding: 5px;
+  color: #000;
+  font-weight: normal; }
+
+.list_box table tbody tr:nth-child(even) {
+  background-color: #F5F5F5; }
+
+.icon_div {
+  width: 100%;
+  clear: both;
+  height: 40px; }
+
+.user_icon {
+  border-radius: 50%;
+  text-align: center;
+  color: #fff;
+  padding: 15px;
+  text-transform: uppercase;
+  position: absolute; }
+
+.img_icon {
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  padding: 1px 1px 1px 1px; }
+
 .school-avatar {
   width: 40px;
   height: 40px;
   border-radius: 2px 2px 2px 2px;
-  border: 1px solid #fff; }
+  border: 1px solid #278da4; }
+
+.small-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 2px 2px 2px 2px;
+  border: 1px solid #278da4; }
 
 .school-logo {
   width: 50%;
@@ -673,7 +804,36 @@ a:hover {
       font-size: .9em; }
   .wrapper {
     width: 95%;
-    margin: 0 auto; } }
+    margin: 0 auto; }
+  .primary-nav-content {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column; }
+  .aux-menu {
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 0;
+    background-color: #d4e6f1; }
+    .aux-menu h6 {
+      font-family: "Raleway";
+      color: #17202a;
+      font-size: .75em;
+      margin: 2px 0 0 2px;
+      padding: 2px 2px 2px 2px;
+      display: inline-block;
+      border-bottom: 1.5px solid #d2b4de; }
+    .aux-menu ul {
+      padding-left: 0;
+      margin-bottom: 2px; }
+      .aux-menu ul li {
+        display: block;
+        font-family: "Open Sans";
+        list-style-type: none;
+        padding: 1.5px 1.5px 1.5px 1.5px; }
+        .aux-menu ul li a {
+          text-decoration: none !important;
+          color: #616a6b;
+          font-size: .65em; } }
 
 @media (max-width: 991px) {
   .secondary-col {
@@ -693,6 +853,16 @@ a:hover {
     margin: 0 auto; }
     .primary-nav-content h2 {
       font-size: 1.9em; }
+  .primary-link {
+    display: flex;
+    margin-right: 0;
+    padding-left: 0px; }
+    .primary-link li {
+      margin: 0 0.65em;
+      list-style-type: none;
+      padding: 3px 0 3px 0; }
+      .primary-link li a {
+        text-decoration: none; }
   .secondary-nav-content {
     width: 90%;
     margin: 0 auto; }
@@ -705,23 +875,61 @@ a:hover {
       font-size: .97em; }
   .wrapper {
     width: 90%;
-    margin: 0 auto; } }
+    margin: 0 auto; }
+  .menu-nav-list {
+    padding-left: 0; }
+    .menu-nav-list li {
+      display: inline-block;
+      font-family: "Open Sans";
+      list-style-type: none;
+      padding: 3px 3px 3px 3px; }
+      .menu-nav-list li a {
+        text-decoration: none !important;
+        color: #616a6b;
+        font-size: .85em; }
+  .aux-menu {
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 0;
+    background-color: #d4e6f1;
+    border-radius: 2px; }
+    .aux-menu h6 {
+      font-family: "Raleway";
+      color: #17202a;
+      font-size: .75em;
+      margin: 2px 0 0 2px;
+      padding: 2px 2px 2px 2px;
+      display: inline-block;
+      border-bottom: 1.5px solid #d2b4de; }
+    .aux-menu ul {
+      padding-left: 0;
+      margin-bottom: 0; }
+      .aux-menu ul li {
+        display: inline-block;
+        font-family: "Open Sans";
+        list-style-type: none;
+        padding: 1.5px 1.5px 1.5px 1.5px; }
+        .aux-menu ul li a {
+          text-decoration: none !important;
+          color: #616a6b;
+          font-size: .65em; } }
 
 /* Desktops and laptops ----------- */
 .primary-col {
+  background-color: #fbfcfc;
   display: inline-block;
   width: 80%;
   vertical-align: top;
-  margin-right: -6px;
+  margin-right: -5px;
   padding-right: 2px;
-  padding-left: 12px; }
+  padding-left: 0px; }
 
 .secondary-col {
+  background-color: #fbfcfc;
   display: inline-block;
   width: 20%;
   vertical-align: top;
-  padding-left: 2px;
-  padding-top: 1em 0; }
+  padding-left: 1px; }
 
 /* The Modal (background) */
 .modal-div {

@@ -61,6 +61,7 @@ $client = new client($dbConnection);
                        <div class="col-md-8">
                             <ul class="staff-menu">
                             <li><a class="load-url" href="newStaff.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Profile</a></li>
+                            <li><a class="load-url" href="staffPhoto.php"><i class="fa fa-camera fa-fw" aria-hidden="true"></i> Upload Photo</a></li>
                             <li><a class="load-url" href="staffQualification.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Academic Qualifications</a></li>
                              <li><a class="load-url" href="staff-preview.php"><i class="fa fa-eye fa-fw" aria-hidden="true"></i> Profile Preview</a></li>
                             </ul>

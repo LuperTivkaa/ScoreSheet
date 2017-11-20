@@ -46,7 +46,7 @@ $staff->clientUser($myroleid,$clientid);
 
                 <div class="row">
                     <div class="col-md-12">
-                    <form action=""  method="post" enctype="multipart/form-data">
+                    <form id="form" action="schoolLogoProcess.php"  method="post" enctype="multipart/form-data">
                        <span>Please click on the camera icon to upload your photo</span>
                         
 
@@ -62,7 +62,13 @@ $staff->clientUser($myroleid,$clientid);
 
                                     </div>
                                     <div id="success-msg">
-                                    <p id="msg"></p>
+                                       <p id="msg"></p>
+                                    </div>
+                                    <div id="preview-img">
+                                    
+                                    </div>
+                                    <div id="err">
+                                    
                                     </div>
                     </form>
                      </div>

@@ -34,9 +34,9 @@ function getClass()
 
 function setSurname($surname)
   {
-  if(empty($surname) || is_numeric($surname) || is_float($surname))
+  if(empty($surname))
   {
-    exit("Please you have entered a bad data!");
+    exit("Please provide surname");
   }
   $this->surname = strtoupper($surname);
   }
@@ -48,9 +48,9 @@ function getSurname()
 
 function setFirstname($firstname)
   {
-  if(empty($firstname) || is_numeric($firstname) || is_float($firstname))
+  if(empty($firstname))
   {
-    exit("Please you have entered a bad data!");
+    exit("Please provide first name");
   }
   $this->firstname = ucfirst($firstname);
   }
@@ -62,9 +62,9 @@ function getFirstname()
 
 function setLastname($lastname)
   {
-  if(empty($lastname) || is_numeric($lastname) || is_float($lastname))
+  if(empty($lastname) )
   {
-    exit("Please you have entered a bad data!");
+    exit("Please provide last name");
   }
   $this->lastname = ucfirst($lastname);
   }
@@ -636,7 +636,7 @@ public  function newStudent($surname,$firstname,$lastname,$sex,
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $this->surname, PDO::PARAM_STR,100);
                             $this->conn->bind(2, $this->firstname, PDO::PARAM_STR,100);
-                            $this->conn->bind(3, $this->lastname, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $lastname, PDO::PARAM_STR,100);
                             $this->conn->bind(4, $this->sex, PDO::PARAM_INT); 
                             $this->conn->bind(5, $class_admtitted, PDO::PARAM_STR);
                             $this->conn->bind(6, $session_admitted, PDO::PARAM_STR,100);
@@ -653,7 +653,7 @@ public  function newStudent($surname,$firstname,$lastname,$sex,
                             $this->conn->bind(17, $this->lga, PDO::PARAM_STR,100);
                             $this->conn->bind(18, $this->religion, PDO::PARAM_STR,100);
                             $this->conn->bind(19, $dob, PDO::PARAM_STR,100);
-                            $this->conn->bind(20, $this->mobile, PDO::PARAM_INT); 
+                            $this->conn->bind(20, $mobile, PDO::PARAM_INT); 
                             $this->conn->bind(21, $status, PDO::PARAM_STR);
                             $this->conn->bind(22, $blood, PDO::PARAM_STR);
                             

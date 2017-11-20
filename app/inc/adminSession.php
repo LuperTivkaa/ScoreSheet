@@ -1,16 +1,11 @@
 <?php
 session_start();
-// if ($_SESSION['user_info'][2] == "3" || $_SESSION['user_info'][2] == "4" || $_SESSION['user_info'] != "") 
-// { 
-
-// }
-// else if ($_SESSION['user_info'][2] == "3" || $_SESSION['user_info'][2] == "4" || $_SESSION['user_info'] != "")
-// {
-// }
-// else{
-// header("location:../../index.php");
-// exit(); 
-// //echo ($_SESSION['user_info'][2]);
-// }
-// ob_end_flush();
+if (!$_SESSION['user_info'] || empty($_SESSION['user_info']) || $_SESSION['user_info'] == "") 
+   { 
+    header("location:../../index.php");
+    exit();
+   }
+  else {
+    }
+//ob_end_flush();
  ?>

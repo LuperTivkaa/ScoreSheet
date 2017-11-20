@@ -860,7 +860,7 @@ function advancedExamSearch($class,$subject,$session,$term,$schid)
 function staffProfile($clientid,$staffid)
         {
         try {
-                $query ="SELECT id, CONCAT(UPPER(surname), ' ', middle_name, ' ', lastname) AS fullname, gender AS Gender, date_of_birth AS Dob, mobile AS Mobile, user_img FROM staff_profile
+                $query ="SELECT id, CONCAT(UPPER(surname), ' ', middle_name, ' ', lastname) AS fullname, gender AS Gender, date_of_birth AS Dob, mobile AS Mobile FROM staff_profile
                 WHERE my_school_id=? AND gender='male'";
                     $this->conn->query($query);
                     $this->conn->bind(1, $id, PDO::PARAM_INT); 
@@ -882,6 +882,62 @@ function staffProfile($clientid,$staffid)
         }
         }
 //End Staff Profile method
+
+
+//STAFF PREVIEW METHOD
+
+function staffProfilePreview($clientid,$staffid)
+        {
+        try {
+                $query ="SELECT id, CONCAT(UPPER(surname), ' ', middle_name, ' ', lastname) AS fullname, gender AS Gender, date_of_birth AS Dob, mobile AS Mobile, religion AS Religion, dateAdded AS DateAdded FROM staff_profile
+                WHERE my_school_id=? AND user_id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $this->conn->bind(2, $staffid, PDO::PARAM_INT); 
+                    $output = array();
+                    $myResult = $this->conn->resultset();
+                    $output = $myResult;
+                    $printOutput = "";
+                    if($output)
+                    {
+
+                      foreach($output as $row => $key)
+					            {
+                        //make the record id of the terminal exam table the key of the array
+						            $fullname = $key['fullname'];
+                        $sex = $key['Gender'];
+                        $Dob = $key['Dob'];
+                        $mobile = $key['Mobile'];
+                        $added = $key['DateAdded'];
+                        //var_dump($arr);
+					            }
+                      $printOutput.='<div class="">
+                      <h6 class="top-header">Personal Information</h6>
+                      <ul class="preview-list-container">';
+                      $printOutput.='<li class=""> <span class=""> <i class="fa fa-user-o fa-fw" aria-hidden="true"></i>
+ Name</span> '.$fullname.'</li>';
+                      $printOutput.='<li class=""> <span class=""> <i class="fa fa-female fa-fw" aria-hidden="true"></i>Gender </span>'.$sex.'</li>';
+                      $printOutput.='<li class=""> <span class=""> <i class="fa fa-birthday-cake fa-fw" aria-hidden="true"></i>
+ Born On </span>' .$Dob.'</li>';
+                       $printOutput.='<li class=""> <span class=""> <i class="fa fa-phone fa-fw" aria-hidden="true"></i>
+Mobile </span>'.$mobile.'</li>';
+                      $printOutput.='<li class=""><span class=""><i class="fa fa-hashtag fa-fw"  aria-hidden="true"></i>
+Joined On</span> '.$added.'</li>';
+                      $printOutput.='</ul></div>';
+                    }
+                    else
+                    {
+                      echo "No Staff profile yet!";
+                    }
+                    echo $printOutput;
+                }//End of try catch block
+         catch(Exception $e)
+        {
+            echo json_encode("Error: Unable to fetch Male Staff");
+        }
+        }
+//END STAFF PREVIEW METHOD
+
 
 //DISTINCT METHOD NOT IN USE
  //loop the print ca code in a for each of the result of the distinct subject
@@ -2498,31 +2554,41 @@ function staffProfileCard($clientid,$userid)
                             $email = $key['Email'];
                             $role = $key['Role'];
                             $logoPrint = '<img src="'.$image.'" alt="Staff Avatar" class="bg-image">';    
-                        }
+                         }
                                 if(empty($fullname)){
                                     $fullname = "ScoreSheet";
                                 } elseif(empty($image)){
                                     $logoPrint = '<img src="../images/profile-icon.png" alt="Staff Avatar" class="bg-image"></>';
                                 }
-                                $printOutput.='<div class="card"><div class="img-div">
-                                    <img src="../images/bg.jpg" alt="background image" style="width:100%">';
-                                    $printOutput.=$logoPrint.'</div>';
-                                    $printOutput.='<div class="card-container">
-                                        <span class="image-upload">
-                                        <label for="image-file">
-                                        <i class="fa fa-camera fa-fw" aria-hidden="true"></i>
-                                        </label>
-                                        <input type="file" name="image-file" class="form-control" id="image-file">
-                                        </span>';
-                                        $printOutput.='<h5>'.$fullname.'</h5>';
-                                        $printOutput.='<p class="title">'.$role.'</p>';
-                                        $printOutput.='</div></div>';
+                                $printOutput.='<div class="card">
+                                <div class="img-div">
+                                  <img src="../images/bg.jpg" alt="background image" style="width:100%">';
+                                  $printOutput.=$logoPrint;
+                                  $printOutput.='</div>';
+                                  $printOutput.='<div class="card-container">';
+                                  $printOutput.='<h5>'.$fullname.'</h5>';
+                                  $printOutput.='<p class="title">'.$role.'</p>';
+                                  $printOutput.='</div></div>';
+                              }
+                         else{
+
+                                  $fullname = 'ScoreSheet';
+                                  $printOutput.='<div class="card">
+                                  <div class="img-div">
+                                  <img src="../images/bg.jpg" alt="background image" style="width:100%">';
+                                  $printOutput.='<img src="../images/profile-icon.png" alt="Staff Avatar" class="bg-image"></>';
+                                  $printOutput.='</div>';
+                                  $printOutput.='<div class="card-container">';
+                                    $printOutput.='<h6 class="staff-profile-header">'.$fullname.'</h6>';
+                                    $printOutput.='<p class="title">Staff</p>';
+                                    $printOutput.='</div></div>';
+
                     }
                     echo $printOutput;
             }// End of try catch block
          catch(Exception $e)
             {
-            echo ("Error: Unable to fetch sstaff Profile");
+            echo ("Error: Unable to fetch staff Profile");
             }
         }
 
@@ -3308,7 +3374,7 @@ function deleteAffectiveTraits($id)
       }
   }
 
- //REMOVE PSYCHO SKILLS
+ //REMOVE student PSYCHO SKILLS
 function deletePsychoSkills($id)
    {
       
@@ -4460,7 +4526,51 @@ function clientUser($userid,$schid)
 
 //End client user
 
+function getColor(){
+	$ColorArr = array("#A27BA7","#C72A3B","#DA6784","#0495C2","#0F3353","#6872FF","#488957","#FF59AC","#999999","#996855","#3C3636");//Default colors array
+	$k = array_rand($ColorArr);
+	return $ColorArr[$k];
+}
 
+//End Define Random color
+
+//Code to generate User icon
+function generateUserIcon($_name){
+	$nameArr = explode(" ", $_name);
+	$name_str = "";
+	foreach ($nameArr as $name) {
+		$name_str.= substr($name, 0, 1);//take first letter from first name and last name
+    }
+    $randomColor = $this->getColor();
+	$icon = '<a class="user_icon" style="background-color:'.$randomColor.'">'.$name_str.'</a>';
+	return $icon;
+}
+//End code to generate user icon
+
+
+//METHOD TO GET CLASS TEACHER'S CLASS ID
+public function classTeacherClassID($staffid,$schid)
+  {
+   try {
+        $query ="SELECT class_teacher.class_id AS ID FROM class_teacher
+        WHERE staff_id=? AND school_id=?";
+            $this->conn->query($query);
+            $this->conn->bind(1, $staffid, PDO::PARAM_INT);
+            $this->conn->bind(2, $schid, PDO::PARAM_INT);
+            $myResult = $this->conn->resultset();
+           $output =" "; 
+     foreach ($myResult as $row => $key) 
+      {
+      $ID = $key['ID'];
+     }
+     return $ID;
+     }// End of try catch block
+     catch(Exception $e)
+     {
+    echo "Error: Unable to load class teacher ID";
+      }
+    }
+//END METHOD TO GET CLASS TEACHER'S CLASS ID
 
 
 

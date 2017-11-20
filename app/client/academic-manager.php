@@ -121,6 +121,35 @@ $staff->clientUser($myroleid,$clientid);
 
                         <!--End edit prefix settings  -->
 
+
+                        <!--edit staff subjects  -->
+
+                        <div class="staffsubjects-div hide-me">
+                            <div class="col-8">
+                            <h6 class="highlight top-header text-xs-center mt-3">Edit Staff Subject(s)</h6>
+                            </div>
+
+                                <div class="form-group col-md-8 margin-bottom-sm">
+                                <label for="sch-class">Class</label>
+                                <select class="custom-select form-control" id="sch-class">
+                                <?php 
+                                    $client->loadClass($clientid);
+                                ?>
+                                </select> 
+                            </div>
+                    
+                            <div class="form-group col-md-8 margin-bottom-sm">
+                                <label for="sch-subject">Subject</label>
+                                <select class="custom-select form-control" id="sch-subject">
+                                </select> 
+                            </div>
+                            
+                        <div class="col-4">
+                        <button class="submit btn btn-primary btn-md mt-3 mb-3" id="edit-staff-subject"><i class="fa fa-pencil" aria-hidden="true"></i> Update Staff Subjects</button>
+                        </div>
+                        </div>
+                        <!--end edit staff subject  -->
+
                         <!--Begin session div  -->
                         <div class="session-div hide-me">
                             <div class="col-8">
@@ -140,6 +169,7 @@ $staff->clientUser($myroleid,$clientid);
                             </div>
                             <input type="hidden" class="form-control" id="record-id" name="record-id">
                             <input type="hidden" class="form-control" id="item-value" name="item-value">
+                            <input type="hidden" class="form-control" id="staffID" name="staffID">
                             <hr>
                             <div class="col-6" id="modal-list">
                             </div>
@@ -152,10 +182,11 @@ $staff->clientUser($myroleid,$clientid);
                         <div class="aux-menu">
                             <h6> Manage Academic Settings Sub Menu</h6>
                             <ul>
-                            <li><a class="load-url" href="myTerms.php"><i class="fa fa-paper-plane fa-fw" aria-hidden="true"></i>All Terms</a></li>
+                            <li><a class="load-url" href="myTerms.php"><i class="fa fa-paper-plane fa-fw" aria-hidden="true"></i> All Terms</a></li>
                             <li><a class="load-url" href="mySessions.php"><i class="fa fa-bars fa-fw" aria-hidden="true"></i> All Sessions</a></li>
-                            <li><a class="load-url" href="mySubjects.php"><i class="fa fa-paperclip fa-fw" aria-hidden="true"></i>Manage Subjects</a></li>
-                            <li> <a class="load-url" href="schoolClasses.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i>Manage Classes</a></li>
+                            <li><a class="load-url" href="mySubjects.php"><i class="fa fa-paperclip fa-fw" aria-hidden="true"></i> Manage Subjects</a></li>
+                            <li><a class="load-url" href="subjectTeachers.php"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Subject Teachers</a></li>
+                            <li> <a class="load-url" href="schoolClasses.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Manage Classes</a></li>
                             <li><a class="load-url" href="myAdmNoSettings.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> Manage Prefix Settings</a></li>
                             </ul>   
                         </div>  

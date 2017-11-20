@@ -38,21 +38,34 @@ $staff->clientUser($myroleid,$clientid);
             <div class="wrapper">
 
                 <div class="primary-col">
-                <div id="my-info">
-                    </div>
-                  <!--bootstrap Container   -->
-                  <h5 class="top-header">All Student(s) List</h5>
-            <div class="container">
 
-                       <div class="row">
+                <!-- Intro content div  -->
 
-                        <div class="col-12 list">
-                        <?php $client->initialStudentList($clientid);?>
+                <div class="intro-content">
+                  <!--conatiner  -->
+                        <div class="container">
+
+                            <div  class="row">
+
+                                <div class="col-md-6">
+                                <h6 class="top-header">Welcome, <?php echo  $_SESSION['user_info'][1];?>, You are super user! </h6>
+                                <img src="../images/legacy2.png">
+
+                                </div>
+
+                                <div class="col-md-6">
+                                <h6 class="top-header">Get Started...</h6>
+                                <p>With scoresheet, we are here poised to drive you to a more productive workflow</p>
+
+                                </div>
+
+                            </div>
+
                         </div>
-                       <input type="hidden" id="row_no" value="10">
-                    </div>
-             </div>
-                  <!--end bootstrap container  -->
+                        <!--end container  -->
+                  </div>
+                  <!-- End Intro content div  -->
+
                     <div id="my-info">
                     </div>
 

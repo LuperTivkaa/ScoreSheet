@@ -53,14 +53,14 @@ function getallStudents(url) {
 
 //Get Staff Records
 $('.my-staff').on('click', function(evt) {
-        evt.preventDefault();
-        $("#my-info").empty();
-        $('#student-search-result').empty();
-        var url = $(this).attr('href');
+    evt.preventDefault();
+    $("#my-info").empty();
+    $('#student-search-result').empty();
+    var url = $(this).attr('href');
 
-        getMyStaff(url);
-    })
-    //get staff function
+    getMyStaff(url);
+});
+//get staff function
 function getMyStaff(url) {
     //get inserted records from the database
     jQuery.getJSON(url, function(response) {
@@ -135,15 +135,9 @@ $("#new-content").on('click', '.reload', function(e) {
 });
 //end of add load all institutional subjects
 //============================
-//REMOVE THIS SNIPPET. NO LONGER IN USE
-//load all institutional subjects
-// $("#new-content").on('click', '.reload-class', function(e) {
-//     $.get("allClasses.php", function(data) {
-//         $("#class-list").html(data);
-//     });
-// });
-//end of add load all institutional subjects
-//==================================================
+//Remove staff subject taught
+
+
 
 //load all new students without parents
 $("#new-content").on('click', '.load-new-student', function(e) {
@@ -228,6 +222,171 @@ function newClass(myclass, category) {
     });
 }
 //END CREATE NEW SCHOOL CLASS
+//============================================================================================
+//Create New Affective Skills settings for school
+$("#new-content").on('click', '#new-affectiveSkills', function(e) {
+    e.preventDefault();
+    $('#new-affectiveSkills').prop("disabled", true);
+    var affectiveskill = $('#affective-skill-item').val();
+    //var category = $("#class-category option:selected").val();
+    newAffective(affectiveskill);
+});
+//end create new class
+//add new class callback function
+function newAffective(skillitem) {
+    $.ajax({
+        url: 'addAffectiveSkills.php',
+        type: 'POST',
+        data: { skillitem: skillitem },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#new-affectiveSkills').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Affective skill added successfully");
+                $('#affective-skill-item').val("");
+                reloadAffectiveDomain();
+            } else {
+                //alert("me")
+                $('#new-affectiveSkills').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End create New Affective Skills settings for school
+
+//Reload added affective skills setting added
+function reloadAffectiveDomain() {
+    $.ajax({
+        url: 'reloadAffectiveDomain.php',
+        type: 'POST',
+        data: {},
+        success: function(response) {
+            $("#reload-skills").html(response);
+        },
+    });
+}
+//end reload affective skills settings
+
+//Reload added psycho skills setting added
+function reloadPsychoDomain() {
+    $.ajax({
+        url: 'reloadPsychoDomain.php',
+        type: 'POST',
+        data: {},
+        success: function(response) {
+            $("#reload-skills").html(response);
+        },
+    });
+}
+//end reload psycho skills settings added
+
+//create school settings for psychomotor skills
+$("#new-content").on('click', '#new-psychoSkills', function(e) {
+    e.preventDefault();
+    $('#new-psychoSkills').prop("disabled", true);
+    var psychoskill = $('#psycho-skill-item').val();
+    //var category = $("#class-category option:selected").val();
+    newPsycho(psychoskill);
+});
+//end create new class
+//add new class callback function
+function newPsycho(skillitem) {
+    $.ajax({
+        url: 'addPsychoSkills.php',
+        type: 'POST',
+        data: { skillitem: skillitem },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#new-psychoSkills').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Psychomotor skill added successfully");
+                $('#psycho-skill-item').val("");
+                reloadPsychoDomain();
+            } else {
+                //alert("me")
+                $('#new-psychoSkills').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+//end create school settings for psychomotor skills
+
+//REMOVE AFFECTIVE SCHOOL SETTINGS
+$("#new-content").on('click', '#remove-domain', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to remove item. This action can not be reversed!") == true) {
+        $('#remove-domain').prop("disabled", true);
+        var id = $(this).data('id');
+        //var examid = $("#record-id").val();
+        deleteAffectiveSettings(id);
+    } else {
+        $('#remove-domain').prop("disabled", false);
+    }
+
+});
+//call back for delete affective skill settings
+function deleteAffectiveSettings(id) {
+    $.ajax({
+        url: 'deleteAffectiveSettings.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                reloadAffectiveDomain();
+            } else {
+                $('#remove-domain').prop("disabled", false);
+                $("#reload-skills").addClass("error");
+                $("#reload-skills").html(data);
+            }
+        },
+    });
+}
+//END REMOVE SCHOOL SETTINGS
+
+//REMOVE PSYCHO SCHOOL SETTINGS
+$("#new-content").on('click', '#remove-psycho', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to remove item. This action can not be reversed!") == true) {
+        $('#remove-psycho').prop("disabled", true);
+        var id = $(this).data('id');
+        //var examid = $("#record-id").val();
+        deletePsychoSettings(id);
+    } else {
+        $('#remove-psycho').prop("disabled", false);
+    }
+
+});
+//call back for delete affective skill settings
+function deletePsychoSettings(id) {
+    $.ajax({
+        url: 'deletePsychoSettings.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                reloadPsychoDomain();
+            } else {
+                $('#remove-psycho').prop("disabled", false);
+                $("#reload-skills").addClass("error");
+                $("#reload-skills").html(data);
+            }
+        },
+    });
+}
+//REMOVE PSYCHO SCHOOL SETTINGS
 
 //=======================================================
 //ADD CLASS CATEGORY
@@ -371,7 +530,7 @@ function assignSubject(subjectid, category) {
                 $("#my-info").html(data);
             }
         },
-    })
+    });
 }
 // End assign block
 
@@ -401,18 +560,92 @@ function createSubject(staff, class_id, subj) {
             } else {
                 //alert("me")
                 $('#add-subject').prop("disabled", false);
-                $("#my-info").addClass("error");;
+                $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
         },
         //alert(user+pass+role);
-    })
+    });
 }
 //end add new subbject
 
 
-// new institution profile
-$("#new-content").on('click', '#sch-profile-btn', function() {
+
+
+
+// SUBJECT TAUGHT BY STAFF
+$("#edit-staff-subject").on('click', function(e) {
+    e.preventDefault();
+    $('#edit-staff-subject').prop("disabled", true);
+    //var staff = $("#staff option:selected").val();
+    var class_id = $("#sch-class option:selected").val();
+    var subj = $("#sch-subject option:selected").val();
+    var recordid = $("#record-id").val();
+    var staffID = $("#staffID").val();
+    //alert(class_id + subj);
+    editStaffSubject(staffID, recordid, class_id, subj);
+});
+
+//function to add new subject call back
+function editStaffSubject(staffid, recordid, class_id, subj) {
+    $.ajax({
+        url: 'editStaffSubject.php',
+        type: 'POST',
+        data: { staffid: staffid, recordid: recordid, class_id: class_id, subj: subj },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#edit-staff-subject').prop("disabled", false);
+                $("#modal_error").addClass("info");
+                $("#modal_error").html("Record edited successfully");
+                reloadStaffSubject();
+            } else {
+                //alert("me")
+                $('#edit-staff-subject').prop("disabled", false);
+                $("#modal_error").addClass("error");
+                $("#modal_error").html(data);
+            }
+        },
+        //alert(user+pass+role);
+    });
+}
+
+
+//END SUBJECT TAUGHT BY STAFF
+
+
+// // new institution profile
+// $("#new-content").on('click', '#sch-profile-btn', function() {
+//     $('#sch-profile-btn').text("Creating...").prop("disabled", true);
+//     var inst_name = $("#institution_name").val();
+//     var inst_category = $("#institution_category").val();
+//     var nation = $("#nation").val();
+//     var state = $("#state").val();
+//     var lg = $("#lg").val();
+//     var city = $("#city").val();
+//     var webAdd = $("#webAdd").val();
+//     var email = $("#Email").val();
+//     var streetAdd = $("#streetAdd").val();
+//     var mailAdd = $("#mailAdd").val();
+//     var mobile = $("#mobile").val();
+//     $.post("addSchoolProfile.php", {
+//         inst_name: inst_name,
+//         inst_category: inst_category,
+//         nation: nation,
+//         state: state,
+//         lg: lg,
+//         city: city,
+//         webAdd: webAdd,
+//         email: email,
+//         streetAdd: streetAdd,
+//         mailAdd: mailAdd,
+//         mobile: mobile
+//     }).done(createInst);
+// });
+
+//Refactored new school profile code
+$("#new-content").on('click', '#sch-profile-btn', function(e) {
+    e.preventDefault();
     $('#sch-profile-btn').text("Creating...").prop("disabled", true);
     var inst_name = $("#institution_name").val();
     var inst_category = $("#institution_category").val();
@@ -425,38 +658,49 @@ $("#new-content").on('click', '#sch-profile-btn', function() {
     var streetAdd = $("#streetAdd").val();
     var mailAdd = $("#mailAdd").val();
     var mobile = $("#mobile").val();
-    $.post("addSchoolProfile.php", {
-        inst_name: inst_name,
-        inst_category: inst_category,
-        nation: nation,
-        state: state,
-        lg: lg,
-        city: city,
-        webAdd: webAdd,
-        email: email,
-        streetAdd: streetAdd,
-        mailAdd: mailAdd,
-        mobile: mobile
-    }).done(createInst);
+    //alert(inst_name)
+    newSchoolProfile(inst_name, inst_category, nation, state, lg, city, webAdd, email, streetAdd, mailAdd, mobile);
 });
-//institution profile call back function
-function createInst(response) {
-
-    var data = $.trim(response);
-    if (data === "ok") {
-        $("#my-info").addClass("info");
-        $("#my-info").text("School Profile Created Successfully");
-        $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
-        // window.location.replace("uploadLogo.php");
-    } else {
-        //alert("me")
-        $("#profile-info").addClass("error");
-        $("#profile-info").html(data);
-        $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
-    }
-
+//call back function for new school profile
+function newSchoolProfile(schname, category, nation, state, lg, city, web, email, streetAdd, mailadd, mobile) {
+    $.ajax({
+        url: 'addSchoolProfile.php',
+        type: 'POST',
+        data: { schname: schname, category: category, nation: nation, state: state, lg: lg, city: city, web: web, email: email, streetAdd: streetAdd, mailadd: mailadd, mobile: mobile },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $("#my-info").addClass("info");
+                $("#my-info").text("School Profile Created Successfully");
+                $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
+            } else {
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+                $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
+            }
+        },
+    });
 }
-// end code to create institution profile
+///end new school profile code
+
+//institution profile call back function
+// function createInst(response) {
+
+//     var data = $.trim(response);
+//     if (data === "ok") {
+//         $("#my-info").addClass("info");
+//         $("#my-info").text("School Profile Created Successfully");
+//         $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
+//         // window.location.replace("uploadLogo.php");
+//     } else {
+//         //alert("me")
+//         $("#profile-info").addClass("error");
+//         $("#profile-info").html(data);
+//         $('#sch-profile-btn').text("Add School Profile").prop("disabled", false);
+//     }
+
+// }
+// // end code to create institution profile
 
 //Reload the content of after interval
 setTimeout(function() {
@@ -495,6 +739,16 @@ $("#new-content").on('change', '#class', function() {
     });
 });
 
+
+///load subjects for selection of subjects for staff subject edit
+$("#sch-class").on('change', function() {
+    var id = $("#sch-class option:selected").val();
+    $.post("listSubjects.php", { id: id }, function(data) {
+        $("#sch-subject").html(data);
+    });
+});
+//end subject for selection of subjects for staff subject edit
+
 // //LIST CLASS ARM BASED ON CLASS SELECTED
 // $("#new-content").on('change', '#class-admitted', function(e) {
 //     var id = $("#class-admitted option:selected").val();
@@ -527,96 +781,198 @@ $('#new-content').on('change', '#lg', function() {
     });
 });
 
-//////////////////////////////////////
-
-// Variable to store your files
-var files;
-
-// Add events
-$('#image-file').on('change', prepareUpload);
-$('#image-file').on('change', uploadFiles);
-// Grab the files and set them to our variable
-function prepareUpload(event) {
-    //firing ok
-    //console.log('This function is working and firing the first event');
-    files = event.target.files;
-    //firing ok
-    //.log(files);
-    //var size  = files[0].size;
-    //console.log(size);   
+//Phot preview code
+function filePreview(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#uploadForm + img').remove();
+            $('#uploadForm').after('<img src="' + e.target.result + '" width="450" height="300"/>');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
 }
+//end photo preview code
+///===================================================================================
 
-// Catch the form files
-function uploadFiles(event) {
-    //firing ok
-    // console.log('Testing the second event handler');
-    event.stopPropagation(); // Stop stuff happening
-    event.preventDefault(); // Totally stop stuff happening
-
-    // START A LOADING SPINNER HERE
-
-    // Create a formdata object and add the files
-    var data = new FormData();
-    $.each(files, function(key, value) {
-        data.append(key, value);
+//Upload Student Passport
+$('#student-file').on('change', function(e) {
+    e.preventDefault();
+    var fd = new FormData();
+    var file_data = $('input[type="file"]')[0].files; // for multiple files
+    for (var i = 0; i < file_data.length; i++) {
+        fd.append("file_" + i, file_data[i]);
+    }
+    var other_data = $('form').serializeArray();
+    $.each(other_data, function(key, input) {
+        fd.append(input.name, input.value);
     });
-
+    //var form = $('form').get(0);
     $.ajax({
-        url: 'processPhoto.php?files',
-        type: 'POST',
-        data: data,
+        url: 'studentPhotoProcess.php',
+        type: "POST",
+        data: fd,
+        contentType: false,
         cache: false,
-        dataType: 'json',
-        processData: false, // Don't process the files
-        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-    }).done(imageCall);
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Catch the form files
-function uploadLogo(event) {
-    //firing ok
-    //console.log('Testing the second event handler');
-    event.stopPropagation(); // Stop stuff happening
-    event.preventDefault(); // Totally stop stuff happening
-
-    // START A LOADING SPINNER HERE
-
-    // Create a formdata object and add the files
-    var data = new FormData();
-    $.each(files, function(key, value) {
-        data.append(key, value);
+        processData: false,
+        beforeSend: function() {
+            //$("#preview").fadeOut();
+            $("#err").text('processing...').fadeOut();
+        },
+        success: function(data) {
+            console.log(data);
+            if (data == 'ok') {
+                // invalid file format.
+                //$("#err").html("Invalid File !").fadeIn();
+                $("#err").html("Upload successful");
+                //console.log("ok");
+                //include a function to reload image in the logo section
+            } else {
+                // view uploaded file.
+                $("#preview-img").html(data).fadeIn();
+                $("#form")[0].reset();
+                //console.log("else");
+            }
+        },
+        error: function(e) {
+            $("#err").html(e).fadeIn();
+            //console.log("error");
+        }
     });
+});
 
+//Upload student passport
+
+
+//Upload staff picture
+
+$("#new-content").on('change', '#staff-file', function(e) {
+    e.preventDefault();
+    var form = $('form').get(0);
     $.ajax({
-        url: 'processLogo.php?files',
-        type: 'POST',
-        data: data,
+        url: "staffPictureProcess.php",
+        type: "POST",
+        data: new FormData(form),
+        contentType: false,
         cache: false,
-        dataType: 'json',
-        processData: false, // Don't process the files
-        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-    }).done(imageCall);
-
-}
-
-///////////////////////////////////////
-//login call back
-function imageCall(result) {
-
-    $("#msg").html(result);
-
-}
+        processData: false,
+        beforeSend: function() {
+            //$("#preview").fadeOut();
+            $("#err").text('processing...').fadeOut();
+        },
+        success: function(data) {
+            if (data == 'ok') {
+                // invalid file format.
+                //$("#err").html("Invalid File !").fadeIn();
+                $("#err").html("Upload successful");
+                //console.log("ok");
+                //include a function to reload image in the logo section
+            } else {
+                // view uploaded file.
+                $("#preview-img").html(data).fadeIn();
+                $("#form")[0].reset();
+                //console.log("else");
+            }
+        },
+        error: function(e) {
+            $("#err").html(e).fadeIn();
+            //console.log("error");
+        }
+    });
+});
+//end upload staff picture
 
 ///////////////////////////////////////////////////////////
 
 // logo upload
+$("#new-content").on('change', '#logo-file', function(e) {
+    e.preventDefault();
+    var form = $('form').get(0);
+    $.ajax({
+        url: "schoolLogoProcess.php",
+        type: "POST",
+        data: new FormData(form),
+        contentType: false,
+        cache: false,
+        processData: false,
+        beforeSend: function() {
+            //$("#preview").fadeOut();
+            $("#err").text('processing...').fadeOut();
+        },
+        success: function(data) {
+            if (data == 'ok') {
+                // invalid file format.
+                //$("#err").html("Invalid File !").fadeIn();
+                $("#err").html("Upload successful");
+                //console.log("ok");
+                //include a function to reload image in the logo section
+            } else {
+                // view uploaded file.
+                $("#preview-img").html(data).fadeIn();
+                $("#form")[0].reset();
+                //console.log("else");
+            }
+        },
+        error: function(e) {
+            $("#err").html(e).fadeIn();
+            //console.log("error");
+        }
+    });
+});
+//end
 
-$('#logo-file').on('change', prepareUpload);
-$('#logo-file').on('change', uploadLogo);
+//////////////////////////
+//Find student by class
+$("#new-content").on('click', '#studByClassBtn', function(e) {
+    e.preventDefault();
+    $('#studByClassBtn').text("Searching...").prop("disabled", true);
+    var classid = $("#studListclass option:selected").val();
+    var session = $("#studsession option:selected").val();
+    studByClass(classid, session);
+});
+//end create new school subject
+//add new subject callback function
+function studByClass(classid, session) {
+    $.ajax({
+        url: 'studByClass.php',
+        type: 'POST',
+        data: { classid: classid, session: session },
+        success: function(response) {
+            //var data = $.trim(response);
+            if (response === undefined) {
+                $('#studByClassBtn').text("List Student(s)").prop("disabled", false);
+                $("#st-list").addClass("error");
+                $('#st-list').html(response);
+            } else {
+                $('#studByClassBtn').text("List Student(s)").prop("disabled", false);
+                $('#st-list').html(response);
+            }
+        },
+    });
+}
 
+//STUDENT PHOTO UPLOAD MODAL FUNCTIONALITY
+$('#new-content').on('click', '#uploadModal', function(e) {
+    e.preventDefault();
+    //$("#modal_error").empty();
+    var studentid = $(this).data('recordid');
+    //var editValue = $(this).data('value');
+    //var staffID = $(this).data('staffid');
+    //alert(editValue + recordid);
+
+    //$('#item-value').val(editValue);
+    $('#record-id').val(studentid);
+    //$('#staffID').val(staffID);
+
+    $('#modal-list').empty();
+    $('#modal_error').empty();
+    var modalid = $('#myModal');
+    modalid.css('display', 'block');
+});
+
+//STUDENT PHOTO UPLOAD MODAL FUNCTIONALITY
+
+//end find student by class
 /////////////////////////
 //STUDENT SEARCH FUNCTIONALITY
 $("#new-content").on('click', '#search-btn', function(e) {
@@ -646,7 +1002,6 @@ function studentGeneralSearch(searchvar) {
         },
     });
 }
-
 //create class teacher functionality
 
 $("#new-content").on('click', '#class-teacher', function(e) {
@@ -1172,6 +1527,7 @@ function deleteAffectiveSkills(id, recordid) {
         },
     });
 }
+//end
 
 //Remove psychomotor skills
 $("#modal-list").on('click', '#remove-psycho-trait', function(e) {
@@ -1207,6 +1563,58 @@ function deletePsychoSkills(id, recordid) {
         },
     });
 }
+
+//remove staff subjecct taught
+$("#new-content").on('click', '#removesubjecttaught', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to remove item. This action can not be reversed!") == true) {
+        $('#removesubjecttaught').text('Removing...').prop("disabled", true);
+        var id = $(this).data('recordid');
+        //var examid = $("#record-id").val();
+        deleteStaffSubject(id);
+    } else {
+        $('#removsubjeecttaught').text('Remove').prop("disabled", false);
+    }
+
+});
+//call back for delete affective skilss
+function deleteStaffSubject(id) {
+    $.ajax({
+        url: 'deleteStaffSubject.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                reloadStaffSubject();
+            } else {
+                $('#removesubjecttaught').tex('Remove').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end remove staff subject taught
+
+//Reload Staff Subjects
+function reloadStaffSubject() {
+    $.ajax({
+        url: 'subjectTeachers.php',
+        type: 'POST',
+        data: {},
+        success: function(response) {
+            $("#new-content").html(response);
+
+        },
+    });
+}
+
+
+
+//end reload staff subjects
 
 //Count characters in a comment text area
 $('#comment-id').keyup(function() {
@@ -1840,10 +2248,12 @@ $('#new-content').on('click', '#editModal', function(e) {
 
     var recordid = $(this).data('recordid');
     var editValue = $(this).data('value');
+    var staffID = $(this).data('staffid');
     //alert(editValue + recordid);
 
     $('#item-value').val(editValue);
     $('#record-id').val(recordid);
+    $('#staffID').val(staffID);
 
     $('#modal-list').empty();
     $('#modal_error').empty();
@@ -1862,12 +2272,26 @@ $('#new-content').on('click', '.term-div', function(e) {
     $('.subject-div').hide();
     $('.class-div').hide();
     $('.prefix-div').hide();
+    $('.staffsubjects-div').hide();
 });
 //Show session-div
 $('#new-content').on('click', '.session-div', function(e) {
     var itemvalue = $('#item-value').val();
     $('#editsession').val(itemvalue);
     $('.session-div').show();
+    $('.term-div').hide();
+    $('.subject-div').hide();
+    $('.class-div').hide();
+    $('.prefix-div').hide();
+    $('.staffsubjects-div').hide();
+});
+//Show staffsubjects-div
+$('#new-content').on('click', '.staffsubjects-div', function(e) {
+    //show value to be edited
+    //var itemvalue = $('#item-value').val();
+    //$('#editsession').val(itemvalue);
+    $('.staffsubjects-div').show();
+    $('.session-div').hide();
     $('.term-div').hide();
     $('.subject-div').hide();
     $('.class-div').hide();
@@ -1882,6 +2306,7 @@ $('#new-content').on('click', '.subject-div', function(e) {
     $('.session-div').hide();
     $('.class-div').hide();
     $('.prefix-div').hide();
+    $('.staffsubjects-div').hide();
 });
 //Show class-div
 $('#new-content').on('click', '.class-div', function(e) {
@@ -1892,6 +2317,7 @@ $('#new-content').on('click', '.class-div', function(e) {
     $('.session-div').hide();
     $('.subject-div').hide();
     $('.prefix-div').hide();
+    $('.staffsubjects-div').hide();
 });
 
 //Show Prefix Settings
@@ -1903,6 +2329,7 @@ $('#new-content').on('click', '.prefix-div', function(e) {
     $('.term-div').hide();
     $('.session-div').hide();
     $('.subject-div').hide();
+    $('.staffsubjects-div').hide();
 });
 
 /**
@@ -2184,6 +2611,7 @@ $("#new-content").on('click', '#add-session', function(e) {
     //var jsURL = $('#input').attr('value');
     addSession(session);
 });
+
 
 //function to add new staff call back
 function addSession(session) {

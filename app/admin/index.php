@@ -38,36 +38,31 @@ $staff->adminUser($roleid,$clientid);
             <div class="wrapper">
 
                 <div class="primary-col">
-                       <!--bootstrap Container   -->
-                  <h5 class="top-header">All Student(s) List</h5>
-            <div class="container">
-            
-                       <div class="row">
-                       
+                    
+                <!-- Intro content div  -->
 
-                        <div class="form-group sm-2">
-                        <label for="inputPassword2" class="sr-only">Password</label>
-                        <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
-                        </div>
+                  <div class="intro-content">
+                  <!--conatiner  -->
+                        <div class="container">
 
-                        <div class="form-group sm-2">
-                        <label for="inputPassword2" class="sr-only">Password</label>
-                        <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
-                        </div>
+                            <div  class="row">
 
-                        <div class="form-group sm-2">
-                        <label for="inputPassword2" class="sr-only">Password</label>
-                        <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
-                        </div>
+                                <div class="col-md-6">
+                                <h6 class="top-header">Hi, <?php echo  $_SESSION['user_info'][1];?>, You are an admin! </h6>
+                                <img src="../images/legacy.png">
 
-                        <div class="form-group sm-2">
-                        <label for="inputPassword2" class="sr-only">Password</label>
-                        <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
-                        </div>
+                                </div>
+
+                                <div class="col-md-6">
+
+                                </div>
+
+                            </div>
 
                         </div>
-                      </div>
-                  <!--end bootstrap container  -->
+                        <!--end container  -->
+                  </div>
+                  <!-- End Intro content div  -->
                     <div id="my-info">
                     </div>
 

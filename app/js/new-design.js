@@ -488,6 +488,7 @@ function deleteAffectiveSkills(id, recordid) {
         },
     });
 }
+//end
 
 //Remove psychomotor skills
 $("#modal-list").on('click', '#remove-psycho-trait', function(e) {
@@ -523,6 +524,58 @@ function deletePsychoSkills(id, recordid) {
         },
     });
 }
+
+//remove staff subjecct taught
+$("#new-content").on('click', '#removesubjecttaught', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to remove item. This action can not be reversed!") == true) {
+        $('#removesubjecttaught').text('Removing...').prop("disabled", true);
+        var id = $(this).data('recordid');
+        //var examid = $("#record-id").val();
+        deleteStaffSubject(id);
+    } else {
+        $('#removsubjeecttaught').text('Remove').prop("disabled", false);
+    }
+
+});
+//call back for delete affective skilss
+function deleteStaffSubject(id) {
+    $.ajax({
+        url: 'deleteStaffSubject.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                reloadStaffSubject();
+            } else {
+                $('#removesubjecttaught').tex('Remove').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end remove staff subject taught
+
+//Reload Staff Subjects
+function reloadStaffSubject() {
+    $.ajax({
+        url: 'subjectTeachers.php',
+        type: 'POST',
+        data: {},
+        success: function(response) {
+            $("#new-content").html(response);
+
+        },
+    });
+}
+
+
+
+//end reload staff subjects
 
 //Count characters in a comment text area
 $('#comment-id').keyup(function() {
@@ -1156,10 +1209,12 @@ $('#new-content').on('click', '#editModal', function(e) {
 
     var recordid = $(this).data('recordid');
     var editValue = $(this).data('value');
+    var staffID = $(this).data('staffid');
     //alert(editValue + recordid);
 
     $('#item-value').val(editValue);
     $('#record-id').val(recordid);
+    $('#staffID').val(staffID);
 
     $('#modal-list').empty();
     $('#modal_error').empty();
@@ -1178,12 +1233,26 @@ $('#new-content').on('click', '.term-div', function(e) {
     $('.subject-div').hide();
     $('.class-div').hide();
     $('.prefix-div').hide();
+    $('.staffsubjects-div').hide();
 });
 //Show session-div
 $('#new-content').on('click', '.session-div', function(e) {
     var itemvalue = $('#item-value').val();
     $('#editsession').val(itemvalue);
     $('.session-div').show();
+    $('.term-div').hide();
+    $('.subject-div').hide();
+    $('.class-div').hide();
+    $('.prefix-div').hide();
+    $('.staffsubjects-div').hide();
+});
+//Show staffsubjects-div
+$('#new-content').on('click', '.staffsubjects-div', function(e) {
+    //show value to be edited
+    //var itemvalue = $('#item-value').val();
+    //$('#editsession').val(itemvalue);
+    $('.staffsubjects-div').show();
+    $('.session-div').hide();
     $('.term-div').hide();
     $('.subject-div').hide();
     $('.class-div').hide();
@@ -1198,6 +1267,7 @@ $('#new-content').on('click', '.subject-div', function(e) {
     $('.session-div').hide();
     $('.class-div').hide();
     $('.prefix-div').hide();
+    $('.staffsubjects-div').hide();
 });
 //Show class-div
 $('#new-content').on('click', '.class-div', function(e) {
@@ -1208,6 +1278,7 @@ $('#new-content').on('click', '.class-div', function(e) {
     $('.session-div').hide();
     $('.subject-div').hide();
     $('.prefix-div').hide();
+    $('.staffsubjects-div').hide();
 });
 
 //Show Prefix Settings
@@ -1219,6 +1290,7 @@ $('#new-content').on('click', '.prefix-div', function(e) {
     $('.term-div').hide();
     $('.session-div').hide();
     $('.subject-div').hide();
+    $('.staffsubjects-div').hide();
 });
 
 /**

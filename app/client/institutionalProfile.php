@@ -85,7 +85,7 @@ $staff->clientUser($myroleid,$clientid);
                             <ul>
                             <li><a class="load-url" href="newSchoolProfile.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i>New Profile</a></li>
                             <li><a class="load-url" href="school_logo.php"><i class="fa fa-camera fa-fw" aria-hidden="true"></i> Upload Logo</a></li>
-                            <li><a class="load-url" href="viewProfile.php"><i class="fa fa-clone fa-fw" aria-hidden="true"></i>View Profile</a></li>
+                            <li><a class="load-url" href="viewSchoolProfile.php"><i class="fa fa-clone fa-fw" aria-hidden="true"></i>View Profile</a></li>
                             </ul>   
                         </div>  
                     <!--You can put content here inside the primary column  -->

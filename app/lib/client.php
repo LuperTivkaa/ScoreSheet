@@ -38,9 +38,9 @@ return $this->role;
 
 function setSchName($sch_name)
 	{
-	if(empty($sch_name) || is_numeric($sch_name) || is_float($sch_name))
+	if(empty($sch_name) )
 	{
-		exit("Please you have entered a bad data!");
+		exit("Please provide a school name");
 	}
 	$this->sch_name = ucwords($sch_name);
 	}
@@ -128,7 +128,7 @@ function getAddress()
 
 function setMobile($mobile)
 	{
-		if($mobile == null && !is_numeric($mobile) && strlen($mobile) !=11)
+		if(empty($mobile) || !is_numeric($mobile))
     	{
         exit("Bad phone number given");
     	}
@@ -472,6 +472,81 @@ public function getAllStudents($id)
         }
     }
     //end of all students
+
+    //Get students by class and session
+    public function studentsByClass($classid,$sessionid,$schid)
+        {
+        try {
+            $query ="SELECT CONCAT(UPPER(student_initial.surname), ', ', student_initial.firstName) AS fullname,
+            student_initial.img AS Avatar,  
+            student_initial.gender AS Gender, 
+            class.class_name AS ClassName,
+            student_class.student_id AS studentID
+            FROM student_class 
+            INNER JOIN student_initial ON student_initial.id= student_class.student_id
+            INNER JOIN class ON student_class.stud_class=class.id
+            WHERE student_class.stud_class=? 
+            AND student_class.stud_sess_id=? 
+            AND student_class.stud_school_id=? ORDER BY fullname AND Gender ASC";
+            $this->conn->query($query);
+            $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+            $this->conn->bind(2, $sessionid, PDO::PARAM_INT); 
+            $this->conn->bind(3, $schid, PDO::PARAM_INT); 
+            $myResult = $this->conn->resultset();
+            $output="";
+            $avatarRow ="";
+            $output.="<h5 class='top-header mt-2'> My Student(s) </h5><br/>";
+            $output .='<div class="list_box">			
+            <table cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Class</th>
+                        <th>Upload Avatar</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                //$avatarData ='<img src="'.$avatar.'" alt="Staff Avatar" class="small-avatar">';
+        if($myResult){
+            foreach ($myResult as $row => $key) 
+            {
+            $fullname = $key['fullname'];
+            $avatar = $key['Avatar'];
+            $sex = $key['Gender'];
+            $class = $key['ClassName'];
+            $studentID = $key['studentID'];
+            //generate icon if picture is not uploaded other wise show picture
+                if(empty($avatar)){
+                    $avatarRow ='<td><div class="icon_div">'. $this->generateUserIcon($key['fullname']).'</div></td>';
+                }
+                else{
+                    $avatarRow = '<td><div class="icon_div"><img src="'.$avatar.'" alt="Staff Avatar" class="img_icon"></div></td>';
+                }
+            $output.= '<tr>';
+            $output.=$avatarRow;
+            $output.='<td>'.$fullname.'</td>';
+            $output.='<td>'.$sex.'</td>';
+            $output.='<td>'.$class.'</td>';
+            $output.='<td><button type="button"  data-recordid="'.$key['studentID'].'" class="btn btn-info btn-sm upload-div" id="uploadModal"><i class="fa fa-upload fa-fw" aria-hidden="true"></i> upload</button></td>';
+            $output.='</tr>';
+           //$output .= "<option value=".$ID.">".$category."</option>";
+            }
+            $output.='</tbody></table></div>';
+            echo $output;
+        }
+        else{
+            exit("No record seen or student(s) not enrolled in this class yet!");
+        }
+    }//End of try catch block
+     catch(Exception $e)
+    {
+        echo json_encode("Error: Uanble to fetch students records");
+    }
+}
+//End get students by class and session
+
 //add new fee item
 public  function feeItem($item_name,$amount,$amt_wrds,$clientid,$term,$session)
   {  
@@ -730,6 +805,70 @@ public  function addSubject($subject_id,$class_id,$staff_id,$sch_id,$addedDate,$
     }
     //end subject taught
 
+    //EDIT STAFF SUBJECT TAUGHT
+    public  function editStaffSubject($recordid,$subject_id,$class_id,$staff_id,$sch_id,$editedDate)
+        {
+             // always use try and catch block to write code
+            try{
+            //check for duplicate values for subject, class arm and staff
+                    $query ="SELECT * FROM staff_subject_taught WHERE subject_id=? AND class_taught=? AND my_id=? AND sch_identity=?";
+                    $this->conn->query($query);
+                     $this->conn->bind(1, $subject_id, PDO::PARAM_INT);
+                    $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                    $this->conn->bind(3, $staff_id, PDO::PARAM_INT);
+                    $this->conn->bind(4, $sch_id, PDO::PARAM_INT);
+                    $this->conn->execute();
+                    //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if ($this->conn->rowCount() >= 1)
+                    {
+                      exit("This staff already has being assigned this subject for this class");
+                    }
+                    else{
+                        //check for duplicate subject per class
+                        $query ="SELECT * FROM staff_subject_taught WHERE subject_id=? AND class_taught=? AND sch_identity=?";
+                        $this->conn->query($query);
+                         $this->conn->bind(1, $subject_id, PDO::PARAM_INT);
+                        $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                        $this->conn->bind(3, $sch_id, PDO::PARAM_INT);
+                        $this->conn->execute();
+                        if ($this->conn->rowCount() >= 1)
+                        {
+                            exit("This subject exist for this class already");
+                        }
+                        else{
+                           //insert new subjects  taught by staff 
+                            $sqlStmt ="UPDATE staff_subject_taught SET subject_id=?, class_taught=?, editedDate=?, addedBy=? WHERE id=? AND my_id=? AND sch_identity=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $subject_id, PDO::PARAM_INT);
+                            $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                            $this->conn->bind(3, $editedDate, PDO::PARAM_STR);
+                            $this->conn->bind(4, $sch_id, PDO::PARAM_INT);
+                            $this->conn->bind(5, $recordid, PDO::PARAM_INT);
+                            $this->conn->bind(6, $staff_id, PDO::PARAM_INT); 
+                            $this->conn->bind(7, $sch_id, PDO::PARAM_STR); 
+                            $this->conn->execute(); 
+                            if ($this->conn->rowCount() == 1) 
+                            {
+                            //check number of inserted rows
+                            echo "ok";
+                            } 
+                            else
+                            {
+                            echo "Error editing records";
+                            }
+                        }
+                    }                   
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//END EDIT STAFF SUBJET TAUGHT
+
 //Add New Staff
 public  function newStaff($email,$username,$password,$role,$clientid,$editedDate,$createdDate)
   {
@@ -814,20 +953,20 @@ public  function instProfile($sch_name,$sch_type,$clientid,$country,$state,$lg,$
                             client_id,country_id,state_id,
                             lg_id,inst_city_id,
                             inst_mobile,web_address,email_add,street_address,mail_box) 
-                            values (?,?,?,?,?,?,?,?,?)";
+                            values (?,?,?,?,?,?,?,?,?,?,?,?)";
                             $this->conn->query($sqlStmt);
-                            $this->conn->bind(1, $this->sch_name, PDO::PARAM_STR,100);
-                            $this->conn->bind(2, $this->sch_type, PDO::PARAM_INT);
+                            $this->conn->bind(1, $sch_name, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $sch_type, PDO::PARAM_INT);
                             $this->conn->bind(3, $clientid, PDO::PARAM_INT);
-                            $this->conn->bind(4, $this->country, PDO::PARAM_INT); 
-                            $this->conn->bind(5, $this->state, PDO::PARAM_INT);
-                            $this->conn->bind(6, $this->lg, PDO::PARAM_INT); 
-                            $this->conn->bind(7, $this->city, PDO::PARAM_INT);
-                            $this->conn->bind(8, $this->mobile, PDO::PARAM_STR);
+                            $this->conn->bind(4, $country, PDO::PARAM_INT); 
+                            $this->conn->bind(5, $state, PDO::PARAM_INT);
+                            $this->conn->bind(6, $lg, PDO::PARAM_INT); 
+                            $this->conn->bind(7, $city, PDO::PARAM_INT);
+                            $this->conn->bind(8, $mobile, PDO::PARAM_STR);
                             $this->conn->bind(9, $webadd, PDO::PARAM_STR);
-                            $this->conn->bind(10, $this->email, PDO::PARAM_STR);
-                            $this->conn->bind(11, $this->strtAdd, PDO::PARAM_STR);
-                            $this->conn->bind(12, $this->mailbox, PDO::PARAM_STR);
+                            $this->conn->bind(10, $email, PDO::PARAM_STR);
+                            $this->conn->bind(11, $strtAdd, PDO::PARAM_STR);
+                            $this->conn->bind(12, $mailbox, PDO::PARAM_STR);
                             $this->conn->execute(); 
                         if ($this->conn->rowCount() == 1) 
                             {
@@ -901,15 +1040,15 @@ public function schHeader($id)
                             $schoolname = $key['SchoolName'];
                             $logo = $key['Logo'];    
                         }
-                                // if(empty($schoolname) || $schoolname =='Null'){
-                                // $schoolname = "ScoreSheet";
-                                // } elseif(empty($logo) || $logo == 'Null'){
-                                // $logoPrint = '<li><img src="../images/profile-icon.png" alt="School Logo" class="school-avatar"></>';
-                                // } elseif(!empty($logo) ){
-                                // $logoPrint = $logoPrint = '<li><img src="'.$logo.'" alt="School Logo" class="school-avatar"></li>';
-                                // }
 
+                                if(empty($logo)){
+                                    $logoPrint = '<li><img src="../images/profile-icon.png" alt="School Logo" class="school-avatar"></li>';
+                                }else{
                                 $logoPrint = $logoPrint = '<li><img src="'.$logo.'" alt="School Logo" class="school-avatar"></li>';
+                                }
+                                if(empty($schoolname)){
+                                $schoolname = "ScoreSheet";
+                                }
 
                                 $printOutPut.='<ul class="school-header">';
                                 $printOutPut.=$logoPrint;
@@ -933,8 +1072,7 @@ public function schHeader($id)
             echo ("Error: Unable to fetch school Profile");
             }
         }
-
-        //end get profile
+ //end get profile
 
 //end of Institution Header
 
@@ -1028,13 +1166,14 @@ public function loadApprovedStaff($client_id,$status="On")
 public function loadStaff($client_id)
     {
         try {
-                $query ="SELECT users.id,users.user_name FROM users WHERE users.id NOT IN (SELECT user_id FROM staff_profile WHERE my_school_id=?)";
+                $query ="SELECT users.id,users.user_name FROM users WHERE users.created_By=?";
                 $this->conn->query($query);
                 $this->conn->bind(1, $client_id, PDO::PARAM_INT);
                 $myResult = $this->conn->resultset();
                 $output =" "; 
         foreach ($myResult as $row => $key) 
         {
+            // $query ="SELECT users.id,users.user_name FROM users WHERE users.id NOT IN (SELECT user_id FROM staff_profile WHERE my_school_id=?)";
             
             $ID = $key['id'];
             $username = $key['user_name'];
@@ -1217,7 +1356,7 @@ public function loadLga($id)
             $lga = $key['lga'];
 
        //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-                //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+        //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
           $output .= "<option value=".$ID.">".$lga."</option>";
                 
         }
@@ -1357,6 +1496,247 @@ public  function newTerm($term,$clientid,$status='Inactive')
         }
 }
 //end term
+
+//Create New School Affective skills records
+public  function createAffectiveDomain($description,$clientid,$userid,$date)
+  {
+
+  //always use try and catch block to write code   
+  try{
+          //insert new term
+                            $sqlStmt = "INSERT INTO affective_domain (description,sch_id,createdby,date_added) 
+                            values (?,?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $description, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $userid, PDO::PARAM_INT);
+                            $this->conn->bind(4, $date, PDO::PARAM_STR);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Could not create school affective domain skills";
+                        }
+
+        }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+}
+//End create new school affective skills records
+
+//RELOAD AFFECTIVE DOMAIN CREATED METHOD
+function allAfectiveSkills($schid)
+  {
+  // Try and Catch block
+   try
+        {
+  			   $query ="SELECT id AS ID, description AS DomainName
+             FROM affective_domain 
+             WHERE 
+             sch_id=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $schid, PDO::PARAM_INT);
+                $myResult= $this->conn->resultset();
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        exit("No added affective skills seen!");
+                        }
+                        else{
+                        $printOutput = " ";
+                        $printOutput.='<h6 class="top-header">Affective Domain Added</h6>';
+                        $printOutput.= '<table  class="transparent-table">';
+                        $printOutput.='<tr><th>#</th>
+                        <th>Affective Domain</th>
+                        <th>Remove</th>';
+                        $ci=1;
+                        foreach($myResult as $row => $key)
+                        {
+                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['DomainName'].'</td>';
+                        $printOutput.='<td><button type="button" data-id="'.$key['ID'].'" class="btn btn-outline-danger btn-sm" id="remove-domain"><i class="fa fa-trash-o" aria-hidden="true"></i></button></td>'; 
+                        $printOutput.='</tr>'; 
+                        $ci++;
+                        }
+                      $printOutput.= "</table>";
+                      echo $printOutput;
+  		            }  
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+//END RELOAD AFFECTIVE DOMAIN CREATED METHOD
+
+//RELOAD ALL PSYCHO SKILLS SETIINGS
+function allPsychoSkills($schid)
+  {
+  // Try and Catch block
+   try
+        {
+  			   $query ="SELECT id AS ID, description AS DomainName
+             FROM psychomotor_skills
+             WHERE 
+             sch_id=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $schid, PDO::PARAM_INT);
+                $myResult= $this->conn->resultset();
+
+                        //loop through the result
+                       if($this->conn->rowCount() == 0)
+                        {
+                        exit("No added psychomotor skills seen!");
+                        }
+                        else{
+                        $printOutput = " ";
+                        $printOutput.='<h6 class="top-header">Psychomotor Skills Added</h6>';
+                        $printOutput.= '<table  class="transparent-table">';
+                        $printOutput.='<tr><th>#</th>
+                        <th>Psychomotor Domain</th>
+                        <th>Remove</th>';
+                        $ci=1;
+                        foreach($myResult as $row => $key)
+                        {
+                        //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $printOutput.='<tr>';
+                        $printOutput.='<td>'.$ci.'</td>';
+                        $printOutput.='<td>'.$key['DomainName'].'</td>';
+                        $printOutput.='<td><button type="button" data-id="'.$key['ID'].'" class="btn btn-outline-danger btn-sm" id="remove-psycho"><i class="fa fa-trash-o" aria-hidden="true"></i></button></td>'; 
+                        $printOutput.='</tr>'; 
+                        $ci++;
+                        }
+                      $printOutput.= "</table>";
+                      echo $printOutput;
+  		            }  
+    }
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+    }
+
+
+//END RELOAD ALL PSYCHO SKILLS SETTINGS
+
+//DELETE PSYCHOMOTOR DOMAIN SKILL SETTING
+function deletePsychoSkillSettings($id,$schid)
+   {
+                 try {
+
+          					     //EDIT EXAM RECORD
+                            $sqlStmt = "DELETE  FROM psychomotor_skills WHERE id=? AND sch_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $id, PDO::PARAM_INT);
+                            $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// action successful
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error removing psychomotor item";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+    }
+//END DELETE PSYCHOMOTOR DOMAIN SKILLS SETTINGS
+//======================================================================================================
+//DELETE AFFECTIVE DOMAIN SKILLS SETTINGS
+function deleteAffectiveSkillSettings($id,$schid)
+   {
+                 try {
+
+          					     //EDIT EXAM RECORD
+                            $sqlStmt = "DELETE  FROM affective_domain WHERE id=? AND sch_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $id, PDO::PARAM_INT);
+                            $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// action successful
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error removing affective item";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+    }
+
+//DELETE AFFECTIVE DOMAIN SKILLS SETTINGS
+
+//Create new school psychomotor
+public  function createPsychoDomain($description,$clientid,$userid,$date)
+  {
+
+  //always use try and catch block to write code   
+  try{
+          
+                            $sqlStmt = "INSERT INTO psychomotor_skills (description,sch_id,staff_id,date_created) 
+                            values (?,?,?,?)";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $description, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                            $this->conn->bind(3, $userid, PDO::PARAM_INT);
+                            $this->conn->bind(4, $date, PDO::PARAM_STR);
+                            $this->conn->execute(); 
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         // check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Could not create school affective domain skills";
+                        }
+
+        }
+      
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        }
+}
+//End create new school psychomotor 
 
 //new academic session
  //create new academic sessionss
@@ -1628,6 +2008,7 @@ public  function assignSubject($subject_id,$class_category_id,$sch_id)
     }
     // End of method block to assign subject
     //===========================================
+    
 
 //================================================
 //ADD NEW SCHOOL CLASS
@@ -1670,40 +2051,227 @@ method block to assign subject to class
 */
 
 //=============================
-//REMOVE METHOD
-// public  function assignClassArm($class_desc,$class_id)
-//   {
-//   try{
+//Process Logo
+public function processLogo($clientid,$files)
+        {
+        try {
+            //define valid file extensions
+            $validextensions = array('jpeg', 'jpg', 'png', 'gif');
 
-//                             //insert new subjects  taught by staff 
-//                             $sql = "INSERT INTO class_arm(
-//                             arm_description,class_id)
-//                              values (?,?)";
-//                             $this->conn->query($sql);
-//                             $this->conn->bind(1, $class_desc, PDO::PARAM_STR);
-//                             $this->conn->bind(2, $class_id, PDO::PARAM_INT);
-//                             $this->conn->execute(); 
-//                         if ($this->conn->rowCount() == 1) 
-//                         {
-//                          //check number of inserted rows
-//                         echo "ok";
-//                         } 
-//                         else
-//                         {
-//                         echo "Error creating class description";
-//                         }  
-//       }
+            //Define variable to store file extension
+            $temporary = explode(".", $files['name']);
+            $file_extension = end($temporary);
 
-//         catch(Exception $e)
-//         {
-//         //echo error here
-//         //this get an error thrown by the system
-//         echo "Error:". $e->getMessage();
-//          }
-// }
-// End of method block to assign class arm description
+            // local Image folder
+            $uploaddir = '../galleryUploads/';
+            //check for valid file type and extenstion
+            if ((($files['type'] == "image/png")
+            || ($files['type'] == "image/jpg")
+            || ($files['type'] == "image/jpeg"))
+            && ($files['size'] < 1000000)//approx. 100kb files can be uploaded
+            && in_array($file_extension, $validextensions))
+            {
+                //PHP Image Uploading Code
+                //move file to the temp folder
+                //if move is successfull, insert into the database 
+                //can upload same image using rand function
+                $userImageName = $files['name'];
+                $tmp = $files['tmp_name'];
+
+                //Final Image name concatenating with  random number
+
+                $finalImageName = rand(1000,1000000).$userImageName;
+                $path = $uploaddir.strtolower($finalImageName);
+                
+                //move uploaded files to the temp folder
+                if(move_uploaded_file($tmp,$path))
+                {
+                    //update the institutional_signup table with new image in the database
+                    $query ="UPDATE institutional_signup SET inst_logo =? WHERE client_id=?";
+					$this->conn->query($query);
+					$this->conn->bind(1, $path, PDO::PARAM_STR);
+                    $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+					$this->conn->execute();
+					if ($this->conn->rowCount() == 1)
+					{
+					echo "ok";
+					}
+					else
+					{
+                    //Unlink the copied file from the tmp folder
+                    unlink($path);
+					exit("Aha! logo not saved");
+					}
+
+                }
+                else
+                {
+                    //Display error when file is not copied
+                    exit("Unable to copy image file!");
+
+                }
+            }
+            else{
+                exit("Inavild file size or file type provided!");
+            }
+                   
+            }// End of try catch block
+        catch(Exception $e)
+            {
+            echo ("Error: Unable to process request");
+            }
+        }
 //===========================================
+//End process logo
 
+//Process staff passport
+public function processStaffPhoto($userid,$clientid,$files)
+        {
+        try {
+            //define valid file extensions
+            $validextensions = array('jpeg', 'jpg', 'png', 'gif');
+
+            //Define variable to store file extension
+            $temporary = explode(".", $files['name']);
+            $file_extension = end($temporary);
+
+            // local Image folder
+            $uploaddir = '../galleryUploads/';
+            //check for valid file type and extenstion
+            if ((($files['type'] == "image/png")
+            || ($files['type'] == "image/jpg")
+            || ($files['type'] == "image/jpeg"))
+            && ($files['size'] < 1000000)//approx. 100kb files can be uploaded
+            && in_array($file_extension, $validextensions))
+            {
+                //PHP Image Uploading Code
+                //move file to the temp folder
+                //if move is successfull, insert into the database 
+                //can upload same image using rand function
+                $userImageName = $files['name'];
+                $tmp = $files['tmp_name'];
+
+                //Final Image name concatenating with  random number
+
+                $finalImageName = rand(1000,1000000).$userImageName;
+                $path = $uploaddir.strtolower($finalImageName);
+                
+                //move uploaded files to the temp folder
+                if(move_uploaded_file($tmp,$path))
+                {
+                    //update the institutional_signup table with new image in the database
+                    $query ="UPDATE staff_profile SET user_img=? WHERE user_id=? AND my_school_id=?";
+					$this->conn->query($query);
+					$this->conn->bind(1, $path, PDO::PARAM_STR);
+                    $this->conn->bind(2, $userid, PDO::PARAM_INT);
+                    $this->conn->bind(3, $clientid, PDO::PARAM_INT);
+					$this->conn->execute();
+					if ($this->conn->rowCount() == 1)
+					{
+					echo "ok";
+					}
+					else
+					{
+                    //Unlink the copied file from the tmp folder
+                    unlink($path);
+					exit("Aha! photo not saved");
+					}
+
+                }
+                else
+                {
+                    //Display error when file is not copied
+                    exit("Unable to copy image file!");
+
+                }
+            }
+            else{
+                exit("Inavild file size or file type provided!");
+            }
+                   
+            }// End of try catch block
+        catch(Exception $e)
+            {
+            echo ("Error: Unable to process request");
+            }
+        }
+
+//End process staff passport
+
+
+//=====================================
+//Upload student picture
+public function processStudentPhoto($studentid,$clientid,$files)
+        {
+        try {
+            //define valid file extensions
+            $validextensions = array('jpeg', 'jpg', 'png', 'gif');
+
+            //Define variable to store file extension
+            $temporary = explode(".", $files['name']);
+            $file_extension = end($temporary);
+
+            // local Image folder
+            $uploaddir = '../studentsUploads/';
+            //check for valid file type and extenstion
+            if ((($files['type'] == "image/png")
+            || ($files['type'] == "image/jpg")
+            || ($files['type'] == "image/jpeg"))
+            && ($files['size'] < 1000000)//approx. 100kb files can be uploaded
+            && in_array($file_extension, $validextensions))
+            {
+                //PHP Image Uploading Code
+                //move file to the temp folder
+                //if move is successfull, insert into the database 
+                //can upload same image using rand function
+                $userImageName = $files['name'];
+                $tmp = $files['tmp_name'];
+
+                //Final Image name concatenating with  random number
+
+                $finalImageName = rand(1000,1000000).$userImageName;
+                $path = $uploaddir.strtolower($finalImageName);
+                
+                //move uploaded files to the temp folder
+                if(move_uploaded_file($tmp,$path))
+                {
+                    //update the institutional_signup table with new image in the database
+                    $query ="UPDATE student_initial SET img =? WHERE stud_sch_id=? AND id=?";
+					$this->conn->query($query);
+					$this->conn->bind(1, $path, PDO::PARAM_STR);
+                    $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+                    $this->conn->bind(3, $studentid, PDO::PARAM_INT);
+					$this->conn->execute();
+					if ($this->conn->rowCount() == 1)
+					{
+					echo "ok";
+					}
+					else
+					{
+                    //Unlink the copied file from the tmp folder
+                    unlink($path);
+					exit("Aha! photo not saved");
+					}
+
+                }
+                else
+                {
+                    //Display error when file is not copied
+                    exit("Unable to copy image file!");
+
+                }
+            }
+            else{
+                exit("Inavild file size or file type provided!");
+            }
+                   
+            }// End of try catch block
+        catch(Exception $e)
+            {
+            echo ("Error: Unable to process request");
+            }
+        }
+//End upload student picture
 //================================
 //all terms 
 public function allTerms($clientid)
@@ -1984,6 +2552,229 @@ public function loadClassTeacherClass($staffid,$schid)
         }
 //END METHOD TO LOAD CLASS TEACHER CLASS
 
+//Define Random Color
+//Function getColor used for pick random color from defined color array
+function getColor(){
+	$ColorArr = array("#A27BA7","#C72A3B","#DA6784","#0495C2","#0F3353","#6872FF","#488957","#FF59AC","#999999","#996855","#3C3636");//Default colors array
+	$k = array_rand($ColorArr);
+	return $ColorArr[$k];
+}
+
+//End Define Random color
+
+//Code to generate User icon
+function generateUserIcon($_name){
+	$nameArr = explode(" ", $_name);
+	$name_str = "";
+	foreach ($nameArr as $name) {
+		$name_str.= substr($name, 0, 1);//take first letter from first name and last name
+    }
+    $randomColor = $this->getColor();
+	$icon = '<a class="user_icon" style="background-color:'.$randomColor.'">'.$name_str.'</a>';
+	return $icon;
+}
+//End code to generate user icon
+
+
+//METHOD TO GET CLASS TEACHER'S CLASS ID
+public function classTeacherClassID($staffid,$schid)
+  {
+   try {
+        $query ="SELECT class_teacher.class_id AS ID FROM class_teacher
+        WHERE staff_id=? AND school_id=?";
+            $this->conn->query($query);
+            $this->conn->bind(1, $staffid, PDO::PARAM_INT);
+            $this->conn->bind(2, $schid, PDO::PARAM_INT);
+            $myResult = $this->conn->resultset();
+           $output =" "; 
+     foreach ($myResult as $row => $key) 
+      {
+      $ID = $key['ID'];
+     }
+    return $ID;
+     }// End of try catch block
+     catch(Exception $e)
+     {
+    echo "Error: Unable to load class teacher ID";
+      }
+    }
+//END METHOD TO GET CLASS TEACHER'S CLASS ID
+
+//METHOD TO  SELECT STUDENTS AND UPLOAD THEIR UPLOAD
+
+public function studentsPhoto($staffid,$schid)
+{
+try {
+    $classTeacherClassID = $this->classTeacherClassID($staffid,$schid);
+    $activeSession = $this->getActiveSession($schid);
+        $query ="SELECT CONCAT(UPPER(student_initial.surname), ', ', student_initial.firstName) AS fullname, 
+        student_initial.img AS Avatar,  
+        student_initial.gender AS Gender, 
+        class.class_name AS ClassName,
+        student_class.student_id AS studentID
+        FROM student_class 
+        INNER JOIN student_initial ON student_initial.id= student_class.student_id
+        INNER JOIN class ON student_class.stud_class=class.id
+        WHERE student_class.stud_class=? 
+        AND student_class.stud_sess_id=? 
+        AND student_class.stud_school_id=?";
+            $this->conn->query($query);
+            $this->conn->bind(1, $classTeacherClassID, PDO::PARAM_INT);
+            $this->conn->bind(2, $activeSession, PDO::PARAM_INT);
+            $this->conn->bind(3, $schid, PDO::PARAM_INT);
+            $myResult = $this->conn->resultset();
+            $output="";
+            $avatarRow ="";
+            $output.="<h5 class='top-header mt-2'> My Student(s) </h5><br/>";
+            $output .='<div class="list_box">			
+            <table cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Class</th>
+                        <th>Upload Avatar</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                //$avatarData ='<img src="'.$avatar.'" alt="Staff Avatar" class="small-avatar">';
+            if($myResult){
+            foreach ($myResult as $row => $key) 
+            {
+            $fullname = $key['fullname'];
+            $avatar = $key['Avatar'];
+            $sex = $key['Gender'];
+            $class = $key['ClassName'];
+            $studentID = $key['studentID'];
+            //generate icon if picture is not uploaded other wise show picture
+                if(empty($avatar)){
+                    $avatarRow ='<td><div class="icon_div">'. $this->generateUserIcon($key['fullname']).'</div></td>';
+                }
+                else{
+                    $avatarRow = '<td><div class="icon_div"><img src="'.$avatar.'" alt="Staff Avatar" class="icon_img"></div></td>';
+                }
+            $output.= '<tr>';
+            $output.=$avatarRow;
+            $output.='<td>'.$fullname.'</td>';
+            $output.='<td>'.$sex.'</td>';
+            $output.='<td>'.$class.'</td>';
+            $output.='<td><button type="button"  data-recordid="'.$key['studentID'].'" class="btn btn-info btn-sm upload-div" id="uploadModal"><i class="fa fa-upload fa-fw" aria-hidden="true"></i> upload</button></td>';
+            $output.='</tr>';
+           //$output .= "<option value=".$ID.">".$category."</option>";
+            }
+            $output.='</tbody></table></div>';
+            echo $output;
+ }//
+else{
+    exit("You have no student(s) enrolled in your class yet!");
+}
+}
+ catch(Exception $e)
+  {
+//echo error here
+//this get an error thrown by the system
+echo "Error:". $e->getMessage();
+
+}
+}
+
+//END METHOD TO SELECT STUDENTS AND UPLOAD THEIR UPLOAD
+
+
+
+
+
+//LOAD all subject taught by each Staff 
+public function subjectTeacher($schid)
+        {
+        try {
+                $query ="SELECT CONCAT(UPPER(staff_profile.surname), ', ', staff_profile.middle_name, ' ', staff_profile.lastname) AS fullname, 
+                staff_profile.user_img AS Avatar,  
+                staff_subject_taught.my_id AS StaffID, 
+                staff_subject_taught.id AS subjectTaughtID, 
+                class.class_name AS ClassName, 
+                subjects.subject_name AS SubjectName FROM staff_profile 
+                INNER JOIN staff_subject_taught ON staff_subject_taught.my_id = staff_profile.user_id
+                INNER JOIN class ON staff_subject_taught.class_taught=class.id
+                INNER JOIN subjects ON subjects.sub_id=staff_subject_taught.subject_id
+                WHERE staff_subject_taught.sch_identity=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $schid, PDO::PARAM_INT);
+                    $myResult = $this->conn->resultset();
+                    $output="";
+                    $myResult = $this->conn->resultset();
+                    $output.="<h5 class='top-header mt-2'> Subject(s) Teachers </h5><br/>";
+                    $output .='<table class="table">';
+                    $output .='<thead><tr><th>Avatar</th><th> Name</th><th>Subject</th><th>Class</th><th>Remove</th><th>Edit</th></tr></thead><tbody>';
+                    if($myResult){
+                    foreach ($myResult as $row => $key) 
+                    {
+                    $fullname = $key['fullname'];
+                    $avatar = $key['Avatar'];
+                    $avatarData ='<img src="'.$avatar.'" alt="Staff Avatar" class="small-avatar">';
+                    $staffID = $key['StaffID'];
+                    $Recordid = $key['subjectTaughtID'];
+                    $class = $key['ClassName'];
+                    $subj = $key['SubjectName'];
+                    $output.= '<tr>';
+                    $output.='<td>'.$avatarData.'</td>';
+                    $output.='<td>'.$fullname.'</td>';
+                    $output.='<td>'.$subj.'</td>';
+                    $output.='<td>'.$class.'</td>';
+                    $output.='<td><button type="button"  data-recordid="'.$key['subjectTaughtID'].'" class="btn btn-info btn-sm" id="removesubjecttaught"><i class="fa fa-trash fa-fw" aria-hidden="true"></i> Remove</button></td>';
+                    $output.='<td><button type="button" data-staffid="'.$key['StaffID'].'" data-recordid="'.$key['subjectTaughtID'].'" class="btn btn-info btn-sm staffsubjects-div" id="editModal"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Edit</button></td>';
+                   $output.='</tr>';
+                   //$output .= "<option value=".$ID.">".$category."</option>";
+                    }
+                    $output.=' </tbody></table>';
+                    echo $output;
+         }// End of try catch block
+        }
+         catch(Exception $e)
+          {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+  }
+//END LOAD SUBJEECT TEACHERS
+
+//REMOVE SUBJECT TEACHER
+function removeSubjectTeacher($recordid,$schid)
+   {
+      
+                 try {
+
+          					        //Remove Promotion Details
+                            $sqlStmt = "DELETE  FROM staff_subject_taught WHERE id=? AND sch_identity=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $recordid, PDO::PARAM_INT);
+                            $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// action successful
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error removing Subject Teacher";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+        
+      }
+    }
+
+//REMOVE SUBJECT TEACHER
 //Activate Term
 function activateTerm($termid,$schid,$activate="Active")
   {

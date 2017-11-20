@@ -40,15 +40,15 @@ $staff = new staff($dbConnection);
                         <div class="aux-menu">
                             <h6> Academic Settings Sub Menu</h6>
                             <ul>
-                            <li><a class="load-url" href="academicTerm.php"><i class="fa fa-paper-plane fa-fw" aria-hidden="true"></i>Term</a></li>
-                            <li><a class="load-url" href="createSessions.php"><i class="fa fa-bolt fa-fw" aria-hidden="true"></i>Sessions</a></li>
-                            <li><a class="load-url" href="mySessions.php"><i class="fa fa-bars fa-fw" aria-hidden="true"></i> All Sessions</a></li>
-                            <li><a class="load-url" href="createSubjects.php"><i class="fa fa-paperclip fa-fw" aria-hidden="true"></i> Subject</a></li>
+                            <li><a class="load-url" href="academicTerm.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Term</a></li>
+                            <li><a class="load-url" href="createSessions.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Session</a></li>
+                            <li><a class="load-url" href="createSubjects.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Subject</a></li>
                             <li> <a class="load-url" href="createClass.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Class</a></li>
                             <li> <a class="load-url" href="classCategory.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Class Category</a></li>
-                            <li> <a class="load-url" href="ScoreSettings.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Scores Settings</a></li>
+                            <li> <a class="load-url" href="scoreSettings.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Scores Settings</a></li>
                             <li><a class="load-url" href="setAdmissionNumber.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> New Numbers</a></li>
                             <li><a class="load-url" href="attendanceSettings.php"><i class="fa fa-calendar" aria-hidden="true"></i> Attendance Settings</a></li>
+                            <li> <a class="load-url" href="createSkills.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Add Skills</a></li>
                             <li><a class="load-url" href="nextTerm.php"><i class="fa fa-calendar" aria-hidden="true"></i> Resumption</a></li>
 
                             </ul>   

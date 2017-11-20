@@ -19,17 +19,19 @@ $staff->clientUser($myroleid,$clientid);
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 //$regno = $_SESSION['ID'];
-$sch_name = filter_input(INPUT_POST, "inst_name", FILTER_SANITIZE_STRING);
-$sch_category = filter_input(INPUT_POST, "inst_category", FILTER_SANITIZE_STRING);
+$sch_name = filter_input(INPUT_POST, "schname", FILTER_SANITIZE_STRING);
+$sch_category = filter_input(INPUT_POST, "category", FILTER_SANITIZE_STRING);
 $nation = filter_input(INPUT_POST, "nation", FILTER_SANITIZE_STRING);
 $state = filter_input(INPUT_POST, "state", FILTER_SANITIZE_STRING);
 $lg = filter_input(INPUT_POST, "lg", FILTER_SANITIZE_STRING);
 $city = filter_input(INPUT_POST, "city", FILTER_SANITIZE_STRING);
 $mobile = filter_input(INPUT_POST, "mobile", FILTER_SANITIZE_STRING);
-$url = filter_input(INPUT_POST, "webAdd", FILTER_SANITIZE_URL);
+$url = filter_input(INPUT_POST, "web", FILTER_SANITIZE_URL);
 $email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
 $strtAdd = filter_input(INPUT_POST, "streetAdd", FILTER_SANITIZE_STRING);
-$mailbox = filter_input(INPUT_POST, "mailAdd", FILTER_SANITIZE_STRING);
+$mailbox = filter_input(INPUT_POST, "mailadd", FILTER_SANITIZE_STRING);
+
+//schname: schname, category: category, nation: nation, state: state, lg: lg, city: city, web: web, email: email, streetAdd: streetAdd, mailadd: mailadd, mobile: mobile
 
 
 $client->setSchName($sch_name);

@@ -37,16 +37,31 @@ $staff = new staff($dbConnection);
             <div class="wrapper">
 
                 <div class="primary-col">
-                       <!--bootstrap Container   -->
-                   <div class="container">
-            
-                       <div class="row">
-                       
+                  <!-- Intro content div  -->
 
-                      <p>Content here th hjhis  htyn ysjjs tjjs tjjs tjjsthj sttsjjs tj tjis thshs tjjs tjj tjsg tj shhsbbs s hs  hjjshfs kjkjfskjfhds kjnfkjdskjds kjnsjnfs kjnjfndsf kjnsdjkfndsf kjndkjnskjf knkfnsdfks kjnsdfkndskjf knfkjdnfkd kjnfkjdnfkd kjndfkjndsfkjs kjnskjfnsdjf kjnskjfndskjf kjnfkjdsnfkj kjdnfkjdnfkdsjf knfkjdsnfkjd </p>
+                  <div class="intro-content">
+                  <!--conatiner  -->
+                        <div class="container">
+
+                            <div  class="row">
+
+                                <div class="col-md-6">
+                                <h6 class="top-header">Hi, <?php echo  $_SESSION['user_info'][1];?>, You are Class Teacher </h6>
+                                <img src="../images/legacy3.png">
+                                <p></p>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                </div>
+
+                            </div>
+
                         </div>
-                      </div>
-                  <!--end bootstrap container  -->
+                        <!--end container  -->
+                  </div>
+                  <!-- End Intro content div  -->
                     <div id="my-info">
                     </div>
 
