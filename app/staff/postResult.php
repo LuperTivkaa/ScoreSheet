@@ -52,13 +52,28 @@ $staff->staffUser($myroleid,$clientid);
                             
                         </div> 
                         <div class="row"> 
-                        <div class="col-6">
-                    <button class="btn btn-primary mt-3" type="button" id="submit-result">  <i class="fa fa-database" aria-hidden="true"></i>
-Submit Result</button>
+                        <div class="col-3">
+                        <button class="btn btn-primary mt-3" type="button" id="submit-result">  <i class="fa fa-database" aria-hidden="true"></i>
+                    Submit Result</button>
                             </div>
-                            <div class="col-6">
+
+                            <div class="col-3">
+                        <button class="btn btn-danger mt-3" type="button" id="reset-submit-result">  <i class="fa fa-undo" aria-hidden="true"></i>
+                    Undo Submit Result</button>
+                            </div>
+
+                            
+
+                            
+
+                            <div class="col-3">
                             <button class="btn btn-success mt-3" type="button" id="class-position"><i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Assign Class Position</button>
                             </div>
+
+                            <div class="col-3">
+                            <button class="btn btn-danger mt-3" type="button" id="reset-class-position"><i class="fa fa-undo" aria-hidden="true"></i> Undo Class Position</button>
+                            </div>
+
                             </div>
                     </div>
   </div>

@@ -19,7 +19,7 @@ $staff->staffUser($myroleid,$clientid);
 <!-- Enter form to create new student here -->
 <div class="row mb-3">
 <!--<div class="col-md-3"></div>-->
-    <div class="col-md-12"><h6 class="top-header text-xs-center mt-3">Previous Enrollemnt</h6></div>
+    <div class="col-md-12"><h6 class="top-header text-xs-center mt-3"><i class="fa fa-th-list fa-fw" aria-hidden="true"></i> Previous Enrollemnt</h6></div>
 <!--<div class="col-md-3"></div>-->
 
 </div>

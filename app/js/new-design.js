@@ -57,23 +57,6 @@ function loadmore() {
     });
 }
 
-//modal setup test
-// $('#new-content').on('click', 'examModal', function(evt) {
-//     evt.preventDefault();
-//     var modal_id = $(this).attr('data-target');
-//     console.log(modal_id);
-//     $(modal_id).on('show.bs.modal', function(event) {
-//         //var button = $(event.relatedTarget) // Button that triggered the modal
-//         //var recipient = button.data('whatever') // Extract info from data-* attributes
-//         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-//         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-//         //var modal = $(this)
-//         // modal.find('.modal-title').text('New message to ' + recipient)
-//         //modal.find('.modal-body input').val(recipient)
-//     });
-
-
-// })
 
 //Edit exam  modal js
 $('#new-content').on('click', '#newbtn', function(e) {
@@ -115,7 +98,6 @@ $('.closex').on('click', function(evt) {
 //EXAM EDIT ROUTINES
 
 //LOAD SUBJECT BASED ON SELECTION OF CLASS
-
 $('#mystudentclass').on('change', function() {
     var id = $("#mystudentclass option:selected").val();
     $.post("staffSubjectByClass.php", { id: id }, function(data) {
@@ -123,6 +105,59 @@ $('#mystudentclass').on('change', function() {
     });
 });
 //END LOAD SUBJECT BASED ON CLASS
+
+//CREATE A NEW ENROLLMENT
+$("#new-content").on('click', '#mystud-enroll', function(e) {
+    e.preventDefault();
+    var mybtn = $(this);
+
+    mybtn.text("Enrolling...").prop("disabled", true);
+    var studentid = $(this).data("studentid");
+    createStudEnrollment(studentid, mybtn);
+});
+
+function createStudEnrollment(studentid, btn) {
+    $.ajax({
+        url: 'studEnrollment.php',
+        type: 'POST',
+        data: { studentid: studentid },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                btn.text("Enroll").prop("disabled", false);
+
+                reloadNewStudents();
+            } else {
+                btn.text("Enroll").prop("disabled", false);
+
+                //reloadNewStudents();
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+//END CREATE NEW ENROLLMENT
+
+//reload newly admitted students
+function reloadNewStudents() {
+    $.ajax({
+        url: 'myEnrollment.php',
+        type: 'POST',
+        data: {},
+        success: function(response) {
+            $("#new-content").html(response);
+
+        },
+    });
+}
+//end reload newly admitted students
+
+
+
+
+
 
 //edit exams scores
 $("#edit-exam").on('click', function(e) {
@@ -255,7 +290,9 @@ $('#mydefault').on('click', function(e) {
     $('#studcomments').removeClass('custom-btn active-trait').addClass('custom-btn');
     $('#attendancediv').removeClass('custom-btn active-trait').addClass('custom-btn');
     var psychomotor = $('.psychomotor-domain-div');
+    var attcont = $('.attendance-div');
     psychomotor.hide();
+    attcont.hide();
 
 });
 //Show comments div on button click
@@ -535,7 +572,7 @@ $("#new-content").on('click', '#removesubjecttaught', function(e) {
         //var examid = $("#record-id").val();
         deleteStaffSubject(id);
     } else {
-        $('#removsubjeecttaught').text('Remove').prop("disabled", false);
+        $('#removesubjeecttaught').text('Remove').prop("disabled", false);
     }
 
 });
@@ -572,10 +609,57 @@ function reloadStaffSubject() {
         },
     });
 }
-
-
-
 //end reload staff subjects
+
+//REMOVE CLASS TEACHER
+$("#new-content").on('click', '#removeclassteacher', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to remove item. This action can not be reversed!") == true) {
+        $('#removeclassteacher').text('Removing...').prop("disabled", true);
+        var id = $(this).data('recordid');
+        //var examid = $("#record-id").val();
+        deleteClassTeacher(id);
+    } else {
+        $('#removeclassteacher').text('Remove').prop("disabled", false);
+    }
+
+});
+//call back for delete affective skilss
+function deleteClassTeacher(id) {
+    $.ajax({
+        url: 'deleteClassTeacher.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                reloadClassTeachers();
+            } else {
+                $('#removesubjecttaught').tex('Remove').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//END REMOVE CLASS TEACHER
+
+//RELOAD LIST OF CLASS TEACHERS
+function reloadClassTeachers() {
+    $.ajax({
+        url: 'classTeachers.php',
+        type: 'POST',
+        data: {},
+        success: function(response) {
+            $("#new-content").html(response);
+
+        },
+    });
+}
+//END RELOAD LIST OF CLASS TEACHERS
+
 
 //Count characters in a comment text area
 $('#comment-id').keyup(function() {
@@ -736,7 +820,7 @@ function publishResult(myclass, session, term) {
 }
 
 
-//Display result for approval 
+//Approve Result 
 $("#new-content").on('click', '#result-approval', function(e) {
     e.preventDefault();
     $('#result-approval').text('Please wait...').prop("disabled", true);
@@ -744,109 +828,152 @@ $("#new-content").on('click', '#result-approval', function(e) {
     var myclass = $("#s-class option:selected").val();
     var session = $("#s-session option:selected").val();
     var term = $("#s-term option:selected").val();
-    //alert(myclass + session + term);
 
-    summaryComments(myclass, session, term);
+    approveResult(myclass, session, term);
 });
 //call back for result approval
-function summaryComments(myclass, session, term) {
+function approveResult(myclass, session, term) {
     $.ajax({
-        url: 'displayFinalComments.php',
+        url: 'approveResult.php',
         type: 'POST',
         data: { myclass: myclass, session: session, term: term },
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
-                //call a reload function here
-                //reloadPsychoSkills(recordid);
                 $('#result-approval').text('Result Approval').prop("disabled", false);
-                //$("#modal_error").addClass("info");
-                //$("#modal_error").text("Comments added");
-                $("#new-content").html(data);
+                $("#my-info").addClass("info");
+                $("#my-info").text("Result Approved Successfully");
+                //$("#new-content").html(data);
             } else {
-                //$('#add-comments').text('Add Comment').prop("disabled", true);
+
                 $('#result-approval').text('Result Approval').prop("disabled", false);
                 //$("#modal_error").addClass("error");
-                $("#new-content").html(data);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+                //$("#new-content").html(data);
             }
         },
     });
 }
 //end display result for approval
 
-//Code to approve result by admin
-$("#new-content").on('click', '#approve', function(e) {
+
+
+//Disapprove result
+
+$("#new-content").on('click', '#reset-result-approval', function(e) {
     e.preventDefault();
-    var mybutton = $(this);
-    //var approveID = $(this).attr('id');
-    // var Approval = $(this).text('Undo Approval');
-    // var changedClass = $(this).removeClass('not-approvedBtn').addClass('approvedBtn');
-    //var approveClass = $(this).attr('class');
-    var studentid = $(this).data('recordid');
+    $('#reset-result-approval').text('Please wait...').prop("disabled", true);
+    //var id = $(this).data('id');
+    var myclass = $("#s-class option:selected").val();
+    var session = $("#s-session option:selected").val();
+    var term = $("#s-term option:selected").val();
 
-    $(this).text('Please wait...');
-
-    adminApproveResult(studentid, mybutton);
+    disapproveResult(myclass, session, term);
 });
-//call back for approving result
-function adminApproveResult(studentid, mybutton) {
+//call back for result approval
+function disapproveResult(myclass, session, term) {
     $.ajax({
-        url: 'adminApproveResult.php',
+        url: 'unApproveResult.php',
         type: 'POST',
-        data: { studentid: studentid },
+        data: { myclass: myclass, session: session, term: term },
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
-
-                mybutton.attr('id', 'disapprove');
-                //alert(id);
-                //$(this).attr('id', 'disapprove');
-                mybutton.text('Undo Approval');
-                mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
+                $('#reset-result-approval').text('Undo Result Approval').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").text("Result Unapproved Successfully");
+                //$("#new-content").html(data);
             } else {
-                mybutton.text('Approve');
-                $("#info").addClass("error");
-                $("#info").html(data);
+
+                $('#reset-result-approval').text('Undo Result Approval').prop("disabled", false);
+                //$("#modal_error").addClass("error");
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+                //$("#new-content").html(data);
             }
         },
     });
 }
+
+
+//End disapprove result
+
+
+
+//Code to approve result by admin
+// $("#new-content").on('click', '#approve', function(e) {
+//     e.preventDefault();
+//     var mybutton = $(this);
+//     //var approveID = $(this).attr('id');
+//     //var Approval = $(this).text('Undo Approval');
+//     //var changedClass = $(this).removeClass('not-approvedBtn').addClass('approvedBtn');
+//     //var approveClass = $(this).attr('class');
+//     var studentid = $(this).data('recordid');
+
+//     $(this).text('Please wait...');
+
+//     adminApproveResult(studentid, mybutton);
+// });
+// //call back for approving result
+// function adminApproveResult(studentid, mybutton) {
+//     $.ajax({
+//         url: 'adminApproveResult.php',
+//         type: 'POST',
+//         data: { studentid: studentid },
+//         success: function(response) {
+//             var data = $.trim(response);
+//             if (data === "ok") {
+
+//                 mybutton.attr('id', 'disapprove');
+//                 //alert(id);
+//                 //$(this).attr('id', 'disapprove');
+//                 mybutton.text('Undo Approval');
+//                 mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
+//             } else {
+//                 mybutton.text('Approve');
+//                 $("#info").addClass("error");
+//                 $("#info").html(data);
+//             }
+//         },
+//     });
+// }
 //End code to approve
 
 //Code to disapprove result
 
-$("#new-content").on('click', '#disapprove', function(e) {
-    e.preventDefault();
-    var mybutton = $(this);
+// $("#new-content").on('click', '#disapprove', function(e) {
+//     e.preventDefault();
+//     var mybutton = $(this);
 
-    var studentid = $(this).data('recordid');
-    $(this).text('Please wait...');
-    adminDisapproveResult(studentid, mybutton);
-});
-//call back for disapproving result
-function adminDisapproveResult(studentid, mybutton) {
-    $.ajax({
-        url: 'adminUnapproveResult.php',
-        type: 'POST',
-        data: { studentid: studentid },
-        success: function(response) {
-            var data = $.trim(response);
-            if (data === "ok") {
+//     var studentid = $(this).data('recordid');
+//     $(this).text('Please wait...');
+//     adminDisapproveResult(studentid, mybutton);
+// });
+// //call back for disapproving result
+// function adminDisapproveResult(studentid, mybutton) {
+//     $.ajax({
+//         url: 'adminUnapproveResult.php',
+//         type: 'POST',
+//         data: { studentid: studentid },
+//         success: function(response) {
+//             var data = $.trim(response);
+//             if (data === "ok") {
 
-                mybutton.attr('id', 'approve');
-                //alert(id);
-                //$(this).attr('id', 'disapprove');
-                mybutton.text('Approve');
-                mybutton.removeClass('approvedBtn').addClass('not-approvedBtn');
-            } else {
+//                 mybutton.attr('id', 'approve');
+//                 //alert(id);
+//                 //$(this).attr('id', 'disapprove');
+//                 mybutton.text('Approve');
+//                 mybutton.removeClass('approvedBtn').addClass('not-approvedBtn');
+//             } else {
 
-                mybutton.text('Undo Approval');
-                $("#info").addClass("error");
-                $("#info").html(data);
-            }
-        },
-    });
-}
+//                 mybutton.text('Undo Approval');
+//                 $("#info").addClass("error");
+//                 $("#info").html(data);
+//             }
+//         },
+//     });
+// }
 //end code to disapprove result
 
 /**
@@ -1221,6 +1348,24 @@ $('#new-content').on('click', '#editModal', function(e) {
     var modalid = $('#myModal');
     modalid.css('display', 'block');
 });
+
+
+//Show edit term div
+$('#new-content').on('click', '.classteacher-div', function(e) {
+    //show term editable div on button click
+
+    //var itemvalue = $('#item-value').val();
+
+    //$('#editterm').val(itemvalue);
+    $('.term-div').hide();
+    $('.session-div').hide();
+    $('.subject-div').hide();
+    $('.class-div').hide();
+    $('.prefix-div').hide();
+    $('.staffsubjects-div').hide();
+    $('.classteacher-div').show();
+});
+//=================
 //Show edit term div
 $('#new-content').on('click', '.term-div', function(e) {
     //show term editable div on button click
@@ -1234,6 +1379,7 @@ $('#new-content').on('click', '.term-div', function(e) {
     $('.class-div').hide();
     $('.prefix-div').hide();
     $('.staffsubjects-div').hide();
+    $('.classteacher-div').hide();
 });
 //Show session-div
 $('#new-content').on('click', '.session-div', function(e) {
@@ -1245,6 +1391,7 @@ $('#new-content').on('click', '.session-div', function(e) {
     $('.class-div').hide();
     $('.prefix-div').hide();
     $('.staffsubjects-div').hide();
+    $('.classteacher-div').hide();
 });
 //Show staffsubjects-div
 $('#new-content').on('click', '.staffsubjects-div', function(e) {
@@ -1257,6 +1404,7 @@ $('#new-content').on('click', '.staffsubjects-div', function(e) {
     $('.subject-div').hide();
     $('.class-div').hide();
     $('.prefix-div').hide();
+    $('.classteacher-div').hide();
 });
 //Show subject-div
 $('#new-content').on('click', '.subject-div', function(e) {
@@ -1279,6 +1427,7 @@ $('#new-content').on('click', '.class-div', function(e) {
     $('.subject-div').hide();
     $('.prefix-div').hide();
     $('.staffsubjects-div').hide();
+    $('.classteacher-div').hide();
 });
 
 //Show Prefix Settings
@@ -1291,6 +1440,7 @@ $('#new-content').on('click', '.prefix-div', function(e) {
     $('.session-div').hide();
     $('.subject-div').hide();
     $('.staffsubjects-div').hide();
+    $('.classteacher-div').hide();
 });
 
 /**
@@ -1562,3 +1712,84 @@ function unpromote(recordid, promotedClass, promotedSess, studentid, mybutton) {
     });
 }
 //end code to unpromote student
+
+
+//================================================================================
+/**
+ * Funtioality to manage enrolled students
+ * 
+ */
+//============================================
+
+//FIND PREVIOUSLY ENROLLED STUDENTS
+
+//Assign subject to class category
+$("#new-content").on('click', '#find-enrolled-student', function(e) {
+    e.preventDefault();
+    $('#find-enrolled-student').prop("disabled", true);
+    var prevClass = $('#enroll-class option:selected').val();
+    var prevSession = $('#enroll-session option:selected').val();
+    prevStudentList(prevClass, prevSession);
+});
+
+//call back for assign subject to class class category
+function prevStudentList(prevClass, prevSession) {
+    $.ajax({
+        url: 'prevStudentList.php',
+        type: 'POST',
+        data: { prevClass: prevClass, prevSession: prevSession },
+        success: function(response) {
+            //var data = $.trim(response);
+            $("#new-content").html(response);
+            $('#find-enrolled-student').prop("disabled", false);
+        },
+    });
+}
+
+//DELETE ENROLLED STUDENT
+$("#new-content").on('click', '#removeEnrolledStud', function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to remove item. This action can not be reversed!") == true) {
+        $('#removeEnrolledStud').text("Working...").prop("disabled", true);
+        var id = $(this).data('recordid');
+        //var examid = $("#record-id").val();
+        removeEnrolee(id);
+    } else {
+        $('#removeEnrolledStud').text("Remove").prop("disabled", false);
+    }
+
+});
+//call back for delete affective skill settings
+function removeEnrolee(id) {
+    $.ajax({
+        url: 'deleteEnrolledStudent.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                reloadStudentPreview();
+            } else {
+                $('#removeEnrolledStud').text("Remove").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//END ENROLLED STUDENT
+
+//RELOAD STUDENT PREVIEW
+
+function reloadStudentPreview() {
+    $.ajax({
+        url: 'currentEnrollment.php',
+        type: 'POST',
+        data: {},
+        success: function(response) {
+            $("#new-content").html(response);
+        },
+    });
+}

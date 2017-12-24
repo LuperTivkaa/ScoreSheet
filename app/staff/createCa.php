@@ -40,7 +40,7 @@ $staff->staffUser($myroleid,$clientid);
 
                         <div class="col-6">
                             <label for="assignmentclass">Select Class</label>
-                            <select class="custom-select  form-control" id="assignmentclass">
+                            <select class="custom-select  form-control stud-ca" id="assignmentclass">
                               <?php
                                 $student->loadClass($clientid);
                               ?>
@@ -50,9 +50,6 @@ $staff->staffUser($myroleid,$clientid);
                             <div class="col-6">
                             <label for="listsubject">Subject</label>
                             <select class="custom-select  form-control" id="listsubject">
-                              <?php
-                                $student->staffSubject($userid);
-                              ?>
                             </select>
                             </div>              
                         </div>  

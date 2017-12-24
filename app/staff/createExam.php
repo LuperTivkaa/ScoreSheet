@@ -28,7 +28,7 @@ $staff->staffUser($myroleid,$clientid);
 
                         <div class="col-6">
                             <label for="my-class">Select Class</label>
-                            <select class="custom-select  form-control" id="my-class">
+                            <select class="custom-select  form-control stud-exam" id="my-class">
                               <?php
                                 $student->loadClass($clientid);
                               ?>

@@ -12,11 +12,7 @@ $student = new student($dbConnection);
 $client = new client($dbConnection);
 $staff = new staff($dbConnection);
 $print = new printRoutines($dbConnection);
-$schid = $_SESSION['user_info'][4];
-//$newStaff = new student();
-$staffid = $_SESSION['user_info'][0];
-$myroleid = $_SESSION['user_info'][2];
-$staff->staffUser($myroleid,$schid);
+
 if ($_SERVER["REQUEST_METHOD"]=="GET")
 {
 //$regno = $_SESSION['ID'];
@@ -39,22 +35,28 @@ else
     <title>ScoreSheet | Assessment Sheet</title>
     <?php include '../inc/scoresheet-header.php';
     $schid = $_SESSION['user_info'][4];
+    //$newStaff = new student();
+    $staffid = $_SESSION['user_info'][0];
+    $myroleid = $_SESSION['user_info'][2];
+    $staff->staffUser($myroleid,$schid);
 //$newStaff = new student();
-$staffid = $_SESSION['user_info'][0];
     ?>
 
 <body>
 
 <div class="result-content-wrapper">
 
-    <div class="school-profile">
+    <div class="ass-school-profile">
+        <?php
+        $print->schoolAvatar($schid);
+        ?>
         <?php
         $print->schoolProfileHeader($schid);
         ?>
     </div>
     <!--end school profile div  -->
     
-    <div class="result-details">
+    <div class="assessment-details background-cover">
         <?php
             $print->printScoreSheet($subjectid,$class,$term,$session,$schoolid);
         ?>

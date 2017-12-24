@@ -55,6 +55,9 @@ $staff->staffUser($myroleid,$clientid);
                         <div class="col-6">
                     <button class="btn btn-primary mt-3" type="button" id="publish-result"><i class="fa fa-database" aria-hidden="true"></i> Publish Result</button>
                             </div>
+                            <div class="col-6">
+                    <button class="btn btn-danger mt-3" type="button" id="reset-publish-result"><i class="fa fa-undo" aria-hidden="true"></i> Undo Publish Result</button>
+                            </div>
                             </div>
                     </div>
   </div>

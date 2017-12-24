@@ -82,8 +82,9 @@ $staff->staffUser($myroleid,$schid);
                        <!--Div to hold card for user profile  -->
                        <div class="col-md-12 pl-0">
                             <ul class="staff-menu">
-                            <li><a class="load-url" href="addEnrollment.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> New Enrollment</a></li>
-                            <li><a class="load-url" href="previousEnrollment.php"><i class="fa fa-bolt fa-fw" aria-hidden="true"></i> Previous Students</a></li> 
+                            <li><a class="load-url" href="myEnrollment.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> New Enrollment</a></li>
+                            <li><a class="load-url" href="currentEnrollment.php"><i class="fa fa-th-list fa-fw" aria-hidden="true"></i> Current Student(s)</a></li> 
+                            <li><a class="load-url" href="previousEnrollment.php"><i class="fa fa-history fa-fw" aria-hidden="true"></i> Previous Students</a></li>
                             </ul>
                             <hr class="mt-2">                
                        </div>

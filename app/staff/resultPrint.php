@@ -58,29 +58,29 @@ $staff->staffUser($myroleid,$schid);
     <div class="school-profile-container">
 
                 <div class="school-avatar-container">
-                <!-- <img class="school-logo" src=../images/avatar-1.jpg> -->
-                 <?php
+                  <!-- <img class="school-logo" src=../images/avatar-1.jpg> -->
+                    <?php
                     $staff->schoolAvatar($schid);
-                ?>
+                    ?>
                 </div>   
 
 
                 <div class="school-profile">
                     <?php
-                    $print->schoolProfileHeader($schid);
+                    $print->schoolProfileHeader($schoolid);
                     ?>
                 </div>
                 <!--end school profile div  -->
 
                 <!--student avatar div  -->
                 <?php
-                    $staff->studentAvatar(2,2);
+                    $staff->studentAvatar($studentid,$schoolid);
                 ?>
                 <!--end studdent avatar div  -->
                 
     </div>
 
-
+   <!-- student details -->
     <div class="student-profile">
          <h6>STUDENT'S INFORMATION</h6>
         <?php
@@ -90,33 +90,109 @@ $staff->staffUser($myroleid,$schid);
         <!--end avatar  div-->
         <div class="profile-details">
             <?php
-            $print->userScoresDetails(2,1,7,1,2);
+            $print->userScoresDetails($studentid,$class,$session,$term,$schoolid);
             ?>
 
         </div>
+           <!-- End userr score details -->
     </div>
+    <!-- end student profile -->
+ 
 
-    <div class="result-details-container">
+<!-- beginnig of result details container -->
+<div class="result-details-container background-cover">
+
         <h6>STUDENT'S TERMLY CONTINOUS ASSESSMENT PERFORMANCE</h6>
+            <!-- Result details conatiner begins here -->
         <div class="result-details">
-            <?php
-            // $print->userScoresDetails(3,1,7,1,2);
-                $print->resultDetails(2,1,1,7,2)
-            ?>
+                <?php
+                // $print->userScoresDetails(3,1,7,1,2);
+                $print->resultDetails($studentid,$class,$term,$session,$schoolid)
+                ?>
+
+             <!-- Teacher Comments container section here -->
+                <div class="teacher-comments-container">
+
+                    <div class="class-teacher-name">
+                        <span class="staff-comments-header">Class Teacher's Name</span>
+                        <span class="staff-comments-item">
+                        <?php 
+                        echo $staff->classTeacher($class,$schoolid);
+                        ?>
+                        </span>
+                    </div>
+
+                        <div class="class-teacher-comments">
+                            <span class="staff-comments-header">Class Teacher's Comments</span>
+                            <span class="staff-comments-item">
+                            <?php 
+                            echo $print->getStaffComment($studentid,$class,$term,$session,$schoolid);
+                            ?>
+                            </span>
+                        </div>
+
+                            <div class="class-teacher-sign">
+                                <span class="staff-comments-header">Class Teacher's Signature</span>
+                                <span class="staff-comments-item">.......................................</span>
+                            </div>
+
+                </div>
+                <!-- End teacher comments container section here -->
+
+                    <!-- Begin principal-comments-container -->
+                <div class="principal-comments-container">
+
+                    <div class="principal-name">
+                        <span class="staff-comments-header">Principal's Name</span>
+                        <span class="staff-comments-item"></span>
+                    </div>
+
+                    <div class="principal-comments">
+                        <span class="staff-comments-header">Principal's Comments</span>
+                        <span class="staff-comments-item"> <?php 
+                        echo $print->getHeadTeacherComment($studentid,$class,$term,$session,$schoolid);
+                        ?></span>
+                    </div>
+
+                    <div class="principal-sign">
+                        <span class="staff-comments-header">Principals's Signature</span>
+                        <span class="staff-comments-item">.........................................</span>
+                    </div>
+                    
+                </div>
+        
+    <!-- end principal comments container section -->
+
+    <!-- item container -->
+        <div class="item-container">
+            <h6 class="grading-header">Key To Grading</h6>
+            <div class="grading-items"><h6>A-Distinction</h6><span>75% Above</span></div>
+            <div class="grading-items"><h6>B-Very Goood</h6><span>65-74</span></div>
+            <div class="grading-items"><h6>C-Good</h6><span>55-64</span></div>
+            <div class="grading-items"><h6>D-Fair</h6><span>40-54</span></div>
+            <div class="grading-items"><h6>E-Poor</h6><span>39 Below</span></div> 
         </div>
-        <div class="domain-ratings">
+    <!-- end Item container -->
+
+  </div>
+<!-- Result details ends here -->
+</div>
+<!--End result details container  -->
+
+<!-- Domain Ratings -->
+<div class="domain-ratings">
                 
                 <div class="traits-items">
                     <h6 class="domain-ratings-header">Affective Domain</h6>
                     <?php
-                    $print->resultAffectiveTraits(2,2);
+                    $print->resultAffectiveTraits($studentid,$schoolid);
                     ?>
                 </div>
             
                 <div class="traits-items">
                     <h6 class="domain-ratings-header">Psychomotor Domain</h6>
                     <?php
-                    $print->resultPsychomotorSkills(2,2);
+                    $print->resultPsychomotorSkills($studentid,$schoolid);
                     ?>
                 </div>
 
@@ -126,19 +202,18 @@ $staff->staffUser($myroleid,$schid);
                     $print->keyToRatings();
                     ?>
                 </div>
-        </div>        
+</div>
+        <!-- domain ratings container ends here -->
 
-    </div>
-    <!--End result details container  -->
 
-    <div class="comments-section">
+    <!-- <div class="comments-section">
         <div class="teacher-comments-container">
 
             <div class="class-teacher-name">
             <span class="staff-comments-header">Class Teacher's Name</span>
             <span class="staff-comments-item">
                 <?php 
-                echo $staff->classTeacher(1,2);
+                //echo $staff->classTeacher($class,$schoolid);
                 ?>
             </span>
             </div>
@@ -147,7 +222,7 @@ $staff->staffUser($myroleid,$schid);
             <span class="staff-comments-header">Class Teacher's Comments</span>
             <span class="staff-comments-item">
                 <?php 
-                echo $print->getStaffComment(2,1,1,7,2);
+                //echo $print->getStaffComment($studentid,$class,$term,$session,$schoolid);
                 ?>
             </span>
             </div>
@@ -170,7 +245,7 @@ $staff->staffUser($myroleid,$schid);
             <div class="principal-comments">
                 <span class="staff-comments-header">Principal's Comments</span>
                 <span class="staff-comments-item"> <?php 
-                echo $print->getHeadTeacherComment(2,1,1,7,2);
+                //echo $print->getHeadTeacherComment($studentid,$class,$term,$session,$schoolid);
                 ?></span>
             </div>
 
@@ -179,9 +254,9 @@ $staff->staffUser($myroleid,$schid);
             </div>
             
         </div>
-    </div>
+    </div> -->
 
-    <div class="item-container">
+    <!-- <div class="item-container">
         <h6 class="grading-header">Key To Grading</h6>
     
     <div class="grading-items"><h6>A-Distinction</h6><span>75% Above</span></div>
@@ -190,7 +265,7 @@ $staff->staffUser($myroleid,$schid);
     <div class="grading-items"><h6>D-Fair</h6><span>40-54</span></div>
     <div class="grading-items"><h6>E-Poor</h6><span>39 Below</span></div>
     
-    </div>
+    </div> -->
 
 </div>
 

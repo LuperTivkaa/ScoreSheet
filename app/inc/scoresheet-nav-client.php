@@ -37,7 +37,7 @@
                             <div id="myDropdown" class="dropdown-content">
                                 <a href="taskCentre.php"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i>Task Panel</a>
                                 <a href="examPanel.php"><i class="fa fa-puzzle-piece fa-fw" aria-hidden="true"></i>Exam Panel</a>
-                                 <a href="results.php"><i class="fa fa-trophy fa-fw" aria-hidden="true"></i>Result Centre</a>
+                                 <a href="admission-Center.php"><i class="fa fa-trophy fa-fw" aria-hidden="true"></i>Admission Center</a>
                             </div>
                         </div>
                     </li>

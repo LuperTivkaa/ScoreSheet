@@ -59,12 +59,20 @@ $staff->staffUser($myroleid,$clientid);
                             </div>
                             
                         </div>  
-                        <div class="col-6">
+                            <div class="row">
+                            <div class="col-6">
                             <button class="btn btn-primary mt-3" type="button" id="assign-position">Assign Subject Position</button>
+                            </div>
+
+                            <div class="col-6">
+                            <button class="btn btn-success mt-3" type="button" id="reset-subject-position"><i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Reset Subject Position</button>
+                            </div>
+
                             </div>
                     </div>
   </div>
 <!-- Enter form to create new student here -->
+
 
 
       

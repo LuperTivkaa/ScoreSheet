@@ -45,8 +45,8 @@ $surn = $student->getSurname();
 $student->setFirstname($firstname);
 $fn = $student->getFirstname();
 
-$student->setLastname($lastname);
-$ln = $student->getLastname();
+// $student->setLastname($lastname);
+// $ln = $student->getLastname();
 
 $student->setReligion($religion);
 $rel = $student->getReligion();
@@ -84,7 +84,7 @@ $dob = $student->getDob();
 $student->setBloodGroup($blood_group);
 $blood = $student->getBloodGroup();
 
-$student->newStaffProfile($surn,$fn,$ln,$rel,$nation,$state,$lg,$city,$cont_add,$perm_add,$userid,$clientid,$mail,$mobile,$sex,$dob,$blood,$dateCreated);
+$student->newStaffProfile($surn,$fn,$lastname,$rel,$nation,$state,$lg,$city,$cont_add,$perm_add,$userid,$clientid,$mail,$mobile,$sex,$dob,$blood,$dateCreated);
     
 }
 else

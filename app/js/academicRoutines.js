@@ -11,6 +11,7 @@ $("#new-content").on('click', '#add-ca', function(e) {
     var studentClass = $("#assignmentclass option:selected").val();
     var ca_number = $("#ca-no option:selected").val();
     var subject = $("#listsubject option:selected").val();
+    //alert(scores+regno+studentclass+ca_number+subject);
     newCa(regno, scores, studentClass, ca_number, subject);
 });
 //call back function to add new continous assessment scores
@@ -36,6 +37,29 @@ function newCa(regno, scores, studentClass, ca_number, subject) {
     });
 } //end add ca method
 
+//GET ADMISSION LIST OF STUDENTS BY CLASS
+
+$("#new-content").on('click', '#adm-list', function(e) {
+    e.preventDefault();
+    $('#adm-list').prop("disabled", true);
+    var myclass = $("#class-adm option:selected").val();
+    var session = $("#sess-adm option:selected").val();
+    admittedList(myclass, session);
+});
+
+//call back function to  get admission students by class
+function admittedList(myclass, session) {
+    $.ajax({
+        url: 'getAdmissionList.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session },
+        success: function(response) {
+            $('#adm-list').prop("disabled", true);
+            $("#new-content").html(response);
+        },
+    });
+}
+//GET ADMISSION LIST OF STUDENTS BY CLASS
 
 //============================================================
 // ADD TERMINAL EXAMINATION SCORES
@@ -85,8 +109,6 @@ $("#new-content").on('click', '#print-result', function(e) {
     var studclass = $("#studclass option:selected").val();
     var session = $("#session option:selected").val();
     var term = $("#term option:selected").val();
-
-    alert(studclass + session + term);
     viewResultPrint(studclass, session, term);
 });
 
@@ -144,7 +166,43 @@ function printScoresheet(subj, myclass, session, term) {
         },
     });
 }
-//END SCORESHEE PROCESSING
+//END SCORESHEET PROCESSING
+
+
+//process class result sheet
+$("#new-content").on('click', '#exam-sheet', function(e) {
+    e.preventDefault();
+    $('#exam-sheet').prop("disabled", true);
+    var myclass = $("#exam-class option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+
+    //alert(subject + myclass + session + term);
+    classResult(myclass, session, term);
+});
+
+//call back function to add new continous assessment scores
+function classResult(myclass, session, term) {
+    $.ajax({
+        url: 'processClassResultSheet.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#exam-sheet').prop("disabled", false);
+                $("#new-content").html(data);
+            } else {
+                $('#exam-sheet').prop("disabled", false);
+                // $("#my-info").addClass("error");
+                $("#new-content").html(data);
+            }
+        },
+    });
+}
+//end process class result sheet 
+
+
 //Get student details on providing a registration number
 $('#new-content').on('keyup', '#regno', function() {
     var id = $("#regno").val();
@@ -152,7 +210,26 @@ $('#new-content').on('keyup', '#regno', function() {
         $("#user_details").html(data);
     });
 });
-//REFACTOR CODE  REMOVE
+
+
+//load students on class change
+//this functioanlity is only available to class teachers only
+
+$("#new-content").on('change', '.stud-ca', function() {
+    var classid = $(".stud-ca option:selected").val();
+    $.post("studentsListClassChange.php", { classid: classid }, function(data) {
+        $(".class-student-list").html(data);
+    });
+});
+
+$("#new-content").on('change', '.stud-exam', function() {
+    var classid = $(".stud-exam option:selected").val();
+    $.post("studentsListClassChange.php", { classid: classid }, function(data) {
+        $(".class-student-list").html(data);
+    });
+});
+
+
 //LOAD STAFF SUBJECT ON SELECTION OF CLASS
 $('#new-content').on('change', '#my-class', function() {
     var id = $("#my-class option:selected").val();
@@ -160,8 +237,15 @@ $('#new-content').on('change', '#my-class', function() {
         $("#position-subject").html(data);
     });
 });
+//END LOAD SRAFF SUBJECT ON SELECTION OF CLASS
+//===================================================
 
-//REFACTOR CODE
+$('#new-content').on('change', '#assignmentclass', function() {
+    var id = $("#assignmentclass option:selected").val();
+    $.post("staffSubjectByClass.php", { id: id }, function(data) {
+        $("#listsubject").html(data);
+    });
+});
 
 //Assign subject position
 $("#new-content").on('click', '#assign-position', function(e) {
@@ -184,16 +268,156 @@ function subjectPosition(subj, myclass, session, term) {
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
-                $('#assign-position').prop("disabled", false);
-                $("#new-content").html(data);
+                $('#assign-position').text("Assign Subject Position").prop("disabled", false);
+                $("#my-info").html("Subject Position Assigned Successfully");
             } else {
                 $('#assign-position').text("Assign Subject Position").prop("disabled", false);
-                // $("#my-info").addClass("error");
-                $("#new-content").html(data);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
             }
         },
     });
 }
+//end assign subject position
+
+//code block to reset subject position
+$("#new-content").on('click', '#reset-subject-position', function(e) {
+    e.preventDefault();
+    $('#reset-subject-position').text("Reseting...").prop("disabled", true);
+    var subject = $("#position-subject option:selected").val();
+    var myclass = $("#my-class option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+
+    resetSubjectPosition(subject, myclass, session, term);
+});
+
+function resetSubjectPosition(subj, myclass, session, term) {
+    $.ajax({
+        url: 'resetSubjectPosition.php',
+        type: 'POST',
+        data: { subj: subj, myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#reset-subject-position').text('Reset Subject Position').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Position Reset successfully");
+            } else {
+                $('#reset-subject-position').text("Reset Subject Position").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end code block to reset subject  position
+
+
+//code to reset submit result
+$("#new-content").on('click', '#reset-submit-result', function(e) {
+    e.preventDefault();
+    $('#reset-submit-result').text("Reseting...").prop("disabled", true);
+
+    var myclass = $("#my-class option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+
+    resetResult(myclass, session, term);
+});
+
+function resetResult(myclass, session, term) {
+    $.ajax({
+        url: 'resetSubmittedResult.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#reset-submit-result').text('Undo Submit Result').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Submitted Result Reset Successfully");
+            } else {
+                $('#reset-submit-result').text("Undo Submit Result").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End code to reset submit result
+
+
+//RESET CLASS POSITION
+$("#new-content").on('click', '#reset-class-position', function(e) {
+    e.preventDefault();
+    $('#reset-class-position').text("Reseting...").prop("disabled", true);
+
+    var myclass = $("#my-class option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+
+    resetClassPosition(myclass, session, term);
+});
+
+function resetClassPosition(myclass, session, term) {
+    $.ajax({
+        url: 'resetClassPosition.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#reset-class-position').text('Undo Class Position').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Class Position Reset Successfully");
+            } else {
+                $('#reset-class-position').text("Undo Class Position").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//END RESET CLASS POSITION
+
+
+//RESET FINAL PUBLISHED RESULT
+$("#new-content").on('click', '#reset-publish-result', function(e) {
+    e.preventDefault();
+    $('#reset-publish-result').text("Reseting...").prop("disabled", true);
+
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+
+    resetPublishedFinalResult(myclass, session, term);
+});
+
+function resetPublishedFinalResult(myclass, session, term) {
+    $.ajax({
+        url: 'resetPublishedResult.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#reset-publish-result').text('Undo Publish Result').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Published Result Reset Successfully");
+            } else {
+                $('#reset-publish-result').text("Undo Publish Result").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+
+
+
+//END RESET FINAL PUBLISHED RESULT
+
 
 //ENROLL NEW STUDENT IN A CLASS
 $("#new-content").on('click', '#enroll-student', function(e) {

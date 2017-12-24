@@ -54,7 +54,7 @@ $staff->staffUser($myroleid,$clientid);
                             
                         </div>  
                         <div class="col-6">
-                            <button class="btn btn-primary mt-3" type="button" id="Exam-Sheet"><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Exam Summary Sheet</button>
+                            <button class="btn btn-primary mt-3" type="button" id="exam-sheet"><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Exam Summary Sheet</button>
                             </div>
                     </div>
   </div>

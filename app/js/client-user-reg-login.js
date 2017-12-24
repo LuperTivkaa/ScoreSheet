@@ -91,7 +91,7 @@ $("#root_Btn").on('click', function(e) {
 //call baack for root account
 function rootAccount(email, username, pass) {
     $.ajax({
-        url: './rootAccessSignup.php',
+        url: 'rootAccessSignup.php',
         type: 'POST',
         data: { email: email, username: username, pass: pass },
         success: function(response) {
@@ -149,75 +149,169 @@ function rootAccount(email, username, pass) {
 
 
 //new client login
-$('#client-btn').on('click', function() {
-    $(this).text("Please wait....").prop("disabled", true);
-    var email = $("#email").val();
-    var password = $("#password").val();
-    $.post("app/public/clientLogin.php", { email: email, password: password }).done(clientLogin_call);
-});
+// $('#client-btn').on('click', function() {
+//     $(this).text("Please wait....").prop("disabled", true);
+//     var email = $("#email").val();
+//     var password = $("#password").val();
+//     $.post("app/public/clientLogin.php", { email: email, password: password }).done(clientLogin_call);
+// });
 
-// user login call back
-function clientLogin_call(result) {
+// // user login call back
+// function clientLogin_call(result) {
 
-    var data = $.trim(result);
-    if (data === "ok") {
-        $("#client-btn").text("Client Login").prop("disabled", false);
-        window.location.replace("app/public/root_pass.php");
-    } else {
-        $("#client-btn").text("Client Login").prop("disabled", false);
-        $("#client-login").addClass("error");
-        $("#client-login").html(data);
-    }
-}
+//     var data = $.trim(result);
+//     if (data === "ok") {
+//         $("#client-btn").text("Client Login").prop("disabled", false);
+//         window.location.replace("app/public/root_pass.php");
+//     } else {
+//         $("#client-btn").text("Client Login").prop("disabled", false);
+//         $("#client-login").addClass("error");
+//         $("#client-login").html(data);
+//     }
+// }
 
 //////////////////////////////////////////////
 
-//MODIFY FUNCTION USE JSON DATA FROM USER LOGIN FUNCTION IN PHP
+//=====================================================================================================================
+//client Login
 
-$("#sch_login_Btn").on('click', function() {
+$('#client-btn').on('click', function(e) {
+    e.preventDefault();
+    $(this).text("Please wait....").prop("disabled", true);
+    var email = $("#email").val();
+    var password = $("#password").val();
+    signmein(email, password);
+    //$.post("app/public/clientLogin.php", { email: email, password: password }).done(clientLogin_call);
+});
+
+function signmein(email, password) {
+    $.ajax({
+        url: 'app/public/clientLogin.php',
+        type: 'POST',
+        data: { email: email, password: password },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $("#client-btn").text("Client Login").prop("disabled", false);
+                window.location.replace("app/public/root_pass.php");
+            } else {
+                $("#client-btn").text("Client Login").prop("disabled", false);
+                $("#client-login").addClass("error");
+                $("#client-login").html(data);
+            }
+        },
+    });
+}
+///
+//end client logi
+//===================================================================================================================
+
+
+//=============================================================================================================
+//SCHOOL LOGIN
+$("#sch_login_Btn").on('click', function(e) {
+    e.preventDefault();
     $('#sch_login_Btn').text("Please wait...").prop("disabled", true);
     var email = $("#email").val();
     var password = $("#password").val();
     console.log(email);
     console.log(password);
-    $.post("./user_login.php", { email: email, password: password }).done(userLogin);
-
-
+    accessSch(email, password);
+    //$.post("./user_login.php", { email: email, password: password }).done(userLogin);
 });
 
+function accessSch(email, password) {
+    $.ajax({
+        url: 'user_login.php',
+        type: 'POST',
+        data: { email: email, password: password },
+        success: function(response) {
+            var obj = JSON.parse(response);
 
-function userLogin(response) {
-    var obj = JSON.parse(response);
+            //console.log(response);
+            if (typeof obj === "object") {
+                //console.log(obj);
+                $.each(obj, function(index, profile) {
+                    //GET THE ROLE ID OF THE USER
+                    //var my_role = profile.roleID;
+                    //console.log(profile.roleID);
+                    // CHECK THE ROLE ID TO REDIRECT AS APPROPRAITE
+                    if (profile.roleID == 1) {
 
-    //console.log(response);
-    if (typeof obj === "object") {
-        //console.log(obj);
-        $.each(obj, function(index, profile) {
-            //GET THE ROLE ID OF THE USER
-            //var my_role = profile.roleID;
-            //console.log(profile.roleID);
-            // CHECK THE ROLE ID TO REDIRECT AS APPROPRAITE
-            if (profile.roleID == 1) {
+                        //console.log(profile.roleID);
+                        // check and redirect to the staff tutor module
+                        window.location.replace("../staff/index.php");
+                    } else if (profile.roleID == 2) {
+                        // check and redirect to the admin module
+                        window.location.replace("../admin/index.php");
+                    } else if (profile.roleID == 3) {
+                        window.location.replace("../client/index.php");
+                    } else {
+                        // undefined role, contact your school administrator
 
-                //console.log(profile.roleID);
-                // check and redirect to the staff tutor module
-                window.location.replace("../staff/index.php");
-            } else if (profile.roleID == 2) {
-                // check and redirect to the admin module
-                window.location.replace("../admin/index.php");
-            } else if (profile.roleID == 3) {
-                window.location.replace("../client/index.php");
-            } else {
-                // undefined role, contact your school administrator
-                $('#error-info').html("Sorry role undefined, check with the admin");
+                        $('#sch_login_Btn').text("Log Me In").prop("disabled", false);
+                        $("#error-info").addClass("error");
+                        $('#error-info').html("Sorry role undefined, check with the admin");
+                    }
+                });
+
+            } // end type check
+            else {
+                $('#sch_login_Btn').text("Log Me In").prop("disabled", false);
+                $("#error-info").addClass("error");
+                $('#error-info').html(response);
             }
-        });
+        },
 
-    } // end type check
-    else {
-        $('#error-info').html(response);
-    }
+    });
 }
+///==========================================================================================================
+
+//MODIFY FUNCTION USE JSON DATA FROM USER LOGIN FUNCTION IN PHP
+
+// $("#sch_login_Btn").on('click', function() {
+//     $('#sch_login_Btn').text("Please wait...").prop("disabled", true);
+//     var email = $("#email").val();
+//     var password = $("#password").val();
+//     console.log(email);
+//     console.log(password);
+//     $.post("./user_login.php", { email: email, password: password }).done(userLogin);
+// });
+
+
+
+// function userLogin(response) {
+//     var obj = JSON.parse(response);
+
+//     //console.log(response);
+//     if (typeof obj === "object") {
+//         //console.log(obj);
+//         $.each(obj, function(index, profile) {
+//             //GET THE ROLE ID OF THE USER
+//             //var my_role = profile.roleID;
+//             //console.log(profile.roleID);
+//             // CHECK THE ROLE ID TO REDIRECT AS APPROPRAITE
+//             if (profile.roleID == 1) {
+
+//                 //console.log(profile.roleID);
+//                 // check and redirect to the staff tutor module
+//                 window.location.replace("../staff/index.php");
+//             } else if (profile.roleID == 2) {
+//                 // check and redirect to the admin module
+//                 window.location.replace("../admin/index.php");
+//             } else if (profile.roleID == 3) {
+//                 window.location.replace("../client/index.php");
+//             } else {
+//                 // undefined role, contact your school administrator
+//                 $('#error-info').html("Sorry role undefined, check with the admin");
+//             }
+//         });
+
+//     } // end type check
+//     else {
+//         $('#error-info').html(response);
+//     }
+// }
 // END OF SCHOOL LOGIN
 //==================================================================================
 //end section of the code handles client sign up, login and user login

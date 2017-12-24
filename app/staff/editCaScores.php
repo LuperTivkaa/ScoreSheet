@@ -26,8 +26,13 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
       $scores = filter_input(INPUT_POST, "scores", FILTER_SANITIZE_NUMBER_INT);
       $caid= filter_input(INPUT_POST, "caid", FILTER_SANITIZE_STRING);
 
+      if(empty($scores))
+      {
+         $scores =0;
+      }
+
       //check for empty variable
-        if(empty($scores) || empty($subject))
+        if(empty($subject))
         {
             exit("Please fill all the fields...");
         }else{

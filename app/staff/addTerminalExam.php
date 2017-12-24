@@ -25,8 +25,14 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
       $studentClass = filter_input(INPUT_POST, "studentClass", FILTER_SANITIZE_NUMBER_INT);
       //$ca_no= filter_input(INPUT_POST, "ca_number", FILTER_SANITIZE_NUMBER_INT);
       $subject = filter_input(INPUT_POST, "subject", FILTER_SANITIZE_NUMBER_INT);
+
+      if(empty($exam_scores))
+      {
+         $exam_scores =0;
+      }
+
       //check for empty variable
-        if(empty($stud_regnumber) || empty($exam_scores) || empty($studentClass)  || empty($subject) )
+        if(empty($stud_regnumber) || empty($studentClass)  || empty($subject) )
         {
         exit("Please fill all the fields...");
         }

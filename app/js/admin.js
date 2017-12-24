@@ -160,6 +160,102 @@ function getAddedSession(url) {
 
 // } //End Get added Fee item
 
+
+//EDIT STUDENT INFORMATION
+
+$("#edit-student-btn").on('click', function(e) {
+    e.preventDefault();
+    $('#edit-student-btn').text('Saving...').prop("disabled", true);
+    var surname = $("#surname").val();
+    var firstname = $("#firstname").val();
+    var studid = $("#studid").val();
+    var lastname = $("#lastname").val();
+    var religion = $("#religion").val();
+    var nation = $("#stud-nation").val();
+    var state = $("#stud-state").val();
+    var lg = $("#stud-lg").val();
+    var city = $("#stud-city").val();
+    var add1 = $("#address1").val();
+    var add2 = $("#address2").val();
+    var mail = $("#mail").val();
+    var mobile = $("#mobile").val();
+    var sex = $("#sex").val();
+    var dob = $("#datepicker").val();
+    var blood_group = $("#blood-group").val();
+    var class_adm = $("#class-admitted").val();
+    //var arm = $("#arm").val();
+    var session = $("#session").val();
+    var adm_type = $("#adm-type").val();
+    editStudent(studid, surname, firstname, lastname, religion, nation, state,
+        lg, city, add1, add2, mail, mobile, sex, dob,
+        blood_group, class_adm, session, adm_type);
+});
+
+//function to add new student
+function editStudent(studid, surname, firstname, lastname, religion, nation, state,
+    lg, city, add1, add2, mail, mobile, sex, dob,
+    blood_group, class_adm, session, adm_type) {
+    $.ajax({
+        url: 'editStudent.php',
+        type: 'POST',
+        data: {
+            studid: studid,
+            surname: surname,
+            firstname: firstname,
+            lastname: lastname,
+            religion: religion,
+            nation: nation,
+            state: state,
+            lg: lg,
+            city: city,
+            add1: add1,
+            add2: add2,
+            mail: mail,
+            mobile: mobile,
+            sex: sex,
+            dob: dob,
+            blood_group: blood_group,
+            class_adm: class_adm,
+            session: session,
+            adm_type: adm_type
+        },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#edit-student-btn').text('Save Changes').prop("disabled", false);
+                $("#my-info").addClass("info");
+                var surname = $("#surname").val();
+                $("#firstname").val("");
+                $("#lastname").val("");
+                $("#state").val("");
+                $("#lg").val("");
+                $("#city").val("");
+                $("#address1").val("");
+                $("#address2").val("");
+                $("#mail").val("");
+                $("#mobile").val("");
+                $("#datepicker").val("");
+                $("#arm").val("");
+                $("#my-info").html(" Student Updated Successfully");
+            } else {
+                //alert("me")
+                $('#edit-student-btn').text('Save Changes').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+        //alert(user+pass+role);
+    });
+}
+
+
+
+
+
+//END EDIT STUDENT INFORMATION
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //add new Student
 $("#new-content").on('click', '#new-student-btn', function(e) {
@@ -384,16 +480,36 @@ $("#new-content").on('click', '.loader', function(e) {
 });
 //load students without admission number
 function noAdmissionNumberStud() {
-    $.get("loadUnassignedStudents.php", function(data) {
-        $("#student").html(data);
+    $.ajax({
+        url: 'loadUnassignedStudents.php',
+        type: 'POST',
+        data: {},
+        success: function(response) {
+            $("#student").html(response);
+        },
     });
 }
+// function noAdmissionNumberStud() {
+//     $.get("loadUnassignedStudents.php", function(data) {
+//         $("#student").html(data);
+//     });
+// }
 //load unassigned admission numbers
 function fetchUnassignedNumbers() {
-    $.get("loadUnassignedNumbers.php", function(data) {
-        $("#add-no").html(data);
+    $.ajax({
+        url: 'loadUnassignedNumbers.php',
+        type: 'POST',
+        data: {},
+        success: function(response) {
+            $("#add-no").html(response);
+        },
     });
 }
+// function fetchUnassignedNumbers() {
+//     $.get("loadUnassignedNumbers.php", function(data) {
+//         $("#add-no").html(data);
+//     });
+// }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //ASSIGN NEW ADMISSION NUMBER
@@ -402,12 +518,14 @@ $("#new-content").on('click', '#assign-admission-no', function(e) {
     $('#assign-admission-no').prop("disabled", true);
     var student_id = $("#student").val();
     var adm_num_id = $("#add-no").val();
+    // console.log(student_id + adm_num_id);
+    // alert(student_id + adm_num_id);
 
-    assignNewNumber(student_id, adm_num_id);
+    NewNumber(student_id, adm_num_id);
 });
 
 //function to assign new admission number to a student
-function assignNewNumber(studid, admno) {
+function NewNumber(studid, admno) {
     $.ajax({
         url: 'assignNewAdmissionNumber.php',
         type: 'POST',
