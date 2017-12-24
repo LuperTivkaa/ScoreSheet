@@ -54,7 +54,7 @@ $staff->clientUser($myroleid,$clientid);
                         <div class="viewStaff-div">
                            
                         </div>
-                        <!--End edit term -->
+                        <!--End view Staff-->
 
                             <input type="hidden" class="form-control" id="record-id" name="record-id">
                             <input type="hidden" class="form-control" id="item-value" name="item-value">

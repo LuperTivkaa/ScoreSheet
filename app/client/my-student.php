@@ -50,9 +50,9 @@ $staff->clientUser($myroleid,$clientid);
                         <p id="modal_error"></p>  
                          
                        </div>
-                        
 
-                        <!--Begin session div  -->
+                        
+                        <!--Begin student photo upload div  -->
                         <div class="upload-div">
                             <div class="col-8">
                             </div>
@@ -97,17 +97,35 @@ $staff->clientUser($myroleid,$clientid);
                     </div>
                 <!--end new modal  -->
 
+            <!-- Begin Bootstrap modal -->
+
+            <div class="modal fade stud-profile-edit" tabindex="-1" role="dialog"     aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+
+                            <!-- end content block -->
+                            <div class="modal-content">
+
+                            </div>
+                            <!-- end  content block -->
+                    </div>
+            </div>
+
+
+            <!-- end bootstrap modal -->
+
+                
+
                 <div class="primary-col">
                         <div class="aux-menu">
                             <h6> My Student Sub Menu</h6>
                             <ul>
                             <li><a class="load-url" href="newStudent.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Student</a></li>
                             <li><a class="load-url" href="studListByClass.php"><i class="fa fa-camera fa-fw" aria-hidden="true"></i> Upload Passport</a></li>
-                            <li><a class="load-url" href="studentParent.php"><i class="fa fa-male fa-fw fa-fw" aria-hidden="true"></i>Add Parent</a></li>
-                            <li><a class="load-url" href="studentGuardian.php"><i class="fa fa-male fa-fw fa-fw" aria-hidden="true"></i>Add Guardian</a></li>
+                            <li><a class="load-url" href="studentParent.php"><i class="fa fa-male fa-fw fa-fw" aria-hidden="true"></i> Add Parent</a></li>
+                            <li><a class="load-url" href="studentGuardian.php"><i class="fa fa-male fa-fw fa-fw" aria-hidden="true"></i> Add Guardian</a></li>
                             <li><a class="load-url" href="createAdmissionNumber.php"><i class="fa fa-sort-numeric-asc fa-fw" aria-hidden="true"></i> Assign Admission Number</a></li>
-                             <li><a class="load-url" href="student-list.php"><i class="fa fa-th-list fa-fw" aria-hidden="true"></i>Student's Preview</a></li>
-                             <li><a class="load-url" href="student-search.php"><i class="fa fa-search fa-fw" aria-hidden="true"></i>Search Student</a></li>
+                            <li><a class="load-url" href="student-list.php"><i class="fa fa-th-list fa-fw" aria-hidden="true"></i> Student's Preview</a></li>
+                            <li><a class="load-url" href="student-search.php"><i class="fa fa-search fa-fw" aria-hidden="true"></i> Search Student</a></li>
                             </ul>   
                         </div>  
                    
@@ -120,6 +138,9 @@ $staff->clientUser($myroleid,$clientid);
                     <div id="new-content">
                     </div>
                     <div id="student-search-result">
+                    </div>
+
+                    <div id="student-edit">
                     </div>
 
                 </div>
