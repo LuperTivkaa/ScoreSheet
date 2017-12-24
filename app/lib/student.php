@@ -132,7 +132,7 @@ function getBloodGroup()
     $this->conn = $db;
     }
 
-//load specific staff subjects
+//load all subjects taught across borad given a staff id
 public function staffSubject($user_id)
     {
         try {
@@ -161,7 +161,7 @@ public function staffSubject($user_id)
    }
   //end staff subjects
 
-  //load staff subject by class
+  //load staff subject taught on selection of class assigned to teach class
 public function staffSubjectByClass($user_id,$classid,$clientid)
     {
         try {
@@ -224,11 +224,12 @@ public function loadStudentGuardian($client_id)
         try {
 
             $query ="SELECT id, CONCAT(UPPER(surname), ' ', firstName) AS fullname FROM 
-            student_initial WHERE student_initial.id NOT IN 
+            student_initial WHERE student_initial.stud_sch_id=? AND student_initial.id NOT IN 
             (SELECT student_id_no FROM student_guardian WHERE parent_sch_id=?)";
              
                 $this->conn->query($query);
                 $this->conn->bind(1, $client_id, PDO::PARAM_INT);
+                $this->conn->bind(2, $client_id, PDO::PARAM_INT);
                 $myResult = $this->conn->resultset();
                 $output =" "; 
         foreach ($myResult as $row => $key) 
@@ -260,11 +261,12 @@ public function loadNewStudent($client_id)
         try {
 
             $query ="SELECT id, CONCAT(UPPER(surname), ' ', firstName) AS fullname FROM 
-            student_initial WHERE student_initial.id NOT IN 
+            student_initial WHERE student_initial.stud_sch_id=? AND student_initial.id NOT IN 
             (SELECT student_id_no FROM student_parent WHERE parent_sch_id=?)";
              
                 $this->conn->query($query);
                 $this->conn->bind(1, $client_id, PDO::PARAM_INT);
+                $this->conn->bind(2, $client_id, PDO::PARAM_INT);
                 $myResult = $this->conn->resultset();
                 $output =" "; 
         foreach ($myResult as $row => $key) 
@@ -316,15 +318,15 @@ public function loadRelationship()
 
 
 //Get student whose id not found in student admission table
-public function getStudentAssign($client_id)
+function getStudentAssign($client_id)
     {
         try {
-            $query ="SELECT id, CONCAT(UPPER(surname), ' ', firstName) AS fullname FROM 
-            student_initial WHERE student_initial.id NOT IN 
-            (SELECT stud_id FROM student_admission_no WHERE my_stud_sch_id=?)";
-             
+            $query ="SELECT student_initial.id, CONCAT(UPPER(student_initial.surname), ' ', student_initial.firstName) AS fullname FROM 
+            student_initial WHERE student_initial.stud_sch_id=? AND student_initial.id NOT IN 
+            (SELECT stud_id FROM my_number WHERE my_stud_sch_id=?)";
                 $this->conn->query($query);
                 $this->conn->bind(1, $client_id, PDO::PARAM_INT);
+                $this->conn->bind(2, $client_id, PDO::PARAM_INT);
                 $myResult = $this->conn->resultset();
                 $output =" "; 
         foreach ($myResult as $row => $key) 
@@ -332,9 +334,8 @@ public function getStudentAssign($client_id)
             
             $ID = $key['id'];
             $fullname = $key['fullname'];
-       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-      //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
-          $output .= "<option value=".$ID.">".$fullname."</option>";
+      
+          $output .= '<option value='.$ID.'>'.$fullname.'</option>';
                 
         }
        echo $output;
@@ -347,24 +348,27 @@ public function getStudentAssign($client_id)
    //end load new  and unassigned student
 
 //function to assign a new number to a student/pupil
-public  function assignNewNumber($studid,$admissionNoId,$clientid)
+function assignNewNumber($studid,$admNoId,$clientid)
   {
     //always use try and catch block to write code   
   try{
 
           //insert new number
-                            $sqlStmt = "INSERT INTO student_admission_no(stud_id,admission_number,my_stud_sch_id) 
+                            $sqlStmt = "INSERT INTO my_number(stud_id,admission_number,my_stud_sch_id) 
                             values (?,?,?)";
+                            // $sqlStmt = "INSERT INTO my_number
+                            // (studid, admno, schid) 
+                            // values (?,?,?)";
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $studid, PDO::PARAM_INT);
-                            $this->conn->bind(2, $admissionNoId, PDO::PARAM_INT);
+                            $this->conn->bind(2, $admNoId, PDO::PARAM_INT);
                             $this->conn->bind(3, $clientid, PDO::PARAM_INT); 
                             $this->conn->execute(); 
-                        if ($this->conn->rowCount() == 1) 
+                          if ($this->conn->rowCount() == 1) 
                         {
                          // check number of inserted rows
                          //TOGGLE ADMISSION NUMBER
-                         $this->toggleAssignNum($admissionNoId);
+                         $this->toggleAssignNum($admNoId);
                         } 
                         else
                         {
@@ -387,7 +391,43 @@ public  function assignNewNumber($studid,$admissionNoId,$clientid)
 //update assigned number
 //change flag to true, which means active 
 //active status means number can not be assigned again
-public  function toggleAssignNum($admNumId)
+//test method
+
+//insert test
+// function insertTest($st,$no,$sch)
+// {
+// try
+// {
+// $sql = "INSERT INTO my_number
+// (studid, admno, schid) 
+// values (?,?,?)";
+// $this->conn->query($sql);
+// $this->conn->bind(1, $st, PDO::PARAM_INT);
+// $this->conn->bind(2, $no, PDO::PARAM_INT);
+// $this->conn->bind(3, $sch, PDO::PARAM_INT);
+// $this->conn->execute();
+//         if ($this->conn->rowCount() == 1) 
+//         {
+//         // check number of inserted rows
+//         //TOGGLE ADMISSION NUMBER
+//         $this->toggleAssignNum($no);
+//         } 
+//         else
+//         {
+//         echo "Unable to add assign admission number";
+//         }
+// }
+// catch(Exception $e)
+// {
+// //echo error here
+// //this get an error thrown by the system
+// echo "Error:". $e->getMessage();
+// }
+
+// }
+//=====================================================================
+
+function toggleAssignNum($admNumId)
   {
    //always use try and catch block to write code  
     try{
@@ -416,9 +456,10 @@ public  function toggleAssignNum($admNumId)
   }
   //end  toogle assigned number
 
+  
 
 //Generate admission numbers
-public function newAdmissionNumber($clientid,$limit,$dateCreated,$status='False')
+function newAdmissionNumber($clientid,$limit,$dateCreated,$status='False')
         {
         try {
                     $query ="SELECT serial_number FROM admission_number WHERE adm_sch_id=? ORDER BY id DESC LIMIT 1 ";
@@ -483,7 +524,7 @@ public function newAdmissionNumber($clientid,$limit,$dateCreated,$status='False'
 
 
         //LOAD UNASSIGNED ADMISSION NUMBERS
-public function loadUnassignedNumber($clientid,$status='False')
+function loadUnassignedNumber($clientid,$status='False')
         {
         try {
             //SELECT THE TOP MOST UNASSIGNED  NUMBER
@@ -516,7 +557,7 @@ public function loadUnassignedNumber($clientid,$status='False')
 
 
 //Add new guardian
-public  function newGuardian($surname,$firstname,$lastname,
+function newGuardian($surname,$firstname,$lastname,
   $occupation,$sex,$contact_add,$mobile,$email,$relationship,
   $stud_id,$sch_id,$emergency)
     {
@@ -566,7 +607,7 @@ public  function newGuardian($surname,$firstname,$lastname,
 //add new guarddian
 
 //Add New Student parent
-public  function newParent($surname,$firstname,$lastname,
+function newParent($surname,$firstname,$lastname,
   $occupation,$sex,$contact_add,$mobile,$email,$relationship,
   $stud_id,$sch_id,$emergency)
     {
@@ -614,6 +655,69 @@ public  function newParent($surname,$firstname,$lastname,
          }
     }
 //end new student parent
+
+//Edit Student 
+public  function editStudent($studid,$schid,$surname,$firstname,$lastname,$sex,
+$class_admtitted,$session_admitted,$adm_type,$date_created,
+$createdBy,$permAdd,$contAdd,$email,$sch_id,$country,$state,$city,$lga,
+$religion,$dob,$mobile,$blood,$status='Active')
+  {
+
+  // always use try and catch block to write code
+   
+try{
+
+        
+                          $sqlStmt = "UPDATE student_initial SET surname=?,firstName=?,lastName=?,gender=?,classAdmitted=?,sessionAdmitted=?,
+                          admissionType=?,dateCreated=?,createdBy=?,perm_home_add=?,contact_add=?,
+                          email=?,stud_sch_id=?,nationality=?,state=?,city=?,lga=?,religion=?,dateOfBirth=?,mobile=?,status_active=?,blood_group=? WHERE id=? AND stud_sch_id=?";
+                          $this->conn->query($sqlStmt);
+                          $this->conn->bind(1, $this->surname, PDO::PARAM_STR,100);
+                          $this->conn->bind(2, $this->firstname, PDO::PARAM_STR,100);
+                          $this->conn->bind(3, $lastname, PDO::PARAM_STR,100);
+                          $this->conn->bind(4, $this->sex, PDO::PARAM_INT); 
+                          $this->conn->bind(5, $class_admtitted, PDO::PARAM_STR);
+                          $this->conn->bind(6, $session_admitted, PDO::PARAM_STR,100);
+                          $this->conn->bind(7, $adm_type, PDO::PARAM_STR,100);
+                          $this->conn->bind(8, $date_created, PDO::PARAM_INT); 
+                          $this->conn->bind(9, $createdBy, PDO::PARAM_STR);
+                          $this->conn->bind(10, $permAdd, PDO::PARAM_STR);
+                          $this->conn->bind(11, $contAdd, PDO::PARAM_STR,100);
+                          $this->conn->bind(12, $this->email, PDO::PARAM_STR,100);
+                          $this->conn->bind(13, $sch_id, PDO::PARAM_STR,100);
+                          $this->conn->bind(14, $this->country, PDO::PARAM_INT); 
+                          $this->conn->bind(15, $this->state, PDO::PARAM_STR);
+                          $this->conn->bind(16, $this->city, PDO::PARAM_STR);
+                          $this->conn->bind(17, $this->lga, PDO::PARAM_STR,100);
+                          $this->conn->bind(18, $this->religion, PDO::PARAM_STR,100);
+                          $this->conn->bind(19, $dob, PDO::PARAM_STR,100);
+                          $this->conn->bind(20, $mobile, PDO::PARAM_INT); 
+                          $this->conn->bind(21, $status, PDO::PARAM_STR);
+                          $this->conn->bind(22, $blood, PDO::PARAM_STR);
+                          $this->conn->bind(23, $studid, PDO::PARAM_INT);
+                          $this->conn->bind(24, $schid, PDO::PARAM_INT);
+                          
+                          $this->conn->execute(); 
+
+                      if ($this->conn->rowCount() == 1) 
+                      {
+                       //check number of inserted rows
+                      echo "ok";
+                      } 
+                      else
+                      {
+                      echo "Error editing student";
+                    }
+    }
+
+      catch(Exception $e)
+      {
+      //echo error here
+      //this get an error thrown by the system
+      echo "Error:". $e->getMessage();
+       }
+}
+//end edit student
 
 //Add New Student
 public  function newStudent($surname,$firstname,$lastname,$sex,

@@ -10,6 +10,12 @@ private $host ="localhost";
 // private $dbname = "smarty";
 
 //
+// private $user = "skygift3_scores7";
+// private $pass = "scoresheet_ems";
+// private $dbname = "skygift3_scoresheet";
+
+
+//
 private $user = "skygift2_scores7";
 private $pass = "scoresheet_ems";
 private $dbname = "skygift2_scoresheet";
@@ -122,14 +128,6 @@ public function endTransaction(){
 public function cancelTransaction(){
     return $this->dbh->rollBack();
 }
-
-
-
-
-
-
-
-
 
 
 

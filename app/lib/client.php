@@ -205,7 +205,7 @@ public function __construct(dbConnection $db)
     }
 
     
- //METHOD TO GET ACTIVE SESSION
+ //METHOD TO GET ACTIVE SESSION ID
 function getActiveSession($schid,$status='Active')
  {
   //always use try and catch block to write code
@@ -297,8 +297,7 @@ public function loadClassArm($class_id)
 
        //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
       //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
-          $output .= "<option value=".$ID.">".$arm."</option>";
-                
+          $output .= "<option value=".$ID.">".$arm."</option>";       
         }
        echo $output;
         }// End of try catch block
@@ -588,7 +587,7 @@ public  function feeItem($item_name,$amount,$amt_wrds,$clientid,$term,$session)
 public function initialStudentList($schid,$status="Active")
         {
         try {
-                $query ="SELECT id AS studentID, CONCAT(UPPER(surname), ', ', lastName, ' ', lastname) AS fullname, gender AS Sex,img AS Image,status_active AS Active FROM student_initial
+                $query ="SELECT id AS studentID, CONCAT(UPPER(surname), ', ', firstName, ' ', lastName) AS fullname, gender AS Sex,img AS myImage,status_active AS Active FROM student_initial
                 WHERE stud_sch_id=? && status_active =? ORDER BY gender AND surname DESC LIMIT 0,10";
                     $this->conn->query($query);
                     $this->conn->bind(1, $schid, PDO::PARAM_INT); 
@@ -597,7 +596,7 @@ public function initialStudentList($schid,$status="Active")
                     $myResult = $this->conn->resultset();
                     //echo table headings
                 $output .='<table class="table">';
-                $output .='<thead><tr><th>Full Name</th><th>Sex</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+                $output .='<thead><tr><th>Avatar</th><th>Full Name</th><th>Sex</th><th>Status</th><th>Action</th></tr></thead><tbody>';
                     if($myResult){
                     foreach ($myResult as $row => $key) 
                     {
@@ -605,13 +604,21 @@ public function initialStudentList($schid,$status="Active")
                     $fullname = $key['fullname'];
                     $sex = $key['Sex'];
                     $status = $key['Active'];
-                    //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-                    //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+                    $studavatar = $key['myImage'];
+                    if($studavatar){
+                    $studentAvatarData='<img src="'.$studavatar.'" class="small-avatar">';
+                    }else{
+                    $studentAvatarData='<img src="../images/profile-icon.png" class="small-avatar">';
+                    }
+                   
                    $output.= '<tr>';
+                   $output.='<td>'.$studentAvatarData.'</td>';
                    $output.='<td>'.$fullname.'</td>';
                    $output.= '<td>'.$sex.'</td>';
                    $output.='<td>'.$status.'</td>';
-                   $output.='<td><button onclick="displayDetails('.$ID.')" class="btn btn-info btn-sm">View</button></td>';
+                   //$output.='<td><button type="button" data-recordid="'.$key['studentID'].'"  class="btn btn-info btn-sm" id="my-stud-edit" data-toggle="modal" data-target=".stud-profile-edit"><i class="fa fa-eye fa-fw" aria-hidden="true"></i> Edit </button></td>';
+                   $output.='<td><a href="myStudentEdit.php?studentid='.$key['studentID'].'" class="btn btn-info btn-sm" target="_blank" id="result-link"><i class="fa fa-pencil" aria-hidden="true"></i> Edit </a></td>';
+
                    $output.='</tr>';
                    //$output .= "<option value=".$ID.">".$category."</option>";
                     }
@@ -657,8 +664,7 @@ public function otherStudentList($schid,$status="Active",$no)
                    $output.='<td>'.$fullname.'</td>';
                    $output.='<td>'.$sex.'</td>';
                    $output.='<td>'.$status.'</td>';
-                   $output.='<td><button onclick="displayDetails('.$ID.')" class="btn btn-info btn-sm"><i class="fa fa-eye fa-fw" aria-hidden="true"></i>
-View</button></td>';
+                   $output.='<td><a href="myStudentEdit.php?studentid='.$key['studentID'].'" class="btn btn-info btn-sm" target="_blank" id="result-link"><i class="fa fa-pencil" aria-hidden="true"></i> Edit </a></td>';
                    $output.='</tr>';
                     }
                     //$output.=' </tbody></table>';
@@ -733,7 +739,6 @@ public function getFemaleStaff($id)
             echo json_encode("Error: Unable to fetch female Staff");
         }
         }
-
         //end get male staff
 
 
@@ -1958,7 +1963,7 @@ public  function newSubject($subjname,$clientid)
 //end new subject
 //=================================================
 /*
-method block to assign subject to class
+method block to assign subject to class category
 */
 public  function assignSubject($subject_id,$class_category_id,$sch_id)
   {
@@ -2520,6 +2525,73 @@ public  function addClassTeacher($staff_id,$class_id,$schid,$createdBy,$addedDat
     }
 //end create class teacher
 
+//=========================
+//EDIT CLASS TEACHER CLASS
+public  function editClassTeacher($recordid,$class_id,$staff_id,$sch_id,$userid,$editedDate)
+    {
+ // always use try and catch block to write code
+            try{
+    //make sure only one staff is assigned as a class teacher
+                  $query ="SELECT id FROM class_teacher WHERE staff_id=? AND class_id=? AND school_id=?";
+                  $this->conn->query($query);
+                   $this->conn->bind(1, $staff_id, PDO::PARAM_INT);
+                  $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                  $this->conn->bind(3, $sch_id, PDO::PARAM_INT);
+                  $this->conn->execute();
+                  //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                  if ($this->conn->rowCount() >= 1)
+                  {
+                    exit("This staff has been assigned this class already!");
+                  }
+                  else{
+                          //check for duplicate subject per class
+                          $query ="SELECT class_id FROM class_teacher WHERE class_id=? AND school_id=?";
+                          $this->conn->query($query);
+                          $this->conn->bind(1, $class_id, PDO::PARAM_INT);
+                          $this->conn->bind(2, $sch_id, PDO::PARAM_INT);
+                          $this->conn->execute();
+                                  if ($this->conn->rowCount() >= 1)
+                                  {
+                                      exit("This class has been assigned a class teacher already");
+                                  }
+                                      else{
+                                      //insert new subjects  taught by staff 
+                                      $sqlStmt = "UPDATE class_teacher set staff_id=?,
+                                      class_id=?,addedBy=?,dateAdded=? WHERE id=? AND school_id=?";
+                                      $this->conn->query($sqlStmt);
+                                      $this->conn->bind(1, $staff_id, PDO::PARAM_INT);
+                                      $this->conn->bind(2, $class_id, PDO::PARAM_INT);
+                                      $this->conn->bind(3, $userid, PDO::PARAM_INT);
+                                      $this->conn->bind(4, $editedDate, PDO::PARAM_STR);  
+                                      $this->conn->bind(5, $recordid, PDO::PARAM_INT);
+                                      $this->conn->bind(6, $sch_id, PDO::PARAM_INT);
+                                      
+                                      $this->conn->execute(); 
+                                          if ($this->conn->rowCount() == 1) 
+                                          {
+                                          //check number of inserted rows
+                                          echo "ok";
+                                          } 
+                                          else
+                                          {
+                                          echo "Error editing class teacher";
+                                          }
+                                      }
+                                  }     
+    }
+
+      catch(Exception $e)
+      {
+      //echo error here
+      //this get an error thrown by the system
+      echo "Error:". $e->getMessage();
+       }
+  }
+///END EDIT CLASS TEACHER CLASS
+
+
+
+
 //load class assigned to a staff as CLAS TEACHER
 public function loadClassTeacherClass($staffid,$schid)
         {
@@ -2587,11 +2659,14 @@ public function classTeacherClassID($staffid,$schid)
             $this->conn->bind(2, $schid, PDO::PARAM_INT);
             $myResult = $this->conn->resultset();
            $output =" "; 
-     foreach ($myResult as $row => $key) 
-      {
-      $ID = $key['ID'];
-     }
-    return $ID;
+           if($myResult)
+           {
+            foreach ($myResult as $row => $key) 
+            {
+            $ID = $key['ID'];
+            }
+            return $ID;
+        }else{}
      }// End of try catch block
      catch(Exception $e)
      {
@@ -2603,8 +2678,8 @@ public function classTeacherClassID($staffid,$schid)
 //METHOD TO  SELECT STUDENTS AND UPLOAD THEIR UPLOAD
 
 public function studentsPhoto($staffid,$schid)
-{
-try {
+  {
+  try {
     $classTeacherClassID = $this->classTeacherClassID($staffid,$schid);
     $activeSession = $this->getActiveSession($schid);
         $query ="SELECT CONCAT(UPPER(student_initial.surname), ', ', student_initial.firstName) AS fullname, 
@@ -2682,9 +2757,6 @@ echo "Error:". $e->getMessage();
 //END METHOD TO SELECT STUDENTS AND UPLOAD THEIR UPLOAD
 
 
-
-
-
 //LOAD all subject taught by each Staff 
 public function subjectTeacher($schid)
         {
@@ -2707,7 +2779,8 @@ public function subjectTeacher($schid)
                     $output.="<h5 class='top-header mt-2'> Subject(s) Teachers </h5><br/>";
                     $output .='<table class="table">';
                     $output .='<thead><tr><th>Avatar</th><th> Name</th><th>Subject</th><th>Class</th><th>Remove</th><th>Edit</th></tr></thead><tbody>';
-                    if($myResult){
+                    if($myResult && $this->conn->rowCount()>=1)
+                    {
                     foreach ($myResult as $row => $key) 
                     {
                     $fullname = $key['fullname'];
@@ -2729,8 +2802,49 @@ public function subjectTeacher($schid)
                     }
                     $output.=' </tbody></table>';
                     echo $output;
-         }// End of try catch block
-        }
+         }
+         else{
+            $query ="SELECT users.user_name AS Username,  
+            staff_subject_taught.my_id AS StaffID, 
+            staff_subject_taught.id AS subjectTaughtID, 
+            class.class_name AS ClassName, 
+            subjects.subject_name AS SubjectName FROM users 
+            INNER JOIN staff_subject_taught ON staff_subject_taught.my_id = users.id
+            INNER JOIN class ON staff_subject_taught.class_taught=class.id
+            INNER JOIN subjects ON subjects.sub_id=staff_subject_taught.subject_id
+            WHERE staff_subject_taught.sch_identity=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $schid, PDO::PARAM_INT);
+                $myResult = $this->conn->resultset();
+                $output="";
+                $myResult = $this->conn->resultset();
+                $output.="<h5 class='top-header mt-2'> Subject(s) Teachers </h5><br/>";
+                $output .='<table class="table">';
+                $output .='<thead><tr><th> User Name</th><th>Subject</th><th>Class</th><th>Remove</th><th>Edit</th></tr></thead><tbody>';
+                foreach ($myResult as $row => $key) 
+                {
+                $fullname = $key['Username'];
+                //$avatar = $key['Avatar'];
+                //$avatarData ='<img src="'.$avatar.'" alt="Staff Avatar" class="small-avatar">';
+                $staffID = $key['StaffID'];
+                $Recordid = $key['subjectTaughtID'];
+                $class = $key['ClassName'];
+                $subj = $key['SubjectName'];
+                $output.= '<tr>';
+                //$output.='<td>'.$avatarData.'</td>';
+                $output.='<td>'.$fullname.'</td>';
+                $output.='<td>'.$subj.'</td>';
+                $output.='<td>'.$class.'</td>';
+                $output.='<td><button type="button"  data-recordid="'.$key['subjectTaughtID'].'" class="btn btn-info btn-sm" id="removesubjecttaught"><i class="fa fa-trash fa-fw" aria-hidden="true"></i> Remove</button></td>';
+                $output.='<td><button type="button" data-staffid="'.$key['StaffID'].'" data-recordid="'.$key['subjectTaughtID'].'" class="btn btn-info btn-sm staffsubjects-div" id="editModal"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Edit</button></td>';
+               $output.='</tr>';
+               //$output .= "<option value=".$ID.">".$category."</option>";
+                }
+                $output.=' </tbody></table>';
+                echo $output;
+
+         }      
+        }// End of try catch block
          catch(Exception $e)
           {
         //echo error here
@@ -2775,6 +2889,41 @@ function removeSubjectTeacher($recordid,$schid)
     }
 
 //REMOVE SUBJECT TEACHER
+
+// REMOVE CLASS TEACHER
+function removeClassTeacher($recordid,$schid)
+  {
+   
+              try {
+
+                                   //Remove Promotion Details
+                         $sqlStmt = "DELETE  FROM class_teacher WHERE id=? AND school_id=?";
+                         $this->conn->query($sqlStmt);
+                         $this->conn->bind(1, $recordid, PDO::PARAM_INT);
+                         $this->conn->bind(2, $schid, PDO::PARAM_INT);
+                         $this->conn->execute();
+                             if ($this->conn->rowCount() == 1)
+                             {
+                              // action successful
+                             echo "ok";
+                             }
+                             else
+                             {
+                             echo "Error removing Class Teacher";
+                               }
+
+                         }
+
+     catch(Exception $e)
+     {
+     //echo error here
+     //this get an error thrown by the system
+     echo "Error:". $e->getMessage();
+     
+   }
+ }
+
+//END REMOVE CLASS TEACHER
 //Activate Term
 function activateTerm($termid,$schid,$activate="Active")
   {
@@ -3208,6 +3357,8 @@ function editSchPrefixSettings($prefixid,$prefix,$schid)
   }
 //End edit school prefix settings
 
+// student list
+
 
 //Method to list all users (Staff)
 public function allStaffUsers($clientid)
@@ -3537,13 +3688,1193 @@ function resumptionDate($schid,$date)
         echo "Error:". $e->getMessage();
          }
     }
-
-
-
-
-
-
 //end resumption date settings
+//==========================================================================================
+//SCHOOL SETTINGS
+
+//Method to return current term name 
+public function currentTerm($clientid,$status="Active")
+{
+    try {
+            $query ="SELECT term AS TermName FROM sch_term WHERE term_inst_id=? AND term_status=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                $this->conn->bind(2, $status, PDO::PARAM_STR);
+                $myResult = $this->conn->resultset();
+                $output ="No Active Setting"; 
+                    if($myResult && $this->conn->rowCount() >=1){
+                foreach ($myResult as $row => $key) 
+                    {
+                    $termName = $key['TermName'];
+            
+                    }
+                    return $termName;
+                }else{
+                    return $output;
+                }      
+            }// End of try catch block
+            catch(Exception $e)
+            {
+                echo "Error: Unable to load active term";
+            }
+}
+//End Method to get active term
+
+//Method to return current term name 
+public function currentSession($clientid,$status="Active")
+        {
+            try {
+            $query ="SELECT session AS MySession FROM session 
+            WHERE sess_inst_id=? AND active_status=?";
+                $this->conn->query($query);
+                $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                $this->conn->bind(2, $status, PDO::PARAM_STR);
+                $myResult = $this->conn->resultset();
+                $output ="No Active Setting"; 
+                    if($myResult && $this->conn->rowCount() >=1)
+                    {
+                foreach ($myResult as $row => $key) 
+                    {
+                    $sess = $key['MySession'];
+            
+                    }
+                    return $sess;
+                }else{
+                    return $output;
+                }      
+            }// End of try catch block
+            catch(Exception $e)
+            {
+                echo "Error: Unable to load active session";
+            }
+}
+//End Method to get active term
+
+//Current school settings
+public function currentSchoolSettings($clientid)
+    {
+        $printOutput ="";
+        $printOutput.='<div class="current-settings">
+        <h5><i class="fa fa-wrench fa-fw" aria-hidden="true"></i> 
+        Current Setting</h5>
+        <p class="stud-details-item"><i class="fa fa-calendar-plus-o fa-fw" aria-hidden="true"></i> 
+        Term <span class="item-detail-span">'.$this->currentTerm($clientid).'</span></p>
+        <p class="stud-details-item"><i class="fa fa-briefcase fa-fw" aria-hidden="true"></i> 
+        Session <span class="item-detail-span">' .$this->currentSession($clientid).'</span> </p>
+        </div>';
+        echo $printOutput;
+    }
+
+//GET STUDENT SERIAL NUMBER
+function studentSerialNumber($studentid,$clientid)
+    {
+    try {
+            $query ="SELECT  admission_number.serial_number AS MySerialNumber
+            FROM admission_number
+            INNER JOIN my_number ON admission_number.id=my_number.admission_number
+            WHERE my_number.stud_id=? AND my_number.my_stud_sch_id=?";
+            $this->conn->query($query);
+            $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+            $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+            $myResult = $this->conn->resultset();
+            $output ="Null"; 
+            if($myResult && $this->conn->rowCount()>=1)
+            {
+            foreach ($myResult as $row => $key) 
+            {
+                $serialNumber = $key['MySerialNumber'];
+                //$output .= "<option value=".$ID.">".$termName."</option>";
+            }
+            return $serialNumber;
+        }else{
+            return $output;
+        }
+        }// End of try catch block
+            catch(Exception $e)
+            {
+                echo "Error: Unable to get serial number for student";
+            }
+}
+//END STUDENT SERIAL NUMBER
+
+//=================================
+/**
+ * Load all students upon select of a class especially when staff is enterring scores
+ * This will help the staff to look up students name and number by just scrolling up and down the list
+ * select student admission number from appropriate table
+ */
+
+public function studentListOnClass($clientid,$classid)
+    {
+        try {
+            if($this->getActiveSession($clientid))
+            {
+        $sessionid = $this->getActiveSession($clientid);
+        $query ="SELECT  CONCAT(UPPER(student_initial.surname), ', ', student_initial.firstName, ' ', student_initial.lastName) AS fullname, 
+        student_initial.img AS MyImage,
+        student_class.student_id AS StudentID
+        FROM student_class
+        INNER JOIN student_initial ON student_initial.id=student_class.student_id
+        WHERE student_class.stud_class=? AND student_class.stud_school_id=? AND student_class.stud_sess_id=? ORDER BY fullname ASC";
+            $this->conn->query($query);
+            $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+            $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+            $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+            $myResult = $this->conn->resultset();
+            $printOutput ="";
+            $errorOutput ="";
+            
+            $printOutput ='<div class="studlist-on-class">
+            <h5><i class="fa fa-history fa-fw" aria-hidden="true"></i>Working Class</h5>
+            <ul class="stud-list-highlight">';
+            if($myResult && $this->conn->rowCount() >=1)
+            {
+                foreach($myResult as $row => $key)
+                {
+                $fullname = $key['fullname'];
+                $img = $key['MyImage'];
+                if($img){
+                    $thumbnail='<img src="'.$img.'" class="list-avatar">';
+                   
+
+                }else{
+                    $thumbnail='<img src="../images/profile-icon.png" class="list-avatar">';
+                }
+                $studentid = $key['StudentID'];
+                $serial_no = $this->studentSerialNumber($studentid,$clientid);
+                   $printOutput.='<li>
+                                <div class="small-stud-avatar">'.
+                                $thumbnail.'
+                                </div>
+
+                            <div class="small-stud-detail">
+                                <p class="stud-details-item">'.$fullname.'</p>
+                                <p class="stud-details-sub-item">'.$serial_no.'</p>
+                            </div>
+                          </li>';
+                }
+
+                echo $printOutput;
+            }
+            else{
+                //do nothing
+                // $errorOutput.='<div class="error-div">'.$null.'</div>';
+                // echo $errorOutput;
+            }
+        }else{
+            //do nothing;
+        }
+        }//End of try catch block
+    catch(Exception $e)
+    {
+    echo "Error:". $e->getMessage();
+    }
+}
+
+//End student list on class
+
+
+//Method to list students enrolled student in a particular class based on staff for brief secondary column display
+public function studentInClass($staffid,$clientid)
+    {
+     try {
+       
+        $staffClassID =$this->classTeacherClassID($staffid,$clientid);
+        if($staffClassID && $this->getActiveSession($clientid))
+         {
+        
+        $sessionid = $this->getActiveSession($clientid);
+        $query ="SELECT student_class.student_id AS StudentID,
+        CONCAT(UPPER(student_initial.surname), ', ', student_initial.firstName) AS studName, 
+        student_initial.img AS MyImage
+        FROM student_class
+        INNER JOIN staff_profile ON student_class.stud_added_by=staff_profile.user_id
+        INNER JOIN student_initial ON student_class.student_id=student_initial.id
+        WHERE student_class.stud_added_by=? AND student_class.stud_school_id=? AND student_class.stud_sess_id=? AND student_class.stud_class=? ORDER BY studName ASC";
+            $this->conn->query($query);
+            $this->conn->bind(1, $staffid, PDO::PARAM_INT); 
+            $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+            $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+            $this->conn->bind(4, $staffClassID, PDO::PARAM_INT);
+            $myResult = $this->conn->resultset();
+            $null ='<p class="top-header"> No student yet! </p>';
+            $printOutput ="";
+            
+                if($myResult && $this->conn->rowCount() >=1)
+                {
+                    $printOutput ='<div class="studlist-on-class">
+                    <h5><i class="fa fa-bar-chart fa-fw" aria-hidden="true"></i>
+                    Roll Call</h5>
+                        <ul class="stud-list-highlight">';
+                    foreach($myResult as $row => $key)
+                    {
+                    $studID = $key['StudentID'];
+                    $studname = $key['studName'];
+                    $img = $key['MyImage'];
+                        if($img){
+                            $thumbnail='<img src="'.$img.'" class="list-avatar">';
+                        
+
+                        }else{
+                            $thumbnail='<img src="../images/profile-icon.png" class="list-avatar">';
+                         }
+                            $studSerialNum =$this->studentSerialNumber($studID,$clientid);
+                            $printOutput.='<li>
+                                <div class="small-stud-avatar">
+                                '.$thumbnail.'
+                                </div>
+
+                                <div class="small-stud-detail">
+                                    <p class="stud-details-item">'.$studname.'</p>
+                                    <p class="stud-details-sub-item">'.$studSerialNum.'</p>
+                                </div>
+                            </li>';
+                    }
+                    $printOutput.='</ul></div>';
+                    echo $printOutput;
+                }
+            else{
+                echo $null;
+                }
+            }
+            else{
+                //staff is not a class teacher, display nothing
+            }
+        }//End of try catch block
+    catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+    }
+//End method to list enrolled students in a particular class based on staff
+
+
+//==================================================================================================================
+
+//GET ADMISSION LIST PER CLASS ADMITTED
+//===========================================================
+public function admissionListByClass($classid,$sessionid,$clientid)
+  {
+    try {
+    $sessionid = $this->getActiveSession($clientid);
+    //$staffClassID =$this->classTeacherClassID($staffid,$schid);
+    $query ="SELECT
+    CONCAT(UPPER(student_initial.surname), ', ', student_initial.firstName, ' ', student_initial.lastName) AS studName, student_initial.id AS StudentID, student_initial.img AS MyImage, student_initial.gender AS Gender,
+    class.class_name AS className,
+    session.session AS SessionName
+    FROM student_initial
+    INNER JOIN class ON student_initial.classAdmitted=class.id
+    INNER JOIN session ON student_initial.sessionAdmitted=session.id
+    WHERE student_initial.classAdmitted=? AND student_initial.sessionAdmitted=? AND student_initial.stud_sch_id=? ORDER BY studName ASC";
+    $this->conn->query($query);
+    $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+    $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+    $this->conn->bind(3, $clientid, PDO::PARAM_INT);
+    $myResult = $this->conn->resultset();
+    $null ="<p>No student yet!</p>";
+        $ci =1;
+        $output="";
+    $output.= '<p class="printAssessment">
+    <a href="admissionListPrint.php?class='.$classid.'&session='.$sessionid.'&schoolid='.$clientid.'" target="_blank" id="print-link"><i class="fa fa-print" aria-hidden="true"></i> Print List </a>
+    <hr></p>';
+    
+    $myResult = $this->conn->resultset();
+    $output.='<h5 class="top-header mt-2"><i class="material-icons">group</i>  Admission List </h5><br/>';
+    $output.='<table class="table-print">
+    <thead><tr><th>#</th><th>Avatar</th><th>Name</th><th>Gender</th><th>Class</th><th>Session</th><th>Admission Number</th></tr></thead><tbody>';
+        if($myResult && $this->conn->rowCount()>=1)
+            {
+                foreach ($myResult as $row => $key) 
+                {
+                $fullname = $key['studName'];
+                $avatar = $key['MyImage'];
+                        if($avatar){
+                        $thumbnail='<img src="'.$avatar.'" class="list-avatar">';
+                        }else{
+                        $thumbnail='<img src="../images/profile-icon.png" class="list-avatar">';
+                         }
+                    
+                //$avatarData ='<img src="'.$avatar.'" alt="Student Avatar" class="small-avatar">';
+                $studentID = $key['StudentID'];
+                $gender = $key['Gender'];
+                $class = $key['className'];
+                $session = $key['SessionName'];
+                $studSerialNum =$this->studentSerialNumber($studentID,$clientid);
+                $output.= '<tr>';
+                $output.='<td>'.$ci.'</td>';
+                $output.='<td>'.$thumbnail.'</td>';
+                $output.='<td>'.$fullname.'</td>';
+                $output.='<td>'.$gender.'</td>';
+                $output.='<td>'.$class.'</td>';
+                $output.='<td>'.$session.'</td>';
+                $output.='<td>'.$studSerialNum.'</td>';
+                $output.='</tr>';
+                $ci++;
+    //$output .= "<option value=".$ID.">".$category."</option>";
+        }
+    echo $output.=' </tbody></table>';
+    }else{
+    echo $null;
+    }
+    }
+//End of try catch block
+    catch(Exception $e)
+    {
+    echo "Error:". $e->getMessage();
+    }
+    }
+    //end method to get list of admitted students by class
+//==========================================================
+
+//METHOD TO PRINT ADMISSION LIST
+public function admissionListPrint($classid,$sessionid,$clientid)
+{
+  try {
+  $sessionid = $this->getActiveSession($clientid);
+  //$staffClassID =$this->classTeacherClassID($staffid,$schid);
+  $query ="SELECT
+  CONCAT(UPPER(student_initial.surname), ', ', student_initial.firstName) AS studName, student_initial.id AS StudentID, student_initial.img AS MyImage, student_initial.gender AS Gender,
+  class.class_name AS className,
+  session.session AS SessionName
+  FROM student_initial
+  INNER JOIN class ON student_initial.classAdmitted=class.id
+  INNER JOIN session ON student_initial.sessionAdmitted=session.id
+  WHERE student_initial.classAdmitted=? AND student_initial.sessionAdmitted=? AND student_initial.stud_sch_id=? ORDER BY studName ASC";
+  $this->conn->query($query);
+  $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+  $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+  $this->conn->bind(3, $clientid, PDO::PARAM_INT);
+  $myResult = $this->conn->resultset();
+  $null ="<p>No student yet!</p>";
+      $ci =1;
+  $output="";
+  $myResult = $this->conn->resultset();
+  $output.='<table class="table-print">
+  <thead><tr><th>#</th><th>Avatar</th><th>Name</th><th>Gender</th><th>Class</th><th>Session</th><th>Admission Number</th></tr></thead><tbody>';
+      if($myResult && $this->conn->rowCount()>=1)
+          {
+              foreach ($myResult as $row => $key) 
+              {
+              $fullname = $key['studName'];
+              $avatar = $key['MyImage'];
+                      if($avatar){
+                      $thumbnail='<img src="'.$avatar.'" class="list-avatar">';
+                      }else{
+                      $thumbnail='<img src="../images/profile-icon.png" class="list-avatar">';
+                       }
+                  
+              //$avatarData ='<img src="'.$avatar.'" alt="Student Avatar" class="small-avatar">';
+              $studentID = $key['StudentID'];
+              $gender = $key['Gender'];
+              $class = $key['className'];
+              $session = $key['SessionName'];
+              $studSerialNum =$this->studentSerialNumber($studentID,$clientid);
+              $output.= '<tr>';
+              $output.='<td>'.$ci.'</td>';
+              $output.='<td>'.$thumbnail.'</td>';
+              $output.='<td>'.$fullname.'</td>';
+              $output.='<td>'.$gender.'</td>';
+              $output.='<td>'.$class.'</td>';
+              $output.='<td>'.$session.'</td>';
+              $output.='<td>'.$studSerialNum.'</td>';
+              $output.='</tr>';
+              $ci++;
+  //$output .= "<option value=".$ID.">".$category."</option>";
+      }
+  echo $output.=' </tbody></table>';
+  }else{
+  echo $null;
+  }
+  }
+//End of try catch block
+  catch(Exception $e)
+  {
+  echo "Error:". $e->getMessage();
+  }
+  }
+
+
+
+
+//METHOD TO PRINT ADMISSION LIST
+
+
+//Full enrolled students display with delete button and deactivate button
+public function classEnrollmentPreview($staffid,$clientid)
+    {
+        try {
+            $sessionid = $this->getActiveSession($clientid);
+            $staffClassID =$this->classTeacherClassID($staffid,$clientid);
+            $query ="SELECT student_class.id AS classID, student_class.student_id AS StudentID,
+            CONCAT(UPPER(student_initial.surname), ', ', student_initial.firstName, ' ', student_initial.lastName) AS studName, student_initial.img AS MyImage, 
+            class.class_name AS className
+            FROM student_class
+            INNER JOIN staff_profile ON student_class.stud_added_by=staff_profile.user_id
+            INNER JOIN class ON student_class.stud_class = class.id
+            INNER JOIN student_initial ON student_class.student_id=student_initial.id
+            WHERE student_class.stud_added_by=? AND student_class.stud_school_id=? AND student_class.stud_sess_id=? AND student_class.stud_class=? ORDER BY studName ASC";
+            $this->conn->query($query);
+            $this->conn->bind(1, $staffid, PDO::PARAM_INT); 
+            $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+            $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+            $this->conn->bind(4, $staffClassID, PDO::PARAM_INT);
+            $myResult = $this->conn->resultset();
+            $null ="<p>No student yet!</p>";
+        
+        $output="";
+        $myResult = $this->conn->resultset();
+        $output.='<h5 class="top-header mt-2"><i class="material-icons">group</i> Current Enrolled Students </h5><br/>';
+        $output .='<table class="table">';
+        $output .='<thead><tr><th>Avatar</th><th> Name</th><th>Class</th><th>Remove</th><th>Preview</th></tr></thead><tbody>';
+        if($myResult && $this->conn->rowCount()>=1)
+         {
+                foreach ($myResult as $row => $key) 
+                {
+                $fullname = $key['studName'];
+                $avatar = $key['MyImage'];
+                $avatarData ='<img src="'.$avatar.'" alt="Student Avatar" class="small-avatar">';
+                $studentID = $key['StudentID'];
+                $Recordid = $key['classID'];
+                $class = $key['className'];
+                $output.= '<tr>';
+                $output.='<td>'.$avatarData.'</td>';
+                $output.='<td>'.$fullname.'</td>';
+                $output.='<td>'.$class.'</td>';
+                $output.='<td><button type="button"  data-recordid="'.$key['classID'].'" class="btn btn-info btn-sm" id="removeEnrolledStud"><i class="material-icons">delete_forever</i> Remove</button></td>';
+                $output.='<td><button type="button" data-studentid="'.$key['StudentID'].'" data-recordid="'.$key['classID'].'" class="btn btn-info btn-sm enrolledStudent-div" id="enrolledStudPreview"> <i class="material-icons">perm_identity</i> Preview</button></td>';
+                $output.='</tr>';
+            //$output .= "<option value=".$ID.">".$category."</option>";
+                }
+            echo $output.=' </tbody></table>';
+    }else{
+        echo $null;
+    }
+}
+    //End of try catch block
+catch(Exception $e)
+    {
+        echo "Error:". $e->getMessage();
+    }
+}
+//End full enrolled students display with delete button and deactivate button
+
+//STUDENT ENROLLMENT BY CLASS AND SESSION, SELECTION BASED ON CLASS TEACHER
+
+public function classEnrollmentFilter($classid,$session,$staffid,$clientid)
+    {
+        try {
+        //$sessionid = getActiveSession($clientid);
+        //$staffClassID =$this->classTeacherClassID($staffid,$schid);
+        $query ="SELECT student_class.id AS classID, student_class.student_id AS StudentID,
+        CONCAT(UPPER(student_initial.surname), ', ', student_initial.firstName, ' ', student_initial.lastName) AS studName, student_initial.img AS MyImage, 
+        class.class_name AS className,
+        session.session AS SessionName
+        FROM student_class
+        INNER JOIN staff_profile ON student_class.stud_added_by=staff_profile.user_id
+        INNER JOIN class ON student_class.stud_class = class.id
+        INNER JOIN session ON student_class.stud_sess_id=session.id
+        INNER JOIN student_initial ON student_class.student_id=student_initial.id
+        WHERE student_class.stud_added_by=? AND student_class.stud_school_id=? AND student_class.stud_sess_id=? AND student_class.stud_class=? ORDER BY studName ASC";
+        $this->conn->query($query);
+        $this->conn->bind(1, $staffid, PDO::PARAM_INT); 
+        $this->conn->bind(2, $clientid, PDO::PARAM_INT);
+        $this->conn->bind(3, $session, PDO::PARAM_INT);
+        $this->conn->bind(4, $classid, PDO::PARAM_INT);
+        $myResult = $this->conn->resultset();
+        $null ="<p>No student yet!</p>";
+    
+        $output="";
+        $myResult = $this->conn->resultset();
+       $output.='<h5 class="top-header mt-2"><i class="material-icons">group</i>  Enrolled Students List </h5><br/>';
+        $output .='<table class="table">';
+        $output .='<thead><tr><th>Avatar</th><th> Name</th><th>Class</th><th>Session</th><th>Preview</th></tr></thead><tbody>';
+    if($myResult && $this->conn->rowCount()>=1)
+     {
+            foreach ($myResult as $row => $key) 
+            {
+            $fullname = $key['studName'];
+            $avatar = $key['MyImage'];
+            $avatarData ='<img src="'.$avatar.'" alt="Student Avatar" class="small-avatar">';
+            $studentID = $key['StudentID'];
+            $Recordid = $key['classID'];
+            $class = $key['className'];
+            $session = $key['SessionName'];
+            $output.= '<tr>';
+            $output.='<td>'.$avatarData.'</td>';
+            $output.='<td>'.$fullname.'</td>';
+            $output.='<td>'.$class.'</td>';
+            $output.='<td>'.$session.'</td>';
+            $output.='<td><button type="button" data-studentid="'.$key['StudentID'].'" class="btn btn-info btn-sm enrolledStudent-div" id="enrolledStudPreview"> <i class="material-icons">perm_identity</i> Preview</button></td>';
+            $output.='</tr>';
+        //$output .= "<option value=".$ID.">".$category."</option>";
+            }
+        echo $output.=' </tbody></table>';
+}else{
+    echo $null;
+}
+}
+//End of try catch block
+catch(Exception $e)
+{
+    echo "Error:". $e->getMessage();
+}
+}
+
+//END STUDENT ENROLLMENT BY CLASS AND SESSION, SELECTION BASED ON CLASS TEACHER
+
+//METHOD TO LIST  CLASS TEACHERS
+public function listClassTeachers($schid)
+ {
+    try {
+        $query ="SELECT CONCAT(UPPER(staff_profile.surname), ', ', staff_profile.middle_name, ' ', staff_profile.lastname) AS fullname, 
+        staff_profile.user_img AS Avatar,  
+        class_teacher.staff_id AS StaffID, 
+        class_teacher.id AS classteacherID, 
+        class.class_name AS ClassName
+        FROM staff_profile 
+        INNER JOIN class_teacher ON class_teacher.staff_id = staff_profile.user_id
+        INNER JOIN class ON class_teacher.class_id=class.id
+        WHERE class_teacher.school_id=?";
+            $this->conn->query($query);
+            $this->conn->bind(1, $schid, PDO::PARAM_INT);
+            $myResult = $this->conn->resultset();
+            $output="";
+            $myResult = $this->conn->resultset();
+            $output.="<h5 class='top-header mt-2'> Class Teachers </h5><br/>";
+            $output .='<table class="table">';
+            $output .='<thead><tr><th>Avatar</th><th> Name</th><th>Class</th><th>Remove</th><th>Edit</th></tr></thead><tbody>';
+            if($myResult && $this->conn->rowCount()>=1)
+            {
+            foreach ($myResult as $row => $key) 
+            {
+            $fullname = $key['fullname'];
+            $avatar = $key['Avatar'];
+            $avatarData ='<img src="'.$avatar.'" alt="Staff Avatar" class="small-avatar">';
+            $staffID = $key['StaffID'];
+            $Recordid = $key['classteacherID'];
+            $class = $key['ClassName'];
+            $output.= '<tr>';
+            $output.='<td>'.$avatarData.'</td>';
+            $output.='<td>'.$fullname.'</td>';
+            $output.='<td>'.$class.'</td>';
+            $output.='<td><button type="button"  data-recordid="'.$key['classteacherID'].'" class="btn btn-info btn-sm" id="removeclassteacher"><i class="fa fa-trash fa-fw" aria-hidden="true"></i> Remove</button></td>';
+            $output.='<td><button type="button" data-staffid="'.$key['StaffID'].'" data-recordid="'.$key['classteacherID'].'" class="btn btn-info btn-sm classteacher-div" id="editModal"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Edit</button></td>';
+           $output.='</tr>';
+           //$output .= "<option value=".$ID.">".$category."</option>";
+            }
+            $output.=' </tbody></table>';
+            echo $output;
+ }
+ else{
+    $query ="SELECT users.user_name AS Username,  
+    class_teacher.staff_id AS StaffID, 
+    class_teacher.id AS classteacherID, 
+    class.class_name AS ClassName
+    FROM users 
+    INNER JOIN class_teacher ON class_teacher.staff_id = users.id
+    INNER JOIN class ON class_teacher.class_id=class.id
+    WHERE class_teacher.school_id=?";
+        $this->conn->query($query);
+        $this->conn->bind(1, $schid, PDO::PARAM_INT);
+        $myResult = $this->conn->resultset();
+        $output="";
+        $myResult = $this->conn->resultset();
+        if($myResult && $this->conn->rowCount()>=1)
+        {
+        $output.="<h5 class='top-header mt-2'> Class Teachers </h5><br/>";
+        $output .='<table class="table">';
+        $output .='<thead><tr><th> User Name</th><th>Class</th><th>Remove</th><th>Edit</th></tr></thead><tbody>';
+        foreach ($myResult as $row => $key) 
+        {
+        $fullname = $key['Username'];
+        //$avatar = $key['Avatar'];
+        //$avatarData ='<img src="'.$avatar.'" alt="Staff Avatar" class="small-avatar">';
+        $staffID = $key['StaffID'];
+        $Recordid = $key['classteacherID'];
+        $class = $key['ClassName'];
+        $output.= '<tr>';
+        //$output.='<td>'.$avatarData.'</td>';
+        $output.='<td>'.$fullname.'</td>';
+        $output.='<td>'.$class.'</td>';
+        $output.='<td><button type="button"  data-recordid="'.$key['classteacherID'].'" class="btn btn-info btn-sm" id="removeclassteacher"><i class="fa fa-trash fa-fw" aria-hidden="true"></i> Remove</button></td>';
+        $output.='<td><button type="button" data-staffid="'.$key['StaffID'].'" data-recordid="'.$key['classteacherID'].'" class="btn btn-info btn-sm classteacher-div" id="editModal"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Edit</button></td>';
+       $output.='</tr>';
+       //$output .= "<option value=".$ID.">".$category."</option>";
+        }
+        $output.=' </tbody></table>';
+        echo $output;
+    }else
+    {
+        exit("No staff added or no class assigned yet!");
+    }
+}      
+}// End of try catch block
+ catch(Exception $e)
+  {
+//echo error here
+//this get an error thrown by the system
+echo "Error:". $e->getMessage();
+
+}
+}
+////END METHOD TO LIST CLASS TEACHERS
+
+//school preview method
+
+function schoolProfilePreview($clientid)
+{
+try {
+        $query ="SELECT institutional_signup.inst_id AS ID, institutional_category.category_name AS schType,nationality.nationality AS Nation, states.state_name AS State, lga.lga AS Lg, city.city_name AS City, institutional_signup.inst_mobile AS Mobile,institutional_signup.web_address AS WebAdd, institutional_signup.email_add AS Email FROM institutional_signup
+        INNER JOIN institutional_category ON institutional_signup.institution_type=institutional_category.id
+        INNER JOIN nationality ON institutional_signup.country_id=nationality.id
+        INNER JOIN states ON institutional_signup.state_id=states.id
+        INNER JOIN lga ON institutional_signup.lg_id=lga.id
+        INNER JOIN city ON institutional_signup.inst_city_id=city.id
+        WHERE institutional_signup.client_id=?";
+            $this->conn->query($query);
+            $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+            $output = array();
+            $myResult = $this->conn->resultset();
+            $output = $myResult;
+            $printOutput = "";
+            if($output)
+            {
+
+              foreach($output as $row => $key)
+                        {
+                //make the record id of the terminal exam table the key of the array
+                $schtype = $key['schType'];
+                $nation = $key['Nation'];
+                $state= $key['State'];
+                $lg = $key['Lg'];
+                $city = $key['City'];
+                $mobile= $key['Mobile'];
+                $web = $key['WebAdd'];
+                $email = $key['Email'];
+                //var_dump($arr);
+                        }
+              $printOutput.='<h6 class="top-header">School Profile</h6>
+              <ul class="preview-list-container">';
+              $printOutput.='<li class=""> <span class=""><i class="material-icons">school</i>
+School Type</span> '.$schtype.'</li>';
+              $printOutput.='<li class=""> <span class=""><i class="material-icons">public</i> Country </span>'.$nation.'</li>';
+              $printOutput.='<li class=""> <span class=""> <i class="material-icons">place</i>
+State </span>' .$state.'</li>';
+               $printOutput.='<li class=""> <span class=""> <i class="material-icons">my_location</i>
+City </span>'.$city.'</li>';
+              $printOutput.='<li class=""><span class=""><i class="material-icons">call</i>
+Mobile </span> '.$mobile.'</li>';
+$printOutput.='<li class=""><span class=""><i class="material-icons">link</i>
+Web Address </span> '.$web.'</li>';
+$printOutput.='<li class=""><span class=""><i class="material-icons">mail</i>
+Email </span> '.$email.'</li>';
+              $printOutput.='</ul>';
+            }
+            else
+            {
+              echo "No School profile yet!";
+            }
+            echo $printOutput;
+        }//End of try catch block
+ catch(Exception $e)
+    {
+    echo ("Error: Unable to school profile");
+    }
+}
+//end school preview method
+
+
+//Count the number of male  students in my class
+public function maleStudentCount($staffid,$clientid,$gender="Male")
+    {
+        try {
+            
+            $staffClassID =$this->classTeacherClassID($staffid,$clientid);
+            if($staffClassID)
+            {
+            $sessionid = $this->getActiveSession($clientid);
+            $query ="SELECT  COUNT(student_initial.gender) AS Male
+            FROM student_initial
+            WHERE student_initial.stud_sch_id=? AND student_initial.gender=? AND student_initial.id IN (SELECT student_id FROM student_class WHERE stud_class=? AND stud_sess_id=? AND stud_added_by=? AND stud_school_id=?)";
+            $this->conn->query($query);
+            $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+            $this->conn->bind(2, $gender, PDO::PARAM_STR); 
+            $this->conn->bind(3, $staffClassID, PDO::PARAM_INT); 
+            $this->conn->bind(4, $sessionid, PDO::PARAM_INT); 
+            $this->conn->bind(5, $staffid, PDO::PARAM_INT); 
+            $this->conn->bind(6, $clientid, PDO::PARAM_INT); 
+        
+            $myResult = $this->conn->resultset();
+            $output = "null";
+            if($myResult && $this->conn->rowCount() >=1)
+               {
+                   foreach($myResult as $row => $key)
+                   {
+                    $no = $key['Male'];
+                   }
+                   return $no;
+               }
+               else
+                {
+                return $null;
+                }
+            //echo json_encode($output);
+            }
+        else{
+            //do nothing
+        }
+        }//End of try catch block
+    catch(Exception $e)
+    {
+        echo "Error:". $e->getMessage();
+    }
+    }
+//end get male staff
+
+
+
+//METHOD TO GET NUMBER OF FEMALE STUDENTS IN CLASS
+public function femaleStudentCount($staffid,$clientid,$gender="Female")
+    {
+    try {
+        
+         // $sessionid = $this->getActiveSession($clientid);
+          $staffClassID =$this->classTeacherClassID($staffid,$clientid);
+        if($staffClassID)
+        {
+            $sessionid = $this->getActiveSession($clientid);
+        $query ="SELECT  COUNT(student_initial.gender) AS Female
+        FROM student_initial
+        WHERE student_initial.stud_sch_id=? AND student_initial.gender=? AND student_initial.id IN (SELECT student_id FROM student_class WHERE stud_class=? AND stud_sess_id=? AND stud_added_by=? AND stud_school_id=?)";
+        $this->conn->query($query);
+        $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+        $this->conn->bind(2, $gender, PDO::PARAM_STR); 
+        $this->conn->bind(3, $staffClassID, PDO::PARAM_INT); 
+        $this->conn->bind(4, $sessionid, PDO::PARAM_INT); 
+        $this->conn->bind(5, $staffid, PDO::PARAM_INT); 
+        $this->conn->bind(6, $clientid, PDO::PARAM_INT); 
+        
+        $myResult = $this->conn->resultset();
+        $output = "null";
+        if($myResult && $this->conn->rowCount() >=1)
+           {
+               foreach($myResult as $row => $key)
+               {
+                $no = $key['Female'];
+               }
+               return $no;
+           }
+           else
+            {
+            return $null;
+            }
+        //echo json_encode($output);
+        }
+        else{
+            //do nothing
+        }
+    }//End of try catch block
+    catch(Exception $e)
+    {
+    echo "Error:". $e->getMessage();
+    }
+    }
+//END METHOD TO GET NUMBER OF FEMALE STUDENTS IN CLASS
+
+//count number of students in a particular class
+public function StudentsClassCount($staffid,$clientid)
+  {
+    try {
+        
+        $sessionid = $this->getActiveSession($clientid);
+        $staffClassID =$this->classTeacherClassID($staffid,$clientid);
+        if($staffClassID)
+        {
+        $query ="SELECT  COUNT(student_id) AS StudentCount 
+        FROM
+        student_class 
+        WHERE stud_class=? AND stud_sess_id=? AND stud_added_by=? AND stud_school_id=?";
+        $this->conn->query($query); 
+        $this->conn->bind(1, $staffClassID, PDO::PARAM_INT); 
+        $this->conn->bind(2, $sessionid, PDO::PARAM_INT); 
+        $this->conn->bind(3, $staffid, PDO::PARAM_INT); 
+        $this->conn->bind(4, $clientid, PDO::PARAM_INT); 
+        $myResult = $this->conn->resultset();
+        $output = "null";
+        if($myResult && $this->conn->rowCount() >=1)
+           {
+               foreach($myResult as $row => $key)
+               {
+                $no = $key['StudentCount'];
+               }
+               return $no;
+           }
+           else
+            {
+            return $null;
+            }
+        //echo json_encode($output);
+        }
+        else{
+            //Do nothing
+        }
+    }//End of try catch block
+   catch(Exception $e)
+    {
+        echo "Error:". $e->getMessage();
+    }
+   }
+//End count number of students in a particular class
+
+
+//class count summary
+public function ClassSummaryCount($staffid,$clientid)
+ {
+ try {
+     if( $this->classTeacherClassID($staffid,$clientid) && $this->getActiveSession($clientid))
+     {
+            $sessionid = $this->getActiveSession($clientid);
+            $staffClassID =$this->classTeacherClassID($staffid,$clientid);
+            $classCount = $this->StudentsClassCount($staffid,$clientid);
+            $femaleStudCount = $this->femaleStudentCount($staffid,$clientid);
+            $maleStudentCount = $this->maleStudentCount($staffid,$clientid);
+
+    //call student male function
+    //call female student count function
+    if($staffClassID)
+     {
+                     $printOutput ="";
+                     $printOutput ='<div class="class-stats">
+                    <h5><i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+                    Class Summary</h5>
+                      <ul class="stud-list-highlight">';
+                     $printOutput.='<li>
+                     <p class="stud-details-item"><i class="fa fa-users fa-fw" aria-hidden="true"></i> Total Student(s)   <span class="badge badge-pill badge-primary">'.$classCount.'</span></p></li>';
+                     $printOutput.='<li><p class="stud-details-item"><i class="fa fa-male fa-fw" aria-hidden="true"></i> Male Student(s)    <span class="badge badge-pill badge-info">'.$maleStudentCount.'</span></p></li>';
+                     $printOutput.='<li><p class="stud-details-item"><i class="fa fa-female fa-fw" aria-hidden="true"></i> Female Student(s)    <span class="badge badge-pill badge-info">'.$femaleStudCount.'</span></p></li>';
+                    $printOutput.='</ul></div>';
+                    echo $printOutput;
+      }else{
+          //display nothing
+      }
+    }else{
+        //empty session, do nothing
+    }
+        
+    }//End of try catch block
+    catch(Exception $e)
+    {
+        echo "Error:". $e->getMessage();
+    }
+}
+//class count summary
+
+//STUDEN EDIT FUNCTIONALITY
+public function studentEditProfile($studentid,$clientid)
+    {
+    try {
+        $query ="SELECT student_initial.surname AS Surname, 
+        student_initial.firstName AS FirstName,
+        student_initial.lastName AS LastName,
+        student_initial.perm_home_add AS HomeAdd,
+        student_initial.contact_add AS ContactAdd,
+        student_initial.email AS Mail,
+        student_initial.mobile AS Mobile
+        FROM student_initial
+        WHERE stud_sch_id=? AND id=?";
+            $this->conn->query($query);
+            $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+            $this->conn->bind(2, $studentid, PDO::PARAM_INT); 
+            $myResult = $this->conn->resultset();
+            $output=$myResult;
+            return $output;
+    }// End of try catch block
+    catch(Exception $e)
+    {
+    echo ("Error: Unable to fetch student Profile");
+    }
+}
+
+
+
+
+
+
+//END STUDENT EDIT FUNCTIONALITY
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

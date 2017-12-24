@@ -279,7 +279,7 @@ function user_login($email,$password,$status="On")
             }
             else
             {
-            echo "Bad Login";
+            echo json_encode("Bad Login");
             }
 
       }

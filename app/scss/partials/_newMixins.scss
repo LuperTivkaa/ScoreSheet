@@ -9,8 +9,9 @@
 }
 
 @mixin smallscreen-result-content {
-    width: 99.5%;
-    margin: 0 auto;
+    width: 100%;
+    margin-left: .2px;
+    margin-right: .2px;
 }
 
 @mixin aux-menu-content {
