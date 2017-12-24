@@ -25,8 +25,8 @@ $class = filter_input(INPUT_POST, "myclass", FILTER_SANITIZE_STRING);
   $category = filter_input(INPUT_POST, "category", FILTER_SANITIZE_NUMBER_INT);
 //$role = filter_input(INPUT_POST, "role", FILTER_SANITIZE_STRING);
 
-if(empty($class)){
-	exit("Please enter a class");
+if(empty($class) || empty($category)){
+	exit("Please enter a class/category");
 }
 
 
