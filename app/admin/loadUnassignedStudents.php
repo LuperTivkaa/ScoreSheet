@@ -1,7 +1,4 @@
 <?php
-/*
-load all students no assigned admmission numbers
-*/
 session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
