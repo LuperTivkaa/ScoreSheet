@@ -97,7 +97,8 @@ gulp.task('concatScripts', function() {
     return gulp.src(['app/js/admin-app.js',
             'app/js/new-design.js',
             'app/js/admin.js',
-            'app/js/academicRoutines.js'
+            'app/js/academicRoutines.js',
+            'default-load.js'
         ])
         .pipe(concat('scoresheet.js'))
         .pipe(gulp.dest('app/js'));
