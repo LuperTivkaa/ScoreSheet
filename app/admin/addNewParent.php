@@ -40,8 +40,8 @@ $surn = $student->getSurname();
 $student->setFirstname($firstname);
 $fn = $student->getFirstname();
 
-$student->setLastname($lastname);
-$ln = $student->getLastname();
+// $student->setLastname($lastname);
+// $ln = $student->getLastname();
 
 $student->setOccupation($occupation);
 $occup = $student->getOccupation();
@@ -49,16 +49,16 @@ $occup = $student->getOccupation();
 $student->setAddress($address);
 $cont_add = $student->getAddress();
 
-$student->setEmail($mail);
-$mail = $student->getEmail();
+// $student->setEmail($mail);
+// $mail = $student->getEmail();
 
-$student->setMobile($mobile);
-$mobile = $student->getMobile();
+// $student->setMobile($mobile);
+// $mobile = $student->getMobile();
 
 $student->setGender($sex);
 $sex = $student->getGender();
 
-$student->newParent($surn,$fn,$ln,$occup,$sex,$cont_add,$mobile,$mail,$relationship,$stud_id,$clientid,$emergency);
+$student->newParent($surn,$fn,$lastname,$occup,$sex,$cont_add,$mobile,$mail,$relationship,$stud_id,$clientid,$emergency);
     
 }
 else

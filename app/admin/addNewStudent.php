@@ -38,7 +38,6 @@ $sex = filter_input(INPUT_POST, "sex", FILTER_SANITIZE_STRING);
 $dob = filter_input(INPUT_POST, "dob", FILTER_SANITIZE_STRING);
 $blood_group = filter_input(INPUT_POST, "blood_group", FILTER_SANITIZE_STRING);
 $class_adm = filter_input(INPUT_POST, "class_adm", FILTER_SANITIZE_NUMBER_INT);
-//$arm = filter_input(INPUT_POST, "arm", FILTER_SANITIZE_NUMBER_INT);
 $session = filter_input(INPUT_POST, "session", FILTER_SANITIZE_NUMBER_INT);
 $adm_type = filter_input(INPUT_POST, "adm_type", FILTER_SANITIZE_STRING);
 
@@ -74,8 +73,8 @@ $cont_add = $student->getAddress();
 $student->setAddress($add2);
 $perm_add = $student->getAddress();
 
-$student->setEmail($mail);
-$mail = $student->getEmail();
+// $student->setEmail($mail);
+// $mail = $student->getEmail();
 
 // $student->setMobile($mobile);
 // $mobile = $student->getMobile();
