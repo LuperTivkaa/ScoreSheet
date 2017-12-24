@@ -5,32 +5,31 @@ use ScoreSheet\dbConnection;
 use ScoreSheet\client;
 use ScoreSheet\student;
 use ScoreSheet\staff;
+use Carbon\Carbon;
 //use \PDO;
 $dbConnection = new dbConnection();
-$student = new student($dbConnection);
 $client = new client($dbConnection);
+$student = new student($dbConnection);
 $staff = new staff($dbConnection);
-//$jobmanager = new manager($dbConnection);
-$clientid = $_SESSION['user_info'][4];
-//$newStaff = new student();
-$userid = $_SESSION['user_info'][0];
-$myroleid = $_SESSION['user_info'][2];
-$staff->clientUser($myroleid,$clientid);
 
+$clientid = $_SESSION['user_info'][4];
+$userid = $_SESSION['user_info'][0];
+$roleid = $_SESSION['user_info'][2];
+$staff->clientUser($roleid,$clientid);
 //$dateCreated = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 //$regno = $_SESSION['ID'];
-$subject = filter_input(INPUT_POST, "subjectName", FILTER_SANITIZE_STRING);
-$class = filter_input(INPUT_POST, "classid", FILTER_SANITIZE_STRING);
+$subjectid = filter_input(INPUT_POST, "subjectid",FILTER_SANITIZE_NUMBER_INT);
+$categoryid = filter_input(INPUT_POST, "category", FILTER_SANITIZE_NUMBER_INT);
 //$role = filter_input(INPUT_POST, "role", FILTER_SANITIZE_STRING);
 
-if(empty($subject && $class)){
+if(empty($subjectid && $categoryid)){
 	exit("Please select appropriate datasets!");
 }
 
-$client->assignSubject($subject,$class,$clientid);
+$client->assignSubject($subjectid,$categoryid,$clientid);
     
 }
 else
