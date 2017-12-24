@@ -15,7 +15,7 @@ $staff = new staff($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
 $roleid = $_SESSION['user_info'][2];
-$staff->adminUser($roleid,$clientid);
+$staff->clientUser($roleid,$clientid);
 $dateCreated = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"]=="POST")
@@ -40,8 +40,8 @@ $surn = $student->getSurname();
 $student->setFirstname($firstname);
 $fn = $student->getFirstname();
 
-$student->setLastname($lastname);
-$ln = $student->getLastname();
+// $student->setLastname($lastname);
+// $ln = $student->getLastname();
 
 $student->setOccupation($occupation);
 $occup = $student->getOccupation();
@@ -49,16 +49,16 @@ $occup = $student->getOccupation();
 $student->setAddress($address);
 $cont_add = $student->getAddress();
 
-$student->setEmail($mail);
-$mail = $student->getEmail();
+// $student->setEmail($mail);
+// $mail = $student->getEmail();
 
-$student->setMobile($mobile);
-$mobile = $student->getMobile();
+// $student->setMobile($mobile);
+// $mobile = $student->getMobile();
 
 $student->setGender($sex);
 $sex = $student->getGender();
 
-$student->newGuardian($surn,$fn,$ln,$occup,$sex,$cont_add,$mobile,$mail,$relationship,$stud_id,$clientid,$emergency);
+$student->newGuardian($surn,$fn,$lastname,$occup,$sex,$cont_add,$mobile,$mail,$relationship,$stud_id,$clientid,$emergency);
     
 }
 else
