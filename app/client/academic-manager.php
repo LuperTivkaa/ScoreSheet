@@ -121,32 +121,54 @@ $staff->clientUser($myroleid,$clientid);
 
                         <!--End edit prefix settings  -->
 
+                        <!--edit class teacher subjects  -->
 
-                        <!--edit staff subjects  -->
-
-                        <div class="staffsubjects-div hide-me">
+                        <div class="classteacher-div hide-me">
                             <div class="col-8">
-                            <h6 class="highlight top-header text-xs-center mt-3">Edit Staff Subject(s)</h6>
+                            <h6 class="highlight top-header text-xs-center mt-3">Edit Class Teacher</h6>
                             </div>
 
                                 <div class="form-group col-md-8 margin-bottom-sm">
-                                <label for="sch-class">Class</label>
-                                <select class="custom-select form-control" id="sch-class">
+                                <label for="school-class">Class</label>
+                                <select class="custom-select form-control" id="school-class">
                                 <?php 
                                     $client->loadClass($clientid);
                                 ?>
                                 </select> 
                             </div>
-                    
-                            <div class="form-group col-md-8 margin-bottom-sm">
-                                <label for="sch-subject">Subject</label>
-                                <select class="custom-select form-control" id="sch-subject">
-                                </select> 
-                            </div>
                             
                         <div class="col-4">
-                        <button class="submit btn btn-primary btn-md mt-3 mb-3" id="edit-staff-subject"><i class="fa fa-pencil" aria-hidden="true"></i> Update Staff Subjects</button>
+                        <button class="submit btn btn-primary btn-md mt-3 mb-3" id="edit-class-teacher"><i class="fa fa-pencil" aria-hidden="true"></i> Edit Class Teacher</button>
                         </div>
+                        </div>
+                        <!--end edit class teacher  -->
+
+
+                        <!--edit staff subjects  -->
+
+                        <div class="staffsubjects-div hide-me">
+                                    <div class="col-8">
+                                    <h6 class="highlight top-header text-xs-center mt-3">Edit Staff Subject(s)</h6>
+                                    </div>
+
+                                        <div class="form-group col-md-8 margin-bottom-sm">
+                                        <label for="sch-class">Class</label>
+                                        <select class="custom-select form-control" id="sch-class">
+                                        <?php 
+                                            $client->loadClass($clientid);
+                                        ?>
+                                        </select> 
+                                    </div>
+                    
+                                    <div class="form-group col-md-8 margin-bottom-sm">
+                                        <label for="sch-subject">Subject</label>
+                                        <select class="custom-select form-control" id="sch-subject">
+                                        </select> 
+                                    </div>
+                            
+                                <div class="col-4">
+                                <button class="submit btn btn-primary btn-md mt-3 mb-3" id="edit-staff-subject"><i class="fa fa-pencil" aria-hidden="true"></i> Update Staff Subjects</button>
+                                </div>
                         </div>
                         <!--end edit staff subject  -->
 
@@ -186,6 +208,7 @@ $staff->clientUser($myroleid,$clientid);
                             <li><a class="load-url" href="mySessions.php"><i class="fa fa-bars fa-fw" aria-hidden="true"></i> All Sessions</a></li>
                             <li><a class="load-url" href="mySubjects.php"><i class="fa fa-paperclip fa-fw" aria-hidden="true"></i> Manage Subjects</a></li>
                             <li><a class="load-url" href="subjectTeachers.php"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Subject Teachers</a></li>
+                            <li><a class="load-url" href="classTeachers.php"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i> Class Teachers</a></li>
                             <li> <a class="load-url" href="schoolClasses.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Manage Classes</a></li>
                             <li><a class="load-url" href="myAdmNoSettings.php"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> Manage Prefix Settings</a></li>
                             </ul>   
