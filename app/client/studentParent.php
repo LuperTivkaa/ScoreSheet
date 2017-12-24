@@ -15,7 +15,7 @@ $staff = new staff($dbConnection);
 $clientid = $_SESSION['user_info'][4];
 $userid = $_SESSION['user_info'][0];
 $roleid = $_SESSION['user_info'][2];
-$staff->adminUser($roleid,$clientid);
+$staff->clientUser($roleid,$clientid);
 ?>
 
 <!--Content container  -->
@@ -117,7 +117,7 @@ $staff->adminUser($roleid,$clientid);
                       </div>
                 
                         <div class="form-group col-md-12">
-                          <label for="mobile">Mobile:</label>
+                          <label for="mobile">Mobile [Optional]:</label>
                           <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Mobile"> 
                         </div>
 
@@ -136,7 +136,7 @@ $staff->adminUser($roleid,$clientid);
               <div class="row">
 
                 <div class="form-group col-md-12">
-                  <label for="lastname">Last Name:</label>
+                  <label for="lastname">Last Name [Optional]:</label>
                   <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Lastname"> 
                 </div>
 
@@ -146,7 +146,7 @@ $staff->adminUser($roleid,$clientid);
                 </div>
 
                 <div class="form-group col-md-12">
-                    <label for="parent-mail">Email:</label>
+                    <label for="parent-mail">Email [Optional]:</label>
                     <input type="email" class="form-control" id="parent-mail" name="parent-mail" placeholder="Email"> 
                  </div>
 

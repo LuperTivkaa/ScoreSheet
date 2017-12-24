@@ -53,8 +53,13 @@ $staff->clientUser($myroleid,$clientid);
                             </div>
                             
                         </div>  
+                        <div class="row"> 
                         <div class="col-6">
-                            <button class="btn btn-primary mt-3" type="button" id="result-approval"><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Result Approval </button>
+                    <button class="btn btn-primary mt-3" type="button" id="result-approval"><i class="fa fa-database" aria-hidden="true"></i> Approve Result</button>
+                            </div>
+                            <div class="col-6">
+                    <button class="btn btn-danger mt-3" type="button" id="reset-result-approval"><i class="fa fa-undo" aria-hidden="true"></i> Undo Result Approval</button>
+                            </div>
                             </div>
                     </div>
   </div>
