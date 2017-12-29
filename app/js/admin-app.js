@@ -10,6 +10,15 @@
      var url = $(this).attr('href');
      $('#new-content').load(url);
  });
+
+ //load edit url
+ $('#new-content').on('click', '.load-url', function(evt) {
+     evt.preventDefault();
+     $("#my-info").empty();
+     $('#student-search-result').empty();
+     var url = $(this).attr('href');
+     $('#new-content').load(url);
+ });
  //get birthdays NOT Complete
 
  $('.birthdays').on('click', function(evt) {
