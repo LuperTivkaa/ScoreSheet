@@ -280,33 +280,33 @@ function getActiveTerm($schid,$status='Active')
   }
 //END METHOD TO GET ACTIVE TERM   
     
-    //load class arm
-public function loadClassArm($class_id)
-    {
-        try {
-                $query ="SELECT id,arm_description AS arm FROM class_arm WHERE class_id=?";
-                $this->conn->query($query);
-                $this->conn->bind(1, $class_id, PDO::PARAM_INT);
-                $myResult = $this->conn->resultset();
-                $output =" "; 
-        foreach ($myResult as $row => $key) 
-        {
+//     //load class arm
+// public function loadClassArm($class_id)
+//     {
+//         try {
+//                 $query ="SELECT id,arm_description AS arm FROM class_arm WHERE class_id=?";
+//                 $this->conn->query($query);
+//                 $this->conn->bind(1, $class_id, PDO::PARAM_INT);
+//                 $myResult = $this->conn->resultset();
+//                 $output =" "; 
+//         foreach ($myResult as $row => $key) 
+//         {
             
-            $ID = $key['id'];
-            $arm = $key['arm'];
+//             $ID = $key['id'];
+//             $arm = $key['arm'];
 
-       //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-      //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
-          $output .= "<option value=".$ID.">".$arm."</option>";       
-        }
-       echo $output;
-        }// End of try catch block
-         catch(Exception $e)
-        {
-            echo "Error: Unable to get class arms";
-        }
-   }
-   //end load class arm function
+//        //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
+//       //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
+//           $output .= "<option value=".$ID.">".$arm."</option>";       
+//         }
+//        echo $output;
+//         }// End of try catch block
+//          catch(Exception $e)
+//         {
+//             echo "Error: Unable to get class arms";
+//         }
+//    }
+//    //end load class arm function
     //get all fees
 public function allFeeItems($clientid)
         {
@@ -495,8 +495,7 @@ public function getAllStudents($id)
             $output="";
             $avatarRow ="";
             $output.="<h5 class='top-header mt-2'> My Student(s) </h5><br/>";
-            $output .='<div class="list_box">			
-            <table cellpadding="0" cellspacing="0">
+            $output .='<table class="datatable">
                 <thead>
                     <tr>
                         <th>Avatar</th>
@@ -518,10 +517,10 @@ public function getAllStudents($id)
             $studentID = $key['studentID'];
             //generate icon if picture is not uploaded other wise show picture
                 if(empty($avatar)){
-                    $avatarRow ='<td><div class="icon_div">'. $this->generateUserIcon($key['fullname']).'</div></td>';
+                    $avatarRow ='<td><img src="../images/avatar.jpg" alt="Avatar" class="small-avatar"></td>';
                 }
                 else{
-                    $avatarRow = '<td><div class="icon_div"><img src="'.$avatar.'" alt="Staff Avatar" class="img_icon"></div></td>';
+                    $avatarRow = '<td><img src="'.$avatar.'" alt="Avatar" class="small-avatar"></td>';
                 }
             $output.= '<tr>';
             $output.=$avatarRow;
@@ -532,7 +531,7 @@ public function getAllStudents($id)
             $output.='</tr>';
            //$output .= "<option value=".$ID.">".$category."</option>";
             }
-            $output.='</tbody></table></div>';
+            $output.='</tbody></table>';
             echo $output;
         }
         else{
@@ -541,7 +540,7 @@ public function getAllStudents($id)
     }//End of try catch block
      catch(Exception $e)
     {
-        echo json_encode("Error: Uanble to fetch students records");
+        echo json_encode("Error: Something went wrong, Unable to fetch students records");
     }
 }
 //End get students by class and session
@@ -3357,8 +3356,52 @@ function editSchPrefixSettings($prefixid,$prefix,$schid)
   }
 //End edit school prefix settings
 
-// student list
 
+//Method to display Staff Name and Icon on the Primary Nav
+public function staffIconName($clientid,$staffid){
+  try
+  {
+    $query ="SELECT  staff_profile.user_img AS MyImage,users.user_name AS Username
+    FROM staff_profile
+    INNER JOIN users ON staff_profile.user_id=users.id
+    WHERE staff_profile.my_school_id=? AND staff_profile.user_id=?";
+        $this->conn->query($query);
+        $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+        $this->conn->bind(2, $staffid, PDO::PARAM_INT); 
+        $myResult = $this->conn->resultset();
+            if($myResult)
+            {
+                foreach($myResult as $row => $key)
+                {
+                    $Image = $key['MyImage'];
+                    $username = $key['Username'];
+                } 
+                    if(empty($Image))
+                    {
+                        $avatar ='<img src="../images/profile-icon.png" class="list-avatar">';
+                    }
+                    else
+                    {
+                        $avatar ='<img src="'.$Image.'"  class="list-avatar">';
+                    }
+                    $output = "";
+
+                    $output.='<span class="prim-profile">'.$avatar.'</span><span class="prim-profile">'.$username.'</span>';
+
+                    echo $output;
+
+            }
+            else
+            {
+            echo ("Error");
+            }
+  }
+  catch(Exception $e)
+  {
+    echo "Error:". $e->getMessage();
+  }
+}
+//End Method to display Staff name and Icon on the Primary Nav
 
 //Method to list all users (Staff)
 public function allStaffUsers($clientid)
@@ -4594,16 +4637,37 @@ public function studentEditProfile($studentid,$clientid)
     echo ("Error: Unable to fetch student Profile");
     }
 }
-
-
-
-
-
-
 //END STUDENT EDIT FUNCTIONALITY
 
 
+//EDIT STAFF PROFILE FUNCTIONALITY
+public function staffEditProfile($staffid,$clientid)
+    {
+        try {
+            $query ="SELECT staff_profile.surname AS Surname, 
+            staff_profile.middle_name AS FirstName,
+            staff_profile.lastname AS LastName,
+            staff_profile.email AS Mail,
+            staff_profile.mobile AS Mobile
+            FROM staff_profile
+            WHERE my_school_id=? AND user_id=?";
+            $this->conn->query($query);
+            $this->conn->bind(1, $clientid, PDO::PARAM_INT); 
+            $this->conn->bind(2, $staffid, PDO::PARAM_INT); 
+            $myResult = $this->conn->resultset();
+            $output=$myResult;
+            return $output;
+    }// End of try catch block
+    catch(Exception $e)
+    {
+    echo ("Error: Unable to fetch staff Profile");
+    }
+}
 
+
+
+
+//END EDIT STAFF PROFILE FUNCTIONALITY
 
 
 
