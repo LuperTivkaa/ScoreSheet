@@ -10,6 +10,15 @@
      var url = $(this).attr('href');
      $('#new-content').load(url);
  });
+
+ //load edit url
+ $('#new-content').on('click', '.load-url', function(evt) {
+     evt.preventDefault();
+     $("#my-info").empty();
+     $('#student-search-result').empty();
+     var url = $(this).attr('href');
+     $('#new-content').load(url);
+ });
  //get birthdays NOT Complete
 
  $('.birthdays').on('click', function(evt) {
@@ -3605,8 +3614,7 @@ function staffProfile(surname, firstname, lastname, religion, nation, state,
             var data = $.trim(response);
             if (data === "ok") {
                 $('#new-staff-btn').prop("disabled", false);
-                $("#my-info").addClass("info");
-                var surname = $("#surname").val();
+                $("#surname").val("");
                 $("#firstname").val("");
                 $("#lastname").val("");
                 $("#state").val("");
@@ -3617,6 +3625,7 @@ function staffProfile(surname, firstname, lastname, religion, nation, state,
                 $("#mail").val("");
                 $("#mobile").val("");
                 $("#datepicker").val("");
+                $("#my-info").addClass("info");
                 $("#my-info").html("New Staff profile added successfully");
             } else {
                 //alert("me")
@@ -3629,6 +3638,83 @@ function staffProfile(surname, firstname, lastname, religion, nation, state,
     });
 }
 //End Staff profile
+
+//Edit Staff Record
+$("#new-content").on('click', '#staff-profile-edit', function(e) {
+    e.preventDefault();
+    $('#staff-profile-edit').prop("disabled", true);
+    var surname = $("#surname").val();
+    var firstname = $("#firstname").val();
+    var lastname = $("#lastname").val();
+    var religion = $("#religion").val();
+    var nation = $("#nation").val();
+    var state = $("#state").val();
+    var lg = $("#lg").val();
+    var city = $("#city").val();
+    var contactAdd = $("#contactAdd").val();
+    var permAdd = $("#permAdd").val();
+    var mail = $("#mail").val();
+    var mobile = $("#mobile").val();
+    var sex = $("#sex").val();
+    var dob = $("#datepicker").val();
+    var blood_group = $("#blood-group").val();
+
+    editStaffProfile(surname, firstname, lastname, religion, nation, state,
+        lg, city, contactAdd, permAdd, mail, mobile, sex, dob,
+        blood_group);
+});
+
+//function to add new staff Profile
+function editStaffProfile(surname, firstname, lastname, religion, nation, state,
+    lg, city, contactAdd, permAdd, mail, mobile, sex, dob,
+    blood_group) {
+    $.ajax({
+        url: 'editStaffProfile.php',
+        type: 'POST',
+        data: {
+            surname: surname,
+            firstname: firstname,
+            lastname: lastname,
+            religion: religion,
+            nation: nation,
+            state: state,
+            lg: lg,
+            city: city,
+            contactAdd: contactAdd,
+            permAdd: permAdd,
+            mail: mail,
+            mobile: mobile,
+            sex: sex,
+            dob: dob,
+            blood_group: blood_group,
+        },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#staff-profile-edit').prop("disabled", false);
+                $("#surname").val("");
+                $("#firstname").val("");
+                $("#lastname").val("");
+                $("#state").val("");
+                $("#lg").val("");
+                $("#city").val("");
+                $("#contactAdd").val("");
+                $("#permAdd").val("");
+                $("#mail").val("");
+                $("#mobile").val("");
+                $("#datepicker").val("");
+                $("#my-info").addClass("info");
+                $("#my-info").html("Staff profile edited successfully");
+            } else {
+                //alert("me")
+                $('#staff-profile-edit').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End Edit Staff Record
 
 //Staff qualifications
 $("#new-content").on('click', '#new-qualification-btn', function(e) {
