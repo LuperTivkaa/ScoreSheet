@@ -19,6 +19,9 @@
       font-size: 1em;
       margin-top: 3px; }
 
+.prim-profile {
+  margin-right: 7px; }
+
 .primary-nav {
   background-color: black;
   color: #d7dbdd;
@@ -118,6 +121,11 @@
   .footer p {
     margin-bottom: 0;
     padding: 2px; }
+
+.edit-link a {
+  text-decoration: none !important;
+  font-family: "Fjalla One";
+  font-size: .87em; }
 
 .display-list {
   display: inline-block;
