@@ -1074,6 +1074,7 @@ function staffProfilePreview($clientid,$staffid)
 					            }
                       $printOutput.='<div class="">
                       <h6 class="top-header">Personal Information</h6>
+                      <h6> <span class="edit-link"><a class="load-url" href="staff-profile-edit.php">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a></span></h6>
                       <ul class="preview-list-container">';
                       $printOutput.='<li class=""> <span class=""> <i class="fa fa-user-o fa-fw" aria-hidden="true"></i>
  Name</span> '.$fullname.'</li>';
@@ -1530,44 +1531,44 @@ function terminalAverage($studentid,$classid,$sessionid,$termid,$schid)
 //TERMINAL AVERAGE
 //Obselete method
 //students over all average
-function studentOverAllAverage($studentid,$classid,$sessionid,$termid,$schid)
-	{
-		try {
-			/*
-			1. find the average of student based on the grand total all scores in subject 
-			*/
-        $query = "SELECT FORMAT(GrandTermTotal/(SELECT COUNT( DISTINCT class_category_subject.subject_id ) AS SubjectCount
-        FROM class INNER JOIN class_category_subject
-        ON class.class_categoryid=class_category_subject.class_category_id 
-        WHERE class.id=? AND class.my_inst_id=?),2 ) AS TotalAverage
-        FROM termgrandtotal WHERE 
-        termgrandtotal.student_id=? 
-        AND termgrandtotal.class_id=?
-        AND termgrandtotal.term_id=? AND termgrandtotal.session_id=?
-        AND termgrandtotal.sch_id=?";
-                    $this->conn->query($query);
-                    $this->conn->bind(1, $classid, PDO::PARAM_INT); 
-                    $this->conn->bind(2, $schid, PDO::PARAM_INT); 
-                    $this->conn->bind(3, $studentid, PDO::PARAM_INT);
-			              $this->conn->bind(4, $classid, PDO::PARAM_INT);
-			              $this->conn->bind(5, $termid, PDO::PARAM_INT);
-                    $this->conn->bind(6, $sessionid, PDO::PARAM_INT);
-                    $this->conn->bind(7, $schid, PDO::PARAM_INT);
-                    $output = $this->conn->resultset();
-                    $tav = "";
+// function studentOverAllAverage($studentid,$classid,$sessionid,$termid,$schid)
+// 	{
+// 		try {
+// 			/*
+// 			1. find the average of student based on the grand total all scores in subject 
+// 			*/
+//         $query = "SELECT FORMAT(GrandTermTotal/(SELECT COUNT( DISTINCT class_category_subject.subject_id ) AS SubjectCount
+//         FROM class INNER JOIN class_category_subject
+//         ON class.class_categoryid=class_category_subject.class_category_id 
+//         WHERE class.id=? AND class.my_inst_id=?),2 ) AS TotalAverage
+//         FROM termgrandtotal WHERE 
+//         termgrandtotal.student_id=? 
+//         AND termgrandtotal.class_id=?
+//         AND termgrandtotal.term_id=? AND termgrandtotal.session_id=?
+//         AND termgrandtotal.sch_id=?";
+//                     $this->conn->query($query);
+//                     $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+//                     $this->conn->bind(2, $schid, PDO::PARAM_INT); 
+//                     $this->conn->bind(3, $studentid, PDO::PARAM_INT);
+// 			              $this->conn->bind(4, $classid, PDO::PARAM_INT);
+// 			              $this->conn->bind(5, $termid, PDO::PARAM_INT);
+//                     $this->conn->bind(6, $sessionid, PDO::PARAM_INT);
+//                     $this->conn->bind(7, $schid, PDO::PARAM_INT);
+//                     $output = $this->conn->resultset();
+//                     $tav = "";
       
-					          foreach($output as $row => $key)
-					          {
-					          $totalAverage = $key['TotalAverage'];
-					          }	
-					          return $totalAverage;
+// 					          foreach($output as $row => $key)
+// 					          {
+// 					          $totalAverage = $key['TotalAverage'];
+// 					          }	
+// 					          return $totalAverage;
                     
-                }//End of try catch block
-                catch(Exception $e)
-                {
-                    echo "Error:". $e->getMessage();
-                }
-	        }
+//                 }//End of try catch block
+//                 catch(Exception $e)
+//                 {
+//                     echo "Error:". $e->getMessage();
+//                 }
+// 	        }
 
 //END STUDENTS OVER ALL AVERAGE 
  //SELECT GRAND TOTAL
