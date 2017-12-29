@@ -40,25 +40,13 @@ $client = new client($dbConnection);
             
                        <div class="row">
                        <!--Div to hold card for user profile  -->
-                       <div class="col-md-4">
+                       <!-- <div class="col-md-4">
                                 <?php 
-                                //session_start();
-                                // require '../../vendor/autoload.php';
-                                // use ScoreSheet\dbConnection;
-                                // use ScoreSheet\client;
-                                // use ScoreSheet\student;
-                                // use ScoreSheet\staff;
-                                // //use \PDO;
-                                // $dbConnection = new dbConnection();
-                                // $student = new student($dbConnection);
-                                // $client = new client($dbConnection);
-                                // $staff = new staff($dbConnection);
-                               
-                                $staff->staffProfileCard($clientid,$userid);
+                                //$staff->staffProfileCard($clientid,$userid);
                                 ?>
-                       </div>
+                       </div> -->
 
-                       <div class="col-md-8">
+                       <div class="col-md-12">
                             <ul class="staff-menu">
                             <li><a class="load-url" href="newStaff.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> New Profile</a></li>
                             <li><a class="load-url" href="staffPhoto.php"><i class="fa fa-camera fa-fw" aria-hidden="true"></i> Upload Photo</a></li>
