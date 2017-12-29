@@ -387,46 +387,6 @@ function assignNewNumber($studid,$admNoId,$clientid)
   //
 
 
-
-//update assigned number
-//change flag to true, which means active 
-//active status means number can not be assigned again
-//test method
-
-//insert test
-// function insertTest($st,$no,$sch)
-// {
-// try
-// {
-// $sql = "INSERT INTO my_number
-// (studid, admno, schid) 
-// values (?,?,?)";
-// $this->conn->query($sql);
-// $this->conn->bind(1, $st, PDO::PARAM_INT);
-// $this->conn->bind(2, $no, PDO::PARAM_INT);
-// $this->conn->bind(3, $sch, PDO::PARAM_INT);
-// $this->conn->execute();
-//         if ($this->conn->rowCount() == 1) 
-//         {
-//         // check number of inserted rows
-//         //TOGGLE ADMISSION NUMBER
-//         $this->toggleAssignNum($no);
-//         } 
-//         else
-//         {
-//         echo "Unable to add assign admission number";
-//         }
-// }
-// catch(Exception $e)
-// {
-// //echo error here
-// //this get an error thrown by the system
-// echo "Error:". $e->getMessage();
-// }
-
-// }
-//=====================================================================
-
 function toggleAssignNum($admNumId)
   {
    //always use try and catch block to write code  
@@ -666,8 +626,6 @@ $religion,$dob,$mobile,$blood,$status='Active')
   // always use try and catch block to write code
    
 try{
-
-        
                           $sqlStmt = "UPDATE student_initial SET surname=?,firstName=?,lastName=?,gender=?,classAdmitted=?,sessionAdmitted=?,
                           admissionType=?,dateCreated=?,createdBy=?,perm_home_add=?,contact_add=?,
                           email=?,stud_sch_id=?,nationality=?,state=?,city=?,lga=?,religion=?,dateOfBirth=?,mobile=?,status_active=?,blood_group=? WHERE id=? AND stud_sch_id=?";
@@ -901,6 +859,73 @@ $dateOfBirth,$bloodGroup,$date_created)
          }
   }
   //End method to add staff profile
+
+//Method to edit staff profile
+public  function editStaffProfile($staffid,$sch_id,$surname,$firstname,$lastname,
+$religion,$country,$state,$lga,$city,$contact_add1,$perm_add2,$email,$mobile,$sex,
+$dateOfBirth,$bloodGroup)
+    {
+       // always use try and catch block to write code
+      try{
+        // $sqlStmt = "SELECT user_id FROM  staff_profile WHERE user_id=?";
+         // $this->conn->query($sqlStmt);
+         // $this->conn->bind(1, $user_id, PDO::PARAM_INT);
+        // $this->conn->resultset();
+         //   if($this->conn->rowCount()>=1)
+          //   {
+       //     exit("You have already added your personal profile!");
+       //   }
+        //else{
+          
+                            //Update staff profile
+                            $sqlStmt = "UPDATE staff_profile SET surname=?,middle_name=?,lastname=?,gender=?,date_of_birth=?,mobile=?,
+                            address_line1=?,address_line2=?,country=?,state=?,lga=?,city=?,email=?,bloodgroup=?,religion=? WHERE user_id=? AND my_school_id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $this->surname, PDO::PARAM_STR,100);
+                            $this->conn->bind(2, $this->firstname, PDO::PARAM_STR,100);
+                            $this->conn->bind(3, $lastname, PDO::PARAM_STR,100);
+                            $this->conn->bind(4, $this->sex, PDO::PARAM_STR,100);
+                            $this->conn->bind(5, $this->dateOfBirth, PDO::PARAM_STR,100);
+                            $this->conn->bind(6, $this->mobile, PDO::PARAM_STR);
+                            $this->conn->bind(7, $contact_add1, PDO::PARAM_STR,100);
+                            $this->conn->bind(8, $perm_add2, PDO::PARAM_STR);
+                           // $this->conn->bind(9, $user_id, PDO::PARAM_INT);
+                            // $this->conn->bind(10, $sch_id, PDO::PARAM_INT);
+                            // $this->conn->bind(11, $date_created, PDO::PARAM_STR);
+                            $this->conn->bind(9, $this->country, PDO::PARAM_INT);
+                            $this->conn->bind(10, $this->state, PDO::PARAM_INT);
+                            $this->conn->bind(11, $this->lga, PDO::PARAM_INT);
+                            $this->conn->bind(12, $this->city, PDO::PARAM_INT);
+                            $this->conn->bind(13, $this->email, PDO::PARAM_STR);      
+                            $this->conn->bind(14, $this->bloodGroup, PDO::PARAM_STR,100);
+                            $this->conn->bind(15, $this->religion, PDO::PARAM_INT);
+                            $this->conn->bind(16, $staffid, PDO::PARAM_INT);
+                            $this->conn->bind(17, $sch_id, PDO::PARAM_INT);
+                            $this->conn->execute(); 
+
+                        if ($this->conn->rowCount() == 1) 
+                        {
+                         //check number of inserted rows
+                        echo "ok";
+                        } 
+                        else
+                        {
+                        echo "Error creating your profile";
+                        }
+        //}
+      }
+
+        catch(Exception $e)
+        {
+        //echo error here
+        //this get an error thrown by the system
+        echo "Error:". $e->getMessage();
+         }
+  }
+//End method to edit staff profile
+
+
+
 
 //Method to add qualification
 public  function staffQualification($instname,$certificate,$yrgrad,$user_id,$sch_id)
