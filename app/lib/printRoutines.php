@@ -15,15 +15,15 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
         AND classpositionals.session_id=?
         AND classpositionals.term_id=?
         AND classpositionals.school_id=?) AS studentCount,
-        (SELECT FORMAT(GrandTermTotal/(SELECT COUNT( DISTINCT class_category_subject.subject_id ) AS SubjectCount
-         FROM class INNER JOIN class_category_subject
-         ON class.class_categoryid=class_category_subject.class_category_id 
-         WHERE class.id=? AND class.my_inst_id=?),2 ) AS TotalAverage
-         FROM termgrandtotal WHERE 
-         termgrandtotal.student_id=? 
-         AND termgrandtotal.class_id=?
-         AND termgrandtotal.term_id=? AND termgrandtotal.session_id=?
-         AND termgrandtotal.sch_id=?) AS Average,
+        -- (SELECT FORMAT(GrandTermTotal/(SELECT COUNT( DISTINCT class_category_subject.subject_id ) AS SubjectCount
+        --  FROM class INNER JOIN class_category_subject
+        --  ON class.class_categoryid=class_category_subject.class_category_id 
+        --  WHERE class.id=? AND class.my_inst_id=?),2 ) AS TotalAverage
+        --  FROM termgrandtotal WHERE 
+        --  termgrandtotal.student_id=? 
+        --  AND termgrandtotal.class_id=?
+        --  AND termgrandtotal.term_id=? AND termgrandtotal.session_id=?
+        --  AND termgrandtotal.sch_id=?) AS Average,
          termgrandtotal.GrandTermTotal AS Total,
          classpositionals.termposition AS TermPosition
 	    FROM student_initial 
@@ -70,7 +70,6 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
                     $term = $key['Term'];
                     $session = $key['session'];
                     $studentCount = $key['studentCount'];
-                    //$average = $key['Average'];
                     $total = $key['Total'];
                     $classPosition = $this->ordinalSuffix($key['TermPosition']);
                     $prefix = $this->schoolPrefix($schid);
