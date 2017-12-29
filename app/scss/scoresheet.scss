@@ -34,6 +34,10 @@
                                 }
                             }
                             
+                            .prim-profile {
+                                margin-right: 7px;
+                            }
+                            
                             .primary-nav {
                                 background-color: $primary-dark-profile;
                                 color: $primary-nav-color;
@@ -152,6 +156,14 @@
                                 p {
                                     margin-bottom: 0;
                                     padding: 2px;
+                                }
+                            }
+                            
+                            .edit-link {
+                                a {
+                                    text-decoration: none !important;
+                                    font-family: $font-primary;
+                                    font-size: .87em;
                                 }
                             }
                             
