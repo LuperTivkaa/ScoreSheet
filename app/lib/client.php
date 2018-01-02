@@ -280,34 +280,7 @@ function getActiveTerm($schid,$status='Active')
   }
 //END METHOD TO GET ACTIVE TERM   
     
-//     //load class arm
-// public function loadClassArm($class_id)
-//     {
-//         try {
-//                 $query ="SELECT id,arm_description AS arm FROM class_arm WHERE class_id=?";
-//                 $this->conn->query($query);
-//                 $this->conn->bind(1, $class_id, PDO::PARAM_INT);
-//                 $myResult = $this->conn->resultset();
-//                 $output =" "; 
-//         foreach ($myResult as $row => $key) 
-//         {
-            
-//             $ID = $key['id'];
-//             $arm = $key['arm'];
 
-//        //$output =+  '<a href="'.  $key['ID'].'">' . $link['amount']. '</a></br>';
-//       //echo  '<a href="'.  $link['FMarticle_id'].'">' . $link['title']. '</a></br>';
-//           $output .= "<option value=".$ID.">".$arm."</option>";       
-//         }
-//        echo $output;
-//         }// End of try catch block
-//          catch(Exception $e)
-//         {
-//             echo "Error: Unable to get class arms";
-//         }
-//    }
-//    //end load class arm function
-    //get all fees
 public function allFeeItems($clientid)
         {
         try {
@@ -360,6 +333,7 @@ Edit</button></td>';
         }
 
         //end get fee items
+
 //load sessions
 public function loadSession($clientid)
     {
@@ -1161,9 +1135,6 @@ public function loadApprovedStaff($client_id,$status="On")
             echo "Error: Unable to get staff details";
             }
    }
-
-
-
 //End load approved staff for assigning subjects
 
 //Get All Staff
