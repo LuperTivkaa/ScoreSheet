@@ -217,10 +217,10 @@ function getMaxExamScores($class,$schid)
 
 //FUNCTIONAL METHOD TO ENROLL STUDENT
 function studEnrollment($stud_id,$staffid,$inst_id,$date)
-{
-// always use try and catch block to write code
-try
   {
+// always use try and catch block to write code
+  try
+    {
     $class = $this->classTeacherClassID($staffid,$inst_id);
     $sessionid = $this->getActiveSession($inst_id);
     //$stud_id = $this->getStudentId($studentid,$inst_id);
@@ -367,7 +367,7 @@ try
 
 //METHOD TO LOCK RESULT AND PREVENT EDIT, CREATE, PUBLISH,POST
 function lockResult($class,$schid,$approval='Yes')
-{
+  {
   //prevent edit or create after result is approved
   try
    {
@@ -1487,7 +1487,7 @@ function getClassCategoryID($class,$schid)
 
 //TERMINAL AVERAGE
 function terminalAverage($studentid,$classid,$sessionid,$termid,$schid)
-{
+  {
   try {
     /*
     1. find the average of student based on the grand total all scores in subject 
@@ -1858,7 +1858,7 @@ function getStudent($searchVar,$schid)
 
 //RESET CLASS POSITIONING
 function resetClassPosition($termid,$sessionid,$classid,$schid)
-{ 
+  { 
   try
   {
                       $this->lockResult($classid,$schid);
@@ -1897,7 +1897,7 @@ catch(Exception $e)
 
 
     //RESET SUBJECT POSITION
-    function resetSubjectPosition($subjectid,$termid,$sessionid,$classid,$schid)
+function resetSubjectPosition($subjectid,$termid,$sessionid,$classid,$schid)
         { 
           try
           {
@@ -4045,6 +4045,8 @@ their status in added comments. traits
 function newAdminComment($studentid,$comment,$schid)
   {
       // always use try and catch block to write code
+      $studentClass = $this->studentClassID($studentid,$schid);
+      $this->lockResult($studentClass,$schid);
       $termid = $this->getActiveTerm($schid);
       $sessionid = $this->getActiveSession($schid);
       //$student_id = $this->getStudentId($stud_no,$schid);
@@ -5255,6 +5257,33 @@ public function classTeacherClassID($staffid,$schid)
       }
     }
 //END METHOD TO GET CLASS TEACHER'S CLASS ID
+
+//GET STUDENT CLASS ID
+
+public function studentClassID($studentid,$schid)
+{
+ try {
+   $sessionid = $this->getActiveSession($schid);
+      $query ="SELECT stud_class AS ID FROM student_class
+      WHERE student_id=? AND stud_sess_id=? AND stud_school_id=?";
+          $this->conn->query($query);
+          $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+          $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+          $this->conn->bind(3, $schid, PDO::PARAM_INT);
+          $myResult = $this->conn->resultset();
+         $output =" "; 
+   foreach ($myResult as $row => $key) 
+    {
+    $ID = $key['ID'];
+   }
+   return $ID;
+   }// End of try catch block
+   catch(Exception $e)
+   {
+  echo "Error: Can not fetch student ID";
+    }
+  }
+//END GET STUDENT CLASS ID
 
 
 //METHOD TO LIST NEWLY ADMITTED STUDENTS FOR ENROLLMENT
