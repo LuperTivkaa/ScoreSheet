@@ -1207,7 +1207,7 @@ $('#new-content').on('click', '#newbtn', function(e) {
     $('#record-id').val(recordid);
     $('#studclassid').val(classid);
     $('#modal-list').empty();
-    $('#modal-error').empty();
+    $('#modal_error').empty().removeClass();
     var modalid = $('#myModal');
     modalid.css('display', 'block');
 });
@@ -1835,16 +1835,17 @@ function adminComment(studentid, staffcomment) {
                 //reloadPsychoSkills(recordid);
                 $('#admin-comments').text('Add Comment').prop("disabled", false);
                 $("#modal_error").addClass("info");
-                $("#modal_error").text("Comments added");
+                $("#modal_error").text("Comment added");
+                $("#comment-id").val("");
             } else {
                 $('#admin-comments').text('Add Comment').prop("disabled", false);
+                $("#comment-id").val("");
                 $("#modal_error").addClass("error");
                 $("#modal_error").html(data);
             }
         },
     });
 }
-
 //Add Admin comments
 
 //ADD STAFF COMMENTS
@@ -4551,7 +4552,7 @@ function traitsRecords(studentclass, session, term) {
 //fetch published results for adding admin comments
 $("#new-content").on('click', '#published-result', function(e) {
     e.preventDefault();
-    $('#fetch-result').text("Fetching...").prop("disabled", true);
+    $('#published-result').text("Fetching...").prop("disabled", true);
     var myclass = $("#studentclass option:selected").val();
     var session = $("#session option:selected").val();
     var term = $("#term option:selected").val();
