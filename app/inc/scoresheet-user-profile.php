@@ -21,7 +21,13 @@ $staffid = $_SESSION['user_info'][0];
                 <ul class="primary-link">
                     <li>
                         <?php 
+                        if($_SESSION['user_info'][2] != 3)
+                        {
                           $client->staffIconName($schid,$staffid);
+                        }
+                        else{
+                            echo $_SESSION['user_info'][1];
+                        }
                         ?>
                         <span><a href="./logout.php"><i class="fa fa-lock fa-fw" aria-hidden="true"></i> Log Out </a></span>
                     </li>
