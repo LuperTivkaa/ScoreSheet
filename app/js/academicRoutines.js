@@ -793,7 +793,7 @@ function traitsRecords(studentclass, session, term) {
 //fetch published results for adding admin comments
 $("#new-content").on('click', '#published-result', function(e) {
     e.preventDefault();
-    $('#fetch-result').text("Fetching...").prop("disabled", true);
+    $('#published-result').text("Fetching...").prop("disabled", true);
     var myclass = $("#studentclass option:selected").val();
     var session = $("#session option:selected").val();
     var term = $("#term option:selected").val();
