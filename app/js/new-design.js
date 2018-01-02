@@ -70,7 +70,7 @@ $('#new-content').on('click', '#newbtn', function(e) {
     $('#record-id').val(recordid);
     $('#studclassid').val(classid);
     $('#modal-list').empty();
-    $('#modal-error').empty();
+    $('#modal_error').empty().removeClass();
     var modalid = $('#myModal');
     modalid.css('display', 'block');
 });
@@ -698,16 +698,17 @@ function adminComment(studentid, staffcomment) {
                 //reloadPsychoSkills(recordid);
                 $('#admin-comments').text('Add Comment').prop("disabled", false);
                 $("#modal_error").addClass("info");
-                $("#modal_error").text("Comments added");
+                $("#modal_error").text("Comment added");
+                $("#comment-id").val("");
             } else {
                 $('#admin-comments').text('Add Comment').prop("disabled", false);
+                $("#comment-id").val("");
                 $("#modal_error").addClass("error");
                 $("#modal_error").html(data);
             }
         },
     });
 }
-
 //Add Admin comments
 
 //ADD STAFF COMMENTS
