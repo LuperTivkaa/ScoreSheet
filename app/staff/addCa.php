@@ -22,14 +22,15 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
    {
       //$regno = $_SESSION['ID'];
       $stud_regnumber = filter_input(INPUT_POST, "regno", FILTER_SANITIZE_STRING);
-      $ca_scores = filter_input(INPUT_POST, "scores", FILTER_SANITIZE_NUMBER_INT);
+      $ca_scores = filter_input(INPUT_POST, "scores", FILTER_SANITIZE_STRING);
       $studentClass = filter_input(INPUT_POST, "studentClass", FILTER_SANITIZE_NUMBER_INT);
-      $ca_number= filter_input(INPUT_POST, "ca_number", FILTER_SANITIZE_STRING);
+      $ca_number= filter_input(INPUT_POST, "ca_number", FILTER_SANITIZE_NUMBER_INT);
       $subject = filter_input(INPUT_POST, "subject", FILTER_SANITIZE_NUMBER_INT);
+     
 
         if(empty($ca_scores))
          {
-            $ca_scores =0;
+            $ca_scores = 0;
          }
       //check for empty variable
         if(empty($stud_regnumber) || empty($studentClass) || empty($subject))
