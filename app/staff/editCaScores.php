@@ -21,10 +21,11 @@ $dateCreated = date("Y-m-d");
 if ($_SERVER["REQUEST_METHOD"]=="POST")
    {
       //$regno = $_SESSION['ID'];
-      $class = filter_input(INPUT_POST, "myclass", FILTER_SANITIZE_STRING);
+      $class = filter_input(INPUT_POST, "myclass", FILTER_SANITIZE_NUMBER_INT);
       $subject = filter_input(INPUT_POST, "subject", FILTER_SANITIZE_NUMBER_INT);
-      $scores = filter_input(INPUT_POST, "scores", FILTER_SANITIZE_NUMBER_INT);
-      $caid= filter_input(INPUT_POST, "caid", FILTER_SANITIZE_STRING);
+      $scores = filter_input(INPUT_POST, "scores", FILTER_SANITIZE_STRING);
+      $caid= filter_input(INPUT_POST, "caid", FILTER_SANITIZE_NUMBER_INT);
+      
 
       if(empty($scores))
       {

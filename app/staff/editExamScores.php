@@ -22,10 +22,11 @@ $dateCreated = date("Y-m-d");
 if ($_SERVER["REQUEST_METHOD"]=="POST")
    {
       //$regno = $_SESSION['ID'];
-      $class = filter_input(INPUT_POST, "myclass", FILTER_SANITIZE_STRING);
+      $class = filter_input(INPUT_POST, "myclass", FILTER_SANITIZE_NUMBER_INT);
       $subject = filter_input(INPUT_POST, "subject", FILTER_SANITIZE_NUMBER_INT);
-      $scores = filter_input(INPUT_POST, "scores", FILTER_SANITIZE_NUMBER_INT);
-      $examid= filter_input(INPUT_POST, "examid", FILTER_SANITIZE_STRING);
+      $scores = filter_input(INPUT_POST, "scores", FILTER_SANITIZE_STRING);
+      $examid= filter_input(INPUT_POST, "examid", FILTER_SANITIZE_NUMBER_INT);
+      //$exam_scores = $staff->validateScores($scores);
 
       if(empty($scores))
       {
