@@ -3,16 +3,16 @@
   box-sizing: border-box; }
 
 .main-nav {
-  width: 80%;
+  width: 90%;
   margin: 0 auto; }
 
 .secondary-nav {
-  background-color: #f5eef8;
+  background-color: #f06292;
   height: 50px;
   padding: 1em 0; }
   .secondary-nav .secondary-nav-content {
     padding: 1.5px 1.5px 1.5px 1.5px;
-    width: 80%;
+    width: 90%;
     margin: 0 auto; }
     .secondary-nav .secondary-nav-content h4 {
       font-family: "Fjalla One";
@@ -28,7 +28,7 @@
   padding: 1px 1px 1px 1px; }
   .primary-nav .primary-nav-content {
     padding: 1.5px 1.5px 1.5px 1.5px;
-    width: 80%;
+    width: 90%;
     margin: 0 auto; }
     .primary-nav .primary-nav-content ul {
       margin-bottom: 0; }
@@ -43,10 +43,10 @@
 .menu-nav {
   padding: .5em 0;
   margin-bottom: 2px;
-  background-color: #f5eef8; }
+  background-color: #f06292; }
   .menu-nav .menu-nav-content {
-    background-color: #f5eef8;
-    width: 80%;
+    background-color: #f06292;
+    width: 90%;
     margin: 0 auto; }
 
 .menu-nav-list {
@@ -62,7 +62,7 @@
       font-size: .85em; }
 
 .wrapper {
-  width: 80%;
+  width: 90%;
   margin: 0 auto; }
 
 .primary-nav-content {
