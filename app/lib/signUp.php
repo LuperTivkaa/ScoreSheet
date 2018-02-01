@@ -72,10 +72,10 @@ public function getUserName()
   }
 
  //function to create new
- public  function newClient($username,$email,$password)
+public  function newClient($username,$email,$password)
     {
-//always use try and catch block to write code
-  try{
+    //always use try and catch block to write code
+     try{
 
         //check for limit of qualifications added
                     $query ="SELECT * FROM client_signup where user_name=? || email =? || password=?";
@@ -119,6 +119,62 @@ public function getUserName()
          }
      }
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//Get staff username
+ public function staffUserName($staffid,$schid)
+  {
+    try
+    {
+      $query ="SELECT user_name AS Username FROM users WHERE id = ? AND created_By = ?";
+      $this->conn->query($query);
+      $this->conn->bind(1, $staffid, PDO::PARAM_INT);
+      $this->conn->bind(2, $schid, PDO::PARAM_INT);
+      $output = $this->conn->resultset();
+      return $output;
+    }
+    catch(Exception $e)
+    {
+      echo $e.getMessage();
+    }
+
+  }
+
+
+//Get staff username
+
+
+//Method to update/change staff password
+public function changeStaffPass($username,$password,$staffid,$schid)
+{
+
+  try
+    {
+              $sqlQuery = "UPDATE users SET user_name=?, password=? WHERE ID =? AND created_By=?";
+              $this->conn->query($sqlQuery);
+              $this->conn->bind(1, $username, PDO::PARAM_STR,100);
+              $this->conn->bind(2, $password, PDO::PARAM_STR,100);
+              $this->conn->bind(3, $staffid, PDO::PARAM_INT);
+              $this->conn->bind(4, $schid, PDO::PARAM_INT);
+              $this->conn->execute();
+          if ($this->conn->rowCount() == 1)
+          {
+           // check number of inserted rows
+            echo "ok";
+          }
+          else
+          {
+          echo "Password update failed!";
+          }
+
+    }
+    catch(Exception $e)
+     {
+      echo $e.getMessage();
+     }
+}
+
+//End Method to update/change staff password
 
  //method to login into the client portal, after successful login redirect to the client portal
 public  function client_login($email,$password)
