@@ -469,7 +469,7 @@ public function getAllStudents($id)
             $output="";
             $avatarRow ="";
             $output.="<h5 class='top-header mt-2'> My Student(s) </h5><br/>";
-            $output .='<table class="datatable">
+            $output .='<table class="table">
                 <thead>
                     <tr>
                         <th>Avatar</th>
@@ -2237,7 +2237,7 @@ public function processStudentPhoto($studentid,$clientid,$files)
                 }
             }
             else{
-                exit("Inavild file size or file type provided!");
+                exit("Invalid file size or file type provided!");
             }
                    
             }// End of try catch block
@@ -2731,12 +2731,13 @@ echo "Error:". $e->getMessage();
 public function subjectTeacher($schid)
         {
         try {
-                $query ="SELECT CONCAT(UPPER(staff_profile.surname), ', ', staff_profile.middle_name, ' ', staff_profile.lastname) AS fullname, 
+                $query ="SELECT CONCAT(UPPER(staff_profile.surname), ', ', staff_profile.middle_name) AS fullname, 
                 staff_profile.user_img AS Avatar,  
                 staff_subject_taught.my_id AS StaffID, 
                 staff_subject_taught.id AS subjectTaughtID, 
                 class.class_name AS ClassName, 
-                subjects.subject_name AS SubjectName FROM staff_profile 
+                subjects.subject_name AS SubjectName
+                FROM staff_profile 
                 INNER JOIN staff_subject_taught ON staff_subject_taught.my_id = staff_profile.user_id
                 INNER JOIN class ON staff_subject_taught.class_taught=class.id
                 INNER JOIN subjects ON subjects.sub_id=staff_subject_taught.subject_id
@@ -2755,7 +2756,7 @@ public function subjectTeacher($schid)
                     {
                     $fullname = $key['fullname'];
                     $avatar = $key['Avatar'];
-                    $avatarData ='<img src="'.$avatar.'" alt="Staff Avatar" class="small-avatar">';
+                    $avatarData ='<img src="'.$avatar.'" alt="Avatar" class="small-avatar">';
                     $staffID = $key['StaffID'];
                     $Recordid = $key['subjectTaughtID'];
                     $class = $key['ClassName'];
@@ -4240,7 +4241,7 @@ catch(Exception $e)
 public function listClassTeachers($schid)
  {
     try {
-        $query ="SELECT CONCAT(UPPER(staff_profile.surname), ', ', staff_profile.middle_name, ' ', staff_profile.lastname) AS fullname, 
+        $query ="SELECT CONCAT(UPPER(staff_profile.surname), ', ', staff_profile.middle_name) AS fullname, 
         staff_profile.user_img AS Avatar,  
         class_teacher.staff_id AS StaffID, 
         class_teacher.id AS classteacherID, 
@@ -4253,7 +4254,6 @@ public function listClassTeachers($schid)
             $this->conn->bind(1, $schid, PDO::PARAM_INT);
             $myResult = $this->conn->resultset();
             $output="";
-            $myResult = $this->conn->resultset();
             $output.="<h5 class='top-header mt-2'> Class Teachers </h5><br/>";
             $output .='<table class="table">';
             $output .='<thead><tr><th>Avatar</th><th> Name</th><th>Class</th><th>Remove</th><th>Edit</th></tr></thead><tbody>';
@@ -4263,7 +4263,7 @@ public function listClassTeachers($schid)
             {
             $fullname = $key['fullname'];
             $avatar = $key['Avatar'];
-            $avatarData ='<img src="'.$avatar.'" alt="Staff Avatar" class="small-avatar">';
+            $avatarData ='<img src="'.$avatar.'" alt="Avatar" class="small-avatar">';
             $staffID = $key['StaffID'];
             $Recordid = $key['classteacherID'];
             $class = $key['ClassName'];
@@ -4292,7 +4292,6 @@ public function listClassTeachers($schid)
         $this->conn->bind(1, $schid, PDO::PARAM_INT);
         $myResult = $this->conn->resultset();
         $output="";
-        $myResult = $this->conn->resultset();
         if($myResult && $this->conn->rowCount()>=1)
         {
         $output.="<h5 class='top-header mt-2'> Class Teachers </h5><br/>";
