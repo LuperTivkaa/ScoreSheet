@@ -52,6 +52,7 @@ $client = new client($dbConnection);
                             <li><a class="load-url" href="staffPhoto.php"><i class="fa fa-camera fa-fw" aria-hidden="true"></i> Upload Photo</a></li>
                             <li><a class="load-url" href="staffQualification.php"><i class="fa fa-plus fa-fw" aria-hidden="true"></i> Academic Qualifications</a></li>
                              <li><a class="load-url" href="staff-preview.php"><i class="fa fa-eye fa-fw" aria-hidden="true"></i> Profile Preview</a></li>
+                             <li><a class="load-url" href="resetPass.php"><i class="fa fa-unlock-alt fa-fw" aria-hidden="true"></i> Change Password </a></li>
                             </ul>
                             <hr class="mt-2">
                        <div id="Staff-info">
