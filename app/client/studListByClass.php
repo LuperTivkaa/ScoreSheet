@@ -27,14 +27,14 @@ $staff->clientUser($roleid,$clientid);
 
                             <div  class="row">
 
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                 <h6 class="top-header"><i class="fa fa-plus fa-fw" aria-hidden="true"></i>  Student List By Class</h6>
 
                                     <div class="row">
 
                                         
                                             <!--text input  -->
-                                            <div class="form-group col-md-12">
+                                            <div class="form-group col-md-6">
                                                 <!-- <label for="affective-skills-item">Affe/label> -->
                                                 <label for="studListclass">Class:</label>
                                                 <select class="custom-select form-control" id="studListclass" name="studListclass">
@@ -44,7 +44,7 @@ $staff->clientUser($roleid,$clientid);
                                                 </select> 
                                             </div>
 
-                                            <div class="form-group col-md-12">
+                                            <div class="form-group col-md-6">
                                                 <!-- <label for="lastname">Last Name:</label> -->
                                                 <label for="studsession">Session:</label>
                                                 <select class="custom-select form-control" id="studsession" name="studsession">
@@ -66,7 +66,7 @@ $staff->clientUser($roleid,$clientid);
 
                                 </div>
 
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                
                                     <div class="row">
 
