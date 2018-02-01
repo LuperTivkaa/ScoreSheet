@@ -19,7 +19,7 @@
                             }
                             
                             .secondary-nav {
-                                background-color: $secondary-nav;
+                                background-color: $icons-bg;
                                 height: 50px;
                                 padding: 1em 0;
                                 .secondary-nav-content {
@@ -63,9 +63,9 @@
                             .menu-nav {
                                 padding: .5em 0;
                                 margin-bottom: 2px;
-                                background-color: $secondary-nav;
+                                background-color: $icons-bg;
                                 .menu-nav-content {
-                                    background-color: $secondary-nav;
+                                    background-color: $icons-bg;
                                     @include center-content;
                                 }
                             }
