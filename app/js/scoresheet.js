@@ -198,9 +198,69 @@
  //=================================================================================
 
 
+ //validate and compare changed password
+
+ $('#new-content').on('keyup', '#new-pass,#confirm-new-pass', function() {
+     $('#reset-pass').prop("disabled", true);
+     var newPass = $('#new-pass').val();
+     var confirmPass = $('#confirm-new-pass').val();
+     if (newPass.length === confirmPass.length && newPass === confirmPass) {
+         $('#match-pass').removeClass();
+         $('#match-pass').addClass('info');
+         $('#match-pass').html('Password matched...');
+         $('#reset-pass').prop("disabled", false);
+     } else {
+         $('#match-pass').removeClass();
+         $('#match-pass').addClass('error');
+         $('#match-pass').html('Password do not match...');
+         //$('#reset-pass').prop("disabled", false);
+     }
+ });
+
+
+
+
+ //end  validate and compare changed password
+
+ //EDIT LOGIN DETAILS
+ $("#new-content").on('click', '#reset-pass', function(e) {
+     e.preventDefault();
+     $('#reset-pass').prop("disabled", true);
+     var username = $('#username').val();
+     var password = $('#new-pass').val();
+     //var myclass = $('#class-name').val();
+     //var category = $("#class-category option:selected").val();
+     changePass(username, password);
+ });
+
+ function changePass(username, password) {
+     $.ajax({
+         url: 'changePass.php',
+         type: 'POST',
+         data: { username: username, password: password },
+         success: function(response) {
+             var data = $.trim(response);
+             if (data === "ok") {
+                 $('#reset-pass').prop("disabled", false);
+                 $("#my-info").addClass("info");
+                 $("#my-info").html("Login details updated");
+             } else {
+                 //alert("me")
+                 $('#reset-pass').prop("disabled", false);
+                 $("#my-info").addClass("error");
+                 $("#my-info").html(data);
+             }
+         },
+     });
+ }
+
+
+
+ //END EDIT LOGIN DETAILS
+
+
  //=========================================================================
  //CREATE NEW SCHOOL CLASS
-
  $("#new-content").on('click', '#add-new-class', function(e) {
      e.preventDefault();
      $('#add-new-class').prop("disabled", true);
@@ -922,7 +982,10 @@
              if (data == 'ok') {
                  // invalid file format.
                  //$("#err").html("Invalid File !").fadeIn();
-                 $("#err").html("Upload successful");
+                 var modalid = $('#myModal');
+                 modalid.css('display', 'none');
+                 $("#my-info").addClass("info");
+                 $("#my-info").html("Upload successful");
                  //console.log("ok");
                  //include a function to reload image in the logo section
              } else {
@@ -933,7 +996,11 @@
              }
          },
          error: function(e) {
-             $("#err").html(e).fadeIn();
+             var modalid = $('#myModal');
+             modalid.css('display', 'none');
+             $("#my-info").addClass("error");
+             $("#my-info").html("Upload successful");
+             //$("#err").html(e).fadeIn();
              //console.log("error");
          }
      });
@@ -1040,10 +1107,11 @@
              if (response === undefined) {
                  $('#studByClassBtn').text("List Student(s)").prop("disabled", false);
                  $("#st-list").addClass("error");
-                 $('#st-list').html(response);
+                 $("#my-info").html(response);
+                 // $('#st-list').html(response);
              } else {
                  $('#studByClassBtn').text("List Student(s)").prop("disabled", false);
-                 $('#st-list').html(response);
+                 $('#new-content').html(response);
              }
          },
      });
