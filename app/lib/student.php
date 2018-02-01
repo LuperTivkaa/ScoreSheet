@@ -250,9 +250,6 @@ public function loadStudentGuardian($client_id)
             echo "Error: Unable to get student details";
         }
    }
-
-
-
    //end load students whose guradian have not been added yet
 
 //Get student whose id not found in student parent
@@ -889,9 +886,6 @@ $dateOfBirth,$bloodGroup)
                             $this->conn->bind(6, $this->mobile, PDO::PARAM_STR);
                             $this->conn->bind(7, $contact_add1, PDO::PARAM_STR,100);
                             $this->conn->bind(8, $perm_add2, PDO::PARAM_STR);
-                           // $this->conn->bind(9, $user_id, PDO::PARAM_INT);
-                            // $this->conn->bind(10, $sch_id, PDO::PARAM_INT);
-                            // $this->conn->bind(11, $date_created, PDO::PARAM_STR);
                             $this->conn->bind(9, $this->country, PDO::PARAM_INT);
                             $this->conn->bind(10, $this->state, PDO::PARAM_INT);
                             $this->conn->bind(11, $this->lga, PDO::PARAM_INT);
