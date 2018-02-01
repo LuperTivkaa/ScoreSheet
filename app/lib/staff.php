@@ -410,6 +410,16 @@ function lockResult($class,$schid,$approval='Yes')
 
 //END METHOD TO LOCK RESULT AND PREVENT EDIT, CREATE, PUBLISH, POST
 
+//Validate scores
+function validateScores($scores)
+{
+    if(!is_numeric($scores))
+    {
+      exit ("Invalid Input Scores");
+    }
+}
+//End validate scores
+
 
 //METHOD TO ADD NEW ASSESSMENT
 //Get student id from a function that takes in reg number of a student and return the id of the student
@@ -418,7 +428,8 @@ function addCa($score,$stud_no,$subj,$class,$staffid,$canumber,$schid,$date)
   {
   // always use try and catch block to write code
        try {
-
+                     //validate scores
+                    $this->validateScores($score);
                     //Check for lock records
                     $this->lockResult($class,$schid);
                     $termid = $this->getActiveTerm($schid);
@@ -494,6 +505,8 @@ function addTerminalExam($score,$subj,$class,$staffid,$schid,$stud_no,$date)
   {    
         try {
                     // always use try and catch block to write code
+                     //validate scores
+                    $this->validateScores($score);
                     //check for lock result
                     $this->lockResult($class,$schid);
                     $termid = $this->getActiveTerm($schid);
@@ -1236,7 +1249,7 @@ function print_ca($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
 						$arr.= '<td>'.$scores.'</td>';
 					}	
           return $arr;
-      }//End of try catch block
+        }//End of try catch block
          catch(Exception $e)
         {
             echo "Error:". $e->getMessage();
@@ -1267,9 +1280,7 @@ function subject_ScoresTotal($studentid,$subjectid,$classid,$sessionid,$termid,$
 					  foreach($output as $row => $key)
 					  {
 					  $examScores = $key['ExamScore'];
-            //$subjPosition = $key['SubjectPosition'];
-					  //$arr.= '<td>'.$examScores.'</td>';
-            //$arr.= '<td>'.$subjPosition.'</td>';
+          
 					  }	
 					//$arr.='</tr><br>';
           return $examScores;
@@ -1471,7 +1482,7 @@ function getClassCategoryID($class,$schid)
                }
                         else
                         {
-                        exit("No class caetgory available!");
+                        exit("No class category available!");
                         }
        }
 
@@ -1529,48 +1540,7 @@ function terminalAverage($studentid,$classid,$sessionid,$termid,$schid)
               }
         }
 //TERMINAL AVERAGE
-//Obselete method
-//students over all average
-// function studentOverAllAverage($studentid,$classid,$sessionid,$termid,$schid)
-// 	{
-// 		try {
-// 			/*
-// 			1. find the average of student based on the grand total all scores in subject 
-// 			*/
-//         $query = "SELECT FORMAT(GrandTermTotal/(SELECT COUNT( DISTINCT class_category_subject.subject_id ) AS SubjectCount
-//         FROM class INNER JOIN class_category_subject
-//         ON class.class_categoryid=class_category_subject.class_category_id 
-//         WHERE class.id=? AND class.my_inst_id=?),2 ) AS TotalAverage
-//         FROM termgrandtotal WHERE 
-//         termgrandtotal.student_id=? 
-//         AND termgrandtotal.class_id=?
-//         AND termgrandtotal.term_id=? AND termgrandtotal.session_id=?
-//         AND termgrandtotal.sch_id=?";
-//                     $this->conn->query($query);
-//                     $this->conn->bind(1, $classid, PDO::PARAM_INT); 
-//                     $this->conn->bind(2, $schid, PDO::PARAM_INT); 
-//                     $this->conn->bind(3, $studentid, PDO::PARAM_INT);
-// 			              $this->conn->bind(4, $classid, PDO::PARAM_INT);
-// 			              $this->conn->bind(5, $termid, PDO::PARAM_INT);
-//                     $this->conn->bind(6, $sessionid, PDO::PARAM_INT);
-//                     $this->conn->bind(7, $schid, PDO::PARAM_INT);
-//                     $output = $this->conn->resultset();
-//                     $tav = "";
-      
-// 					          foreach($output as $row => $key)
-// 					          {
-// 					          $totalAverage = $key['TotalAverage'];
-// 					          }	
-// 					          return $totalAverage;
-                    
-//                 }//End of try catch block
-//                 catch(Exception $e)
-//                 {
-//                     echo "Error:". $e->getMessage();
-//                 }
-// 	        }
 
-//END STUDENTS OVER ALL AVERAGE 
  //SELECT GRAND TOTAL
 function grandTotals($studentid,$classid,$sessionid,$termid,$schid)
 	  {
@@ -2480,7 +2450,7 @@ function classResultSheet($classid,$termid,$sessionid,$schoolid)
               $studentID = $key['StudentID'];
               $studentName = $key['Fullname'];
               $cumTotal = $this->grandTotals($studentID,$classid,$sessionid,$termid,$schoolid);
-              $av = $this->studentOverAllAverage($studentID,$classid,$sessionid,$termid,$schoolid);
+              $av = $this->terminalAverage($studentID,$classid,$sessionid,$termid,$schoolid);
               //check promotion status                  
               $printOutput.='<tr>';
               $printOutput.='<td>'.$studentName.'</td>';
@@ -2543,7 +2513,7 @@ function promotionSummarySheet($classid,$termid,$sessionid,$schoolid)
             $studentID = $key['StudentID'];
 						$studentName = $key['Fullname'];
             $cumTotal = $this->grandTotals($studentID,$classid,$sessionid,$termid,$schoolid);
-            $av = $this->studentOverAllAverage($studentID,$classid,$sessionid,$termid,$schoolid);
+            $av = $this->terminalAverage($studentID,$classid,$sessionid,$termid,$schoolid);
             //check promotion status
                         if($key['PromotionStatus'] =='On'){
                         $promotion_status = '<button type="button" data-studentid="'.$key['StudentID'].'" data-recordid="'.$key['ID'].'" class="approvedBtn" id="unpromote">Unpromote</button>';
@@ -3177,6 +3147,8 @@ function staffProfileCard($clientid,$userid)
 function editTerminalExam($score,$subj,$class,$staffid,$recordid,$schid)
   {
       // always use try and catch block to write code
+       //validate scores
+       $this->validateScores($score);
       //check for locked result
       $this->lockResult($class,$schid);
       $termid = $this->getActiveTerm($schid);
@@ -3392,6 +3364,10 @@ function editCa($score,$subj,$class,$staffid,$recordid,$schid)
   {
       // always use try and catch block to write code
       //Check for approved
+
+      //validate scores
+      $this->validateScores($score);
+      //lock result
       $this->lockResult($class,$schid);
       $termid = $this->getActiveTerm($schid);
       $sessionid = $this->getActiveSession($schid);
@@ -3484,8 +3460,7 @@ function traits($classid,$schoolid)
           foreach($output as $row => $key)
           {
            $StudID = $key['StudentID'];
-           $termAv = $this->terminalAverage($StudID,$classid,$sessionid,$termid,$schoolid);
-          $studAv = $this->studentOverAllAverage($StudID,$classid,$sessionid,$termid,$schoolid);
+           $termAv = $this->terminalAverage($StudID,$classid,$sessionid,$termid,$schoolid);          
           $printOutput.='<tr>';
           $printOutput.='<td>'.$ci.'</td>';
           $printOutput.='<td>'.$key['Fullname'].'</td>';
@@ -4136,8 +4111,7 @@ function commentSummary($classid,$termid,$sessionid,$schoolid)
               $comm= '<i class="fa fa-check" aria-hidden="true"></i>';
             }
             $myStudID = $key['recordID'];
-            $studAvg = $this->studentOverAllAverage($myStudID,$classid,$sessionid,$termid,$schoolid);
-            $av = $this->terminalAverage($myStudID,$classid,$sessionid,$termid,$schoolid);
+          $av = $this->terminalAverage($myStudID,$classid,$sessionid,$termid,$schoolid);
           $printOutput.='<tr>';
           $printOutput.='<td>'.$ci.'</td>';
           $printOutput.='<td>'.$key['Fullname'].'</td>';
