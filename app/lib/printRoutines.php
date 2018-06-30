@@ -7,7 +7,7 @@ class printRoutines extends \ScoreSheet\staff{
 function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
 	    {
 		try {     	
-        $query ="SELECT CONCAT(student_initial.surname, ', ', LOWER(student_initial.firstName), '  ',LOWER(student_initial.lastName) ) AS Fullname, student_initial.gender AS Sex,
+        $query ="SELECT CONCAT(student_initial.surname, ', ', LOWER(student_initial.firstName), '  ', IFNULL(LOWER(student_initial.lastName),'') ) AS Fullname, student_initial.gender AS Sex,
         class.class_name AS ClassName, 
         sch_term.term AS Term,
         session.session AS session, (SELECT COUNT( classpositionals.student_id )
