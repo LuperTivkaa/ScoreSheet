@@ -106,6 +106,73 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
 	}
         //End userScoresDetails
 
+        //METHOD TO GET GRAND TERM TOTAL
+public function termCumulative($stdID,$termID,$classID,$sessID,$schID){
+        try{
+            $query = "SELECT GrandTermTotal AS Total from termgrandtotal WHERE student_id=? AND class_id=? AND session_id=? AND term_id=? AND sch_id=?";
+            $this->conn->query($query);
+            $this->conn->bind(1, $stdID, PDO::PARAM_INT);
+            $this->conn->bind(2, $classID, PDO::PARAM_INT);
+            $this->conn->bind(3, $sessID, PDO::PARAM_INT);
+            $this->conn->bind(4, $termID, PDO::PARAM_INT);
+            $this->conn->bind(5, $schID, PDO::PARAM_INT);
+
+            $resultset = $this->conn->resultset();
+            if($this->conn->rowCount() >=1){
+                //loop through thr result set
+                foreach($output as $row => $key)
+					{
+                        return $cumulativeTermTotal = $key['Total'];
+                    }
+                }
+                else{
+                    return $cumulativeTermTotal ='NA';
+                }
+         }
+            catch(Exception $e)
+            {
+            echo "Error". $e->getMessage();
+            }
+    }
+        //END METHOD TO GET GRAND TERM TOTAL
+
+        //METHOD TO GET TERMINAL POSITION FOR A STUDENT
+public function studentClassPosition($stdID,$termID,$classID,$sessID,$schID){
+    try
+    {
+        $query = "SELECT termpostion AS myPosition FROM classpositionals
+        WHERE student_id=? 
+        AND class_id=? 
+        AND term_id=? 
+        AND session_id=? 
+        AND school_id=? ";
+        $this->conn->query($query);
+        $this->conn->bind(1, $stdID, PDO::PARAM_INT);
+        $this->conn->bind(2, $classID, PDO::PARAM_INT);
+        $this->conn->bind(3, $termID, PDO::PARAM_INT);
+        $this->conn->bind(4, $sessID, PDO::PARAM_INT);
+        $this->conn->bind(5, $schID, PDO::PARAM_INT);
+        $resultset = $this->conn->resultset();
+
+            if($this->conn->rowCount() >=1)
+            {
+                //loop through the result
+                foreach($resultset as $row => $key)
+                    {
+                        return $myPosition = $this->ordinalSuffix($key['myPosition']);
+                    }
+            }
+            else{
+                return $myPosition = 'NA';
+            }
+
+    }
+        catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+    }
+//END METHOD TO GET TERMINAL POSITION FOR A STUDENT
 
 //Assessment Sheet Printout
 function printScoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
@@ -538,9 +605,98 @@ function printClassResultSheet($classid,$termid,$sessionid,$schoolid)
 //end class result sheet print out
 
 
+//terminal subject summary method
+public function terminalSubjectSummary($studentid= "null", $classid,$termid,$sessionid,$schoolid){
+    try {
+      $query ="SELECT DISTINCT 
+      subjects.subject_name AS subjectName,
+      subjects.sub_id AS SubjectID
+      FROM subjects INNER JOIN assessment ON assessment.ass_subject_id=subjects.sub_id
+      WHERE 
+      assessment.ass_class_id=? AND assessment.ass_session_id=?
+      AND assessment.ass_term_id=?  AND assessment.ass_sch_id=? ORDER BY subjectName DESC";
+      $this->conn->query($query);
+      $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+      $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
+      $this->conn->bind(3, $termid, PDO::PARAM_INT); 
+      $this->conn->bind(4, $schoolid, PDO::PARAM_INT);
+      $output = $this->conn->resultset();
+      $secondRowContent = $output;
+            if($this->conn->rowCount()>=1)
+            {
+                //loop through thr result and  display column headers
+                foreach($output as $row => $key)
+                {
+                $subjectid = $key['SubjectID'];
+                $returnOuput.='<td>'.$this->subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schoolid).'</td>'; 
+                $returnOuput.='<td>'.$this->getSubjectPosition($studentid,$subjectid,$classid,$sessionid,$termid,$schoolid).'</td>';
+                $returnOuput.='<td>'.$this->singleGrade($this->subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schoolid)).'</td>';
+                }
+                //add summary details
+                   
+                    $returnOuput.='<td>'.$this->termCumulative($studentid,$termid,$classid,$sessionid,$schoolid).'</td>';
+                    $returnOuput.='<td>'.$this->terminalAverage($studentid,$classid,$sessionid,$termid,$schoolid).'</td>';
+                    $returnOuput.='<td>'.$this->getClassPosition($studentid,$classid,$sessionid,$termid,$schoolid).'</td>';
+                    $returnOuput.='<td>'.NA.'</td>';
+                return $returnOuput;
+            }
+    }
+    catch(Exception $e)
+        {
+          echo "Error:". $e->getMessage();
+        }
+  }
+//end terminal subject summary method
 
+//method to display yearly result summary
+public function annualResultSummary($classID,$termID,$sessID,$schID)
+    {
+    try{
+        $query ="SELECT classpositionals.student_id AS StudentID,
+     CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname
+     FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
+     INNER JOIN class ON class.id=classpositionals.class_id
+     WHERE classpositionals.class_id=? AND 
+     classpositionals.term_id=? AND classpositionals.session_id=?
+     AND classpositionals.school_id=? ORDER BY Fullname";
+     $this->conn->query($query);
+     //$this->conn->bind(1, $subjectid, PDO::PARAM_INT);
+     $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+     $this->conn->bind(2, $termid, PDO::PARAM_INT);
+     $this->conn->bind(3, $sessionid, PDO::PARAM_INT); 
+     $this->conn->bind(4, $schoolid, PDO::PARAM_INT);
+     $output = $this->conn->resultset();
+     $null ='No record(s) available';
+     $printTable.= '<table class="asstable-print">';
+     $printTable.=$this->listSubjectSummary($classID,$termID,$sessID,$schID);
 
+         $ci=1;
+         if($this->conn->rowCount() >=1)
+         {
+             foreach($output as $row =>$key)
+             {
+                 //loop through the subjects for each name
+                 $studentId = $key['StudentID'];
+                 $tudentName = $key['Fullname'];
+                 $printTable.='<tr>';
+                 $printTable.='<td>'.$studentName.'</td>';
+                 $printTable.=$this->terminalSubjectSummary($studentid,$classid,$termid,$sessionid,$schoolid);
+                 $printTable.='</tr>';
+             }
+             $printTable.='</table>';
+             echo $printTable;
+         }
+         else{
+             echo $null;
+         }
+    }
+    catch(Exception $e)
+    {
+        echo "Error:". $e->getMessage();
+    }
+    }
 
+//end method to display yearly result summary
 
 
 
