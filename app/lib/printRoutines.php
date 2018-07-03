@@ -120,7 +120,7 @@ public function termCumulative($stdID,$termID,$classID,$sessID,$schID){
             $resultset = $this->conn->resultset();
             if($this->conn->rowCount() >=1){
                 //loop through thr result set
-                foreach($output as $row => $key)
+                foreach($resultset as $row => $key)
 					{
                         return $cumulativeTermTotal = $key['Total'];
                     }
@@ -535,8 +535,8 @@ function getResumptionDate($clientid)
 
 //class result sheet print out
 function printClassResultSheet($classid,$termid,$sessionid,$schoolid)
- {
-  try {
+    {
+    try {
      $query ="SELECT classpositionals.student_id AS StudentID,
      CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname
      FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
@@ -606,7 +606,7 @@ function printClassResultSheet($classid,$termid,$sessionid,$schoolid)
 
 
 //terminal subject summary method
-public function terminalSubjectSummary($studentid= "null", $classid,$termid,$sessionid,$schoolid){
+public function terminalSubjectSummary($studentid,$classid,$termid,$sessionid,$schoolid){
     try {
       $query ="SELECT DISTINCT 
       subjects.subject_name AS subjectName,
@@ -621,23 +621,26 @@ public function terminalSubjectSummary($studentid= "null", $classid,$termid,$ses
       $this->conn->bind(3, $termid, PDO::PARAM_INT); 
       $this->conn->bind(4, $schoolid, PDO::PARAM_INT);
       $output = $this->conn->resultset();
-      $secondRowContent = $output;
+      $returnOuput="";
+      $na = "NA";
             if($this->conn->rowCount()>=1)
             {
                 //loop through thr result and  display column headers
                 foreach($output as $row => $key)
                 {
+                
                 $subjectid = $key['SubjectID'];
-                $returnOuput.='<td>'.$this->subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schoolid).'</td>'; 
+                $subjTotals = $this->subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schoolid);
+                $returnOuput.='<td>'.$subjTotals.'</td>'; 
                 $returnOuput.='<td>'.$this->getSubjectPosition($studentid,$subjectid,$classid,$sessionid,$termid,$schoolid).'</td>';
-                $returnOuput.='<td>'.$this->singleGrade($this->subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schoolid)).'</td>';
+                $returnOuput.='<td>'.$this->singleGrade($subjTotals).'</td>';
                 }
                 //add summary details
                    
                     $returnOuput.='<td>'.$this->termCumulative($studentid,$termid,$classid,$sessionid,$schoolid).'</td>';
                     $returnOuput.='<td>'.$this->terminalAverage($studentid,$classid,$sessionid,$termid,$schoolid).'</td>';
                     $returnOuput.='<td>'.$this->getClassPosition($studentid,$classid,$sessionid,$termid,$schoolid).'</td>';
-                    $returnOuput.='<td>'.NA.'</td>';
+                    $returnOuput.='<td>'.$na.'</td>';
                 return $returnOuput;
             }
     }
@@ -649,7 +652,7 @@ public function terminalSubjectSummary($studentid= "null", $classid,$termid,$ses
 //end terminal subject summary method
 
 //method to display yearly result summary
-public function annualResultSummary($classID,$termID,$sessID,$schID)
+public function annualResultSummary($classid,$termid,$sessid,$schid)
     {
     try{
         $query ="SELECT classpositionals.student_id AS StudentID,
@@ -663,24 +666,25 @@ public function annualResultSummary($classID,$termID,$sessID,$schID)
      //$this->conn->bind(1, $subjectid, PDO::PARAM_INT);
      $this->conn->bind(1, $classid, PDO::PARAM_INT); 
      $this->conn->bind(2, $termid, PDO::PARAM_INT);
-     $this->conn->bind(3, $sessionid, PDO::PARAM_INT); 
-     $this->conn->bind(4, $schoolid, PDO::PARAM_INT);
-     $output = $this->conn->resultset();
+     $this->conn->bind(3, $sessid, PDO::PARAM_INT); 
+     $this->conn->bind(4, $schid, PDO::PARAM_INT);
+     $Out = $this->conn->resultset();
      $null ='No record(s) available';
+     $printTable="";
      $printTable.= '<table class="asstable-print">';
-     $printTable.=$this->listSubjectSummary($classID,$termID,$sessID,$schID);
-
+     $printTable.=$this->listSubjectSummary($classid,$termid,$sessid,$schid);
+     
          $ci=1;
          if($this->conn->rowCount() >=1)
          {
-             foreach($output as $row =>$key)
+             foreach($Out as $row =>$key)
              {
                  //loop through the subjects for each name
                  $studentId = $key['StudentID'];
-                 $tudentName = $key['Fullname'];
+                 $studentName = $key['Fullname'];
                  $printTable.='<tr>';
                  $printTable.='<td>'.$studentName.'</td>';
-                 $printTable.=$this->terminalSubjectSummary($studentid,$classid,$termid,$sessionid,$schoolid);
+                 $printTable.=$this->terminalSubjectSummary($studentId,$classid,$termid,$sessid,$schid);
                  $printTable.='</tr>';
              }
              $printTable.='</table>';
@@ -690,12 +694,11 @@ public function annualResultSummary($classID,$termID,$sessID,$schID)
              echo $null;
          }
     }
-    catch(Exception $e)
-    {
-        echo "Error:". $e->getMessage();
+            catch(Exception $e)
+            {
+                //echo "Error:". $e->getMessage();
+            }
     }
-    }
-
 //end method to display yearly result summary
 
 

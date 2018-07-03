@@ -2825,11 +2825,11 @@ public function gradingScores($num)
 //SINGLE GRADE EG A
 public function singleGrade($num)
   {
-    if(!is_int($num) || !is_double($num))
-    {
-      return $printOutput ="NA";
-    }
-    else{
+    // if(!is_int($num) || !is_double($num) || !is_float($num))
+    // {
+    //   return $printOutput ="NA";
+    // }
+    // else{
     $printOutput =" ";
     //Grades
     $a = "A";
@@ -2850,15 +2850,15 @@ public function singleGrade($num)
       return $printOutput=$e;
       break;
 
-      case($num >= 40 && $num <=54):
+      case($num >= 40 && $num <=54.9):
       return $printOutput=$d;
       break;
 
-      case($num >= 55 && $num <=64):
+      case($num >= 55 && $num <=64.9):
       return $printOutput=$c;
       break;
 
-      case($num >= 65 && $num <=74):
+      case($num >= 65 && $num <=74.9):
       return $printOutput=$b;
       break;
 
@@ -2870,7 +2870,7 @@ public function singleGrade($num)
       return $printOutput=$notdefined;
       break;
     }
-  }
+  //}
 }
 //END SINGLE GRADE
 
@@ -4323,7 +4323,8 @@ public function listSubjectSummary($classid,$termid,$sessionid,$schoolid){
     if($this->conn->rowCount()>=1)
     {
       //loop through thr result and  display column headers
-      $returnOuput ='<tr>';
+      $returnOuput="";
+      $returnOuput.='<tr>';
       $returnOuput.='<th></th>';
       foreach($output as $row => $key)
       {
