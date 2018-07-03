@@ -180,6 +180,8 @@ $staff->staffUser($myroleid,$schid);
    <li><a class="load-url" href="studentPromotion.php"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Promotions</a></li>
        <li><a class="load-url" href="printResult.php"><i class="fa fa-eye" aria-hidden="true"></i>
  View Result</a></li>
+ <li><a class="load-url" href="viewAnnualResult.php"><i class="fa fa-eye" aria-hidden="true"></i>
+ Terminal Result</a></li>
                              
                             </ul>
                             <hr class="mt-2">                
