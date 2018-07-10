@@ -45,7 +45,8 @@ $staff->staffUser($myroleid,$clientid);
                             <label for="term">Term</label>
                             <select class="custom-select  form-control" id="term">
                                 <?php
-                                $staff->ActiveTerm($clientid);
+                                //$staff->ActiveTerm($clientid);
+                            $client->loadTerm($clientid);
                                 ?>
                             </select>
                             </div>
