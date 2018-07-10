@@ -59,7 +59,7 @@ else
     
     <div class="assessment-details background-cover">
         <?php
-        $print->printTerminalSummaryResult($class,$session,$term,$schoolid);
+        $print->printYearlyResultSummary($class,$session,$term,$schoolid);
         ?>
     </div>
 

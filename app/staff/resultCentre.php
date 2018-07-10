@@ -182,6 +182,8 @@ $staff->staffUser($myroleid,$schid);
  View Result</a></li>
  <li><a class="load-url" href="viewAnnualResult.php"><i class="fa fa-eye" aria-hidden="true"></i>
  Terminal Result</a></li>
+ <li><a class="load-url" href="viewYearlyResult.php"><i class="fa fa-eye" aria-hidden="true"></i>
+ Annual Result</a></li>
                              
                             </ul>
                             <hr class="mt-2">                

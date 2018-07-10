@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
         else
         {
         //Display terminal result summary
-        $printObj->terminalSummaryResult($studclass,$session,$term,$clientid);
+        $printObj->yearlyResultSummary($studclass,$session,$term,$clientid);
         }
    }
 else

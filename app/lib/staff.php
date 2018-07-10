@@ -1225,17 +1225,17 @@ public function getSubjectPosition($studentID,$subjectid,$classid,$sessionid,$te
 			$this->conn->bind(6, $schid, PDO::PARAM_INT);
       $output = $this->conn->resultset();
       //echo count($output);
-      $null ='null';
-			$arr="";
-          if($output && $this->conn->rowCount() >=1)
+      $null ='NA';
+      $arr="";
+      $position="";
+          if($this->conn->rowCount() >=1)
           {
-					foreach($output as $row => $key)
-					{
-					$subjectPosition = $key['SubjectPosition'];
-          $position = $this->ordinalSuffix($subjectPosition);
-					//$arr.= '<td>'.$position.'</td>';
-					}	
-					//$arr.='</tr><br>';
+              foreach($output as $row => $key)
+              {
+              $subjectPosition = $key['SubjectPosition'];
+              $position = $this->ordinalSuffix($subjectPosition);
+              //$arr.= '<td>'.$position.'</td>';
+              }	
           return $position;
         }
         else{
@@ -1252,8 +1252,7 @@ public function getSubjectPosition($studentID,$subjectid,$classid,$sessionid,$te
 //Method to get class position
 public function getClassPosition($studentID,$classid,$sessionid,$termid,$schid)
 	  {
-		
-		try {
+		try{
       $query ="SELECT termposition AS termPosition
       FROM  classpositionals 
       WHERE student_id=? AND 
@@ -1267,15 +1266,21 @@ public function getClassPosition($studentID,$classid,$sessionid,$termid,$schid)
 			$this->conn->bind(5, $schid, PDO::PARAM_INT);
       $output = $this->conn->resultset();
 			//echo count($output);
-			$arr="";
-					
-					foreach($output as $row => $key)
-					{
-					$classPosition = $key['termPosition'];
-          $position = $this->ordinalSuffix($classPosition);
-					//$arr.= '<td>'.$position.'</td>';
-					}	
-					return $position;	
+      $na = 'NA';
+      $c_pos ="";
+          if($this->conn->rowCount() >=1)
+          {
+              foreach($output as $row => $key)
+              {
+              $classPosition = $key['termPosition'];
+              $c_pos = $this->ordinalSuffix($classPosition);
+              }	
+              return $c_pos;
+          }
+          else
+          {
+          return $na;
+          }	
           }//End of try catch block
          catch(Exception $e)
           {
@@ -1305,8 +1310,9 @@ public function subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,
       $this->conn->bind(5, $termid, PDO::PARAM_INT); 
 			$this->conn->bind(6, $schid, PDO::PARAM_INT);
       $output = $this->conn->resultset();
-			$null="NA";
-      if($output && $this->conn->rowCount() >=1)
+      $null="NA";
+      $subjectTotal="";
+      if($this->conn->rowCount() >=1)
       {
 					foreach($output as $row => $key)
 					{
@@ -1395,12 +1401,16 @@ public function terminalAverage($studentid,$classid,$sessionid,$termid,$schid)
                   $this->conn->bind(10, $schid, PDO::PARAM_INT);
                   $output = $this->conn->resultset();
                   $tav = "";
-    
+                  $na = 'NA';
+                  if($this->conn->rowCount() >=1){
                   foreach($output as $row => $key)
                   {
-                  $terminalAverage = $key['TotalAverage'];
+                  $tav = $key['TotalAverage'];
                   }	
-                  return $terminalAverage;
+                  return $tav;
+                }else{
+                  return $na;
+                }
                   
               }//End of try catch block
               catch(Exception $e)
@@ -1430,14 +1440,18 @@ public function grandTotals($studentid,$classid,$sessionid,$termid,$schid)
       $output = $this->conn->resultset();
 			//echo count($output);
 			$arr="";
-					
-					foreach($output as $row => $key)
-					{
-					$grandTotal = $key['GrandTotal'];
-					//$arr.= '<td>'.$grandTotal.'</td>';
-					}	
-					//$arr.='</tr><br>';
-					return $grandTotal;	
+      $grandTotal=0;
+      $ndf = "NA";
+      if($output && $this->conn->rowCount()==0)
+        {
+        return $ndf;  
+        }else{
+          foreach($output as $row => $key)
+            {
+            $grandTotal = $key['GrandTotal'];
+            }	
+            return $grandTotal;
+        }	
         }//End of try catch block
          catch(Exception $e)
         {
@@ -2006,6 +2020,79 @@ public function lowestInClass($subjectid,$classid,$termid,$sessionid,$schoolid)
 
 //end lowest by subject in class
 
+//method to find highest total in class
+public function highestYearTotal($studentid,$classid,$termid,$sessid,$schid)
+	    {
+		  try {
+        //check to see if records already exist 
+        $query ="SELECT GrandTermTotal AS HighestTotal FROM termgrandtotal WHERE student_id=? AND class_id=? AND 
+        term_id=? AND session_id=? AND sch_id=? ORDER BY HighestTotal DESC LIMIT 1";
+        $this->conn->query($query);
+        $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+				$this->conn->bind(3, $termid, PDO::PARAM_INT);
+        $this->conn->bind(4, $sessid, PDO::PARAM_INT); 
+				$this->conn->bind(5, $schid, PDO::PARAM_INT);
+        $output = $this->conn->resultset();
+        $null="NA";
+        $printOutput = "";
+        if($output && $this->conn->rowCount() >=1)
+        {
+          	foreach($output as $row => $key)
+					{
+            $highesttotal = $key['HighestTotal'];
+					}
+          return $highesttotal;
+        }
+            else
+            {
+              return $null;
+            }
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+//end method to find highest term total
+
+
+//Method to find lowest term total
+public function lowestYearTotal($studentid,$classid,$termid,$sessid,$schid)
+	    {
+		  try {
+        //check to see if records already exist 
+        $query ="SELECT GrandTermTotal AS LowestTotal FROM termgrandtotal WHERE student_id=? AND class_id=? AND 
+        term_id=? AND session_id=? AND sch_id=? ORDER BY LowestTotal ASC LIMIT 1";
+        $this->conn->query($query);
+        $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+				$this->conn->bind(3, $termid, PDO::PARAM_INT);
+        $this->conn->bind(4, $sessid, PDO::PARAM_INT); 
+				$this->conn->bind(5, $schid, PDO::PARAM_INT);
+        $output = $this->conn->resultset();
+        $null="NA";
+        $printOutput = "";
+        if($output && $this->conn->rowCount() >=1)
+        {
+          	foreach($output as $row => $key)
+					  {
+            $lowesttotal = $key['LowestTotal'];
+					  }
+          return $lowesttotal;
+        }
+            else
+            {
+              return $null;
+            }
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	    }
+//end method to find lowest term total
+
 //Scoresheet method
 public function scoreSheet($subjectid,$classid,$termid,$sessionid,$schoolid)
 	    {
@@ -2156,6 +2243,41 @@ public function scoreSheetHeaderInformation($subjectid,$classid,$termid,$session
         }
 	    }
     //End scoresheet Header Information
+
+
+    //method to write annual result header Information
+    public function annualResultHeader($classid,$termid,$sess,$schid)
+	    {
+        $printOutput="";
+        $printOutput.='<div class="student-profile">
+        <h5>Terminal/Annual Result Summary</h5>
+        <ul class="scoresheet-header">';
+              $printOutput.='<li><span class="scoresheet-header-title">Class</span><span class="scoresheet-header-sub">'.$this->getClassName($schid,$classid).'</span></li>';
+              $printOutput.='<li><span class="scoresheet-header-title">Term</span><span class="scoresheet-header-sub">'.$this->getTermName($schid,$termid).'</span></li>';
+              $printOutput.='<li><span class="scoresheet-header-title">Session</span><span class="scoresheet-header-sub">'.$this->getSessionName($schid,$sess).'</span></li></ul></div>';
+          echo $printOutput;
+	    }
+    //end method to write annual result header information
+
+//Yearly result header
+public function yearlyResultHeader($classid,$termid,$sess,$schid)
+	    {
+        $printOutput="";
+        $printOutput.='<div class="student-profile">
+        <h5>Annual Result Summary</h5>
+        <ul class="scoresheet-header">';
+              $printOutput.='<li><span class="scoresheet-header-title">Class</span><span class="scoresheet-header-sub">'.$this->getClassName($schid,$classid).'</span></li>';
+              $printOutput.='<li><span class="scoresheet-header-title">Term</span><span class="scoresheet-header-sub">'.$this->getTermName($schid,$termid).'</span></li>';
+              $printOutput.='<li><span class="scoresheet-header-title">Session</span><span class="scoresheet-header-sub">'.$this->getSessionName($schid,$sess).'</span></li></ul></div>';
+          echo $printOutput;
+	    }
+//end yearly result header
+
+
+
+
+
+
 
 //Class result summary Sheet
 public function classResultHeader($classid,$termid,$sessionid,$schoolid)
@@ -2830,7 +2952,7 @@ public function singleGrade($num)
     //   return $printOutput ="NA";
     // }
     // else{
-    $printOutput =" ";
+    $put =" ";
     //Grades
     $a = "A";
     $b = "B";
@@ -2847,32 +2969,142 @@ public function singleGrade($num)
     switch(TRUE)
     {
       case($num <= 39):
-      return $printOutput=$e;
+      return $put=$e;
       break;
 
       case($num >= 40 && $num <=54.9):
-      return $printOutput=$d;
+      return $put=$d;
       break;
 
       case($num >= 55 && $num <=64.9):
-      return $printOutput=$c;
+      return $put=$c;
       break;
 
       case($num >= 65 && $num <=74.9):
-      return $printOutput=$b;
+      return $put=$b;
       break;
 
       case($num >= 75 && $num <=100):
-      return $printOutput=$a;
+      return $put=$a;
       break;
 
+      default:
+      return $put=$notdefined;
+      break;
+    }
+  //}
+}
+//END SINGLE GRADE
+
+//Subject Compare method
+
+public function subjectCmp($string)
+  {
+    $notdefined="NA";
+    $printOutput =" ";
+    switch(TRUE)
+    {
+      case(strcasecmp($string,'English Language')==0):
+      return $printOutput='ENG';
+      break;
+
+      case(strcasecmp($string,'Mathematics')==0):
+      return $printOutput='MATHS';
+      break;
+
+      case(strcasecmp($string,'Basic Science & Technology')==0):
+      return $printOutput='BST';
+      break;
+
+      case(strcasecmp($string,'Pre-Vocational Studies')==0):
+      return $printOutput='PVS';
+      break;
+
+      case(strcasecmp($string,'Cultural & Creative Arts')==0):
+      return $printOutput='CCA';
+      break;
+
+      //
+      case(strcasecmp($string,'French')==0):
+      return $printOutput='FR';
+      break;
+
+      case(strcasecmp($string,'Business Studies')==0):
+      return $printOutput='BUS STD';
+      break;
+
+      case(strcasecmp($string,'Religion & National Values')==0):
+      return $printOutput='RNV';
+      break;
+
+      case(strcasecmp($string,'Computer Studies')==0):
+      return $printOutput='CMP SC';
+      break;
+
+      case(strcasecmp($string,'Christian Religious Studies')==0):
+      return $printOutput='CRS';
+      break;
+      //
+      case(strcasecmp($string,'Civic Education')==0):
+      return $printOutput='CE';
+      break;
+
+      case(strcasecmp($string,'Animal Husbandry')==0):
+      return $printOutput='AH';
+      break;
+
+      case(strcasecmp($string,'Physics')==0):
+      return $printOutput='PHY';
+      break;
+
+      case(strcasecmp($string,'Chemistry')==0):
+      return $printOutput='CHEM';
+      break;
+
+      case(strcasecmp($string,'Biology')==0):
+      return $printOutput='BIO';
+      break;
+      //
+      case(strcasecmp($string,'Agricultural Science')==0):
+      return $printOutput='AGRIC';
+      break;
+
+      case(strcasecmp($string,'Economics')==0):
+      return $printOutput='ECONS';
+      break;
+
+      case(strcasecmp($string,'Government')==0):
+      return $printOutput='GVT';
+      break;
+
+      case(strcasecmp($string,'Commerce')==0):
+      return $printOutput='COMM';
+      break;
+
+      case(strcasecmp($string,'Financial Accounting')==0):
+      return $printOutput='FIN ACCT';
+      break;
+      //
+      case(strcasecmp($string,'Literature-in-English')==0):
+      return $printOutput='LIT';
+      break;
+
+      case(strcasecmp($string,'Further Mathematics')==0):
+      return $printOutput='F MATHS';
+      break;
+
+      case(strcasecmp($string,'Geography')==0):
+      return $printOutput='GEO';
+      break;
+
+    
       default:
       return $printOutput=$notdefined;
       break;
     }
   //}
 }
-//END SINGLE GRADE
+//end subject compare method
 
 //Method to print school Profile
 public function schoolProfileHeader($clientid)
@@ -4309,10 +4541,11 @@ public function listSubjectSummary($classid,$termid,$sessionid,$schoolid){
     $query ="SELECT DISTINCT 
     subjects.subject_name AS subjectName,
     subjects.sub_id AS SubjectID
-    FROM subjects INNER JOIN assessment ON assessment.ass_subject_id=subjects.sub_id
+    FROM subjects INNER JOIN subjecttotals ON subjecttotals.subject_id=subjects.sub_id
     WHERE 
-    assessment.ass_class_id=? AND assessment.ass_session_id=?
-    AND assessment.ass_term_id=?  AND assessment.ass_sch_id=? ORDER BY subjectName DESC";
+    subjecttotals.class_id=? AND subjecttotals.session_id=?
+    AND subjecttotals.term_id=?  AND subjecttotals.sch_id=? ORDER BY SubjectID ASC";
+    
     $this->conn->query($query);
     $this->conn->bind(1, $classid, PDO::PARAM_INT); 
     $this->conn->bind(2, $sessionid, PDO::PARAM_INT);
@@ -4329,21 +4562,21 @@ public function listSubjectSummary($classid,$termid,$sessionid,$schoolid){
       foreach($output as $row => $key)
       {
         $subjectName = $key['subjectName'];
-        $returnOuput.='<th colspan="3">'.$subjectName.'</th>'; 
+        $returnOuput.='<th colspan="3">'.$this->subjectCmp($subjectName).'</th>'; 
       }
       $returnOuput.='<th colspan="4">Summary</th></tr>'; 
         //create a second row based on the number of subjects available
         $returnOuput.='<tr>';
         $returnOuput.='<th>Name</th>';
           foreach($secondRowContent as $row => $key){
-            $returnOuput.='<th>Total</th>';
-            $returnOuput.='<th>Pos</th>';
-            $returnOuput.='<th>Grade</th>';
+            $returnOuput.='<th>T</th>';
+            $returnOuput.='<th>P</th>';
+            $returnOuput.='<th>G</th>';
             }
-            $returnOuput.='<th>Term Total</th>';
+            $returnOuput.='<th>Total</th>';
             $returnOuput.='<th>Av</th>';
             $returnOuput.='<th>Pos</th>';
-            $returnOuput.='<th>Remark</th></tr>';
+            $returnOuput.='<th>Rmks</th></tr>';
       return $returnOuput;
     }
   }
@@ -5252,12 +5485,116 @@ public function enrollmentRoll($staffid,$clientid)
 //END METHOD TO LIST NEWLY ADMITTED STUDENT FOR ENROLLMENT
 
 
+//
+//METHOD TO GET SESSION NAME
+public function getSessionName($schid,$sess)
+        {
+          //always use try and catch block to write code
+          try{
+                //SELECT THE ID OF THE ACTIVE SESSION BASED ON THE INSTITUTION
+                  $sqlStmt = "SELECT session.session AS SessionName FROM session WHERE sess_inst_id=? AND id=?";
+                  $this->conn->query($sqlStmt);
+                  $this->conn->bind(1, $schid, PDO::PARAM_INT);
+                  $this->conn->bind(2, $sess, PDO::PARAM_INT);
+                  $myResult = $this->conn->resultset();
+                      if ($this->conn->rowCount() == 1)
+                        {
+                          //loop through the result set
+                          foreach ($myResult as $row => $key)
+                          {
+                              $sessName = $key['SessionName'];
+                          }
+                          // retrun the ID  OF THE STUDENT
+                          return $sessName;
+                      }
+                                else
+                                {
+                                exit("No session Selected");
+                                }
+              }
+
+                catch(Exception $e)
+                {
+                //echo error here
+                //this get an error thrown by the system
+                echo "Error:". $e->getMessage();
+                }
+        }
+
+        ///
 
+        //METHOD TO GET TERM NAME
 
+public function getTermName($schid,$termid)
+        {
+          //always use try and catch block to write code
+          try{
+                //SELECT THE ID OF THE ACTIVE SESSION BASED ON THE INSTITUTION
+                  $sqlStmt = "SELECT term AS TermName FROM sch_term WHERE term_inst_id=? AND term_id=?";
+                  $this->conn->query($sqlStmt);
+                  $this->conn->bind(1, $schid, PDO::PARAM_INT);
+                  $this->conn->bind(2, $termid, PDO::PARAM_INT);
+                  $myResult = $this->conn->resultset();
+                      if ($this->conn->rowCount() == 1)
+                        {
+                          //loop through the result set
+                          foreach ($myResult as $row => $key)
+                          {
+                              $termName = $key['TermName'];
+                          }
+                          // retrun the ID  OF THE STUDENT
+                          return $termName;
+                      }
+                                else
+                                {
+                                exit("No Term Selected");
+                                }
+              }
 
+                catch(Exception $e)
+                {
+                //echo error here
+                //this get an error thrown by the system
+                echo "Error:". $e->getMessage();
+                }
+        }
 
+        ///
 
+        ///METHOD NAME TO GET CLASS NAME
+public function getClassName($schid,$classid)
+        {
+          //always use try and catch block to write code
+          try{
+                //SELECT THE ID OF THE ACTIVE SESSION BASED ON THE INSTITUTION
+                  $sqlStmt = "SELECT class_name AS ClassName FROM class WHERE my_inst_id=? AND id=?";
+                  $this->conn->query($sqlStmt);
+                  $this->conn->bind(1, $schid, PDO::PARAM_INT);
+                  $this->conn->bind(2, $classid, PDO::PARAM_INT);
+                  $myResult = $this->conn->resultset();
+                      if ($this->conn->rowCount() == 1)
+                        {
+                          //loop through the result set
+                          foreach ($myResult as $row => $key)
+                          {
+                              $ClassName = $key['ClassName'];
+                          }
+                          // retrun the ID  OF THE STUDENT
+                          return $ClassName;
+                      }
+                                else
+                                {
+                                exit("No Classname Selected");
+                                }
+              }
 
+                catch(Exception $e)
+                {
+                //echo error here
+                //this get an error thrown by the system
+                echo "Error:". $e->getMessage();
+                }
+        }
 
 
 
@@ -5358,4 +5695,257 @@ public function enrollmentRoll($staffid,$clientid)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 }
+//end of class
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

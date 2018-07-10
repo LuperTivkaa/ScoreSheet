@@ -20,7 +20,7 @@ $staff->staffUser($myroleid,$clientid);
 <!--Row  to hold some sub menu  -->
 <div class="row">
                     <div class="col-md-12 mt-1">
-                         <h5 class="top-header">View Terminal Result Summary</h6>
+                         <h5 class="top-header">View Annual Result Summary</h6>
                         <div class="row">
 
                             <div class="col-12">
@@ -53,7 +53,7 @@ $staff->staffUser($myroleid,$clientid);
                         </div> 
                         <div class="row"> 
                         <div class="col-6">
-                    <button class="btn btn-primary mt-3" type="button" id="view-terminal-result-summary"><i class="fa fa-print" aria-hidden="true"></i> View Terminal Result</button>
+                    <button class="btn btn-primary mt-3" type="button" id="view-annual-result-summary"><i class="fa fa-print" aria-hidden="true"></i> View Annual Result</button>
                             </div>
                             </div>
                     </div>
