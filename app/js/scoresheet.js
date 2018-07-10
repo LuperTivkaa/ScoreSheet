@@ -3932,6 +3932,7 @@ function newExamScores(regno, scores, studentClass, subject) {
 //View Result summary for print
 $("#new-content").on('click', '#print-result', function(e) {
     e.preventDefault();
+
     $('#print-result').prop("disabled", true);
     var studclass = $("#studclass option:selected").val();
     var session = $("#session option:selected").val();
@@ -3958,8 +3959,69 @@ function viewResultPrint(studclass, session, term) {
         },
     });
 }
-
 //End View Result summary for print
+
+//code to handle display for terminal result summary
+$("#new-content").on('click', '#view-terminal-result-summary', function(e) {
+    e.preventDefault();
+    $('#view-terminal-result-summary').text("wait a while...").prop("disabled", true);
+    var studclass = $("#studclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+    termResultSummary(studclass, session, term);
+});
+
+//call back function to add new continous assessment scores
+function termResultSummary(studclass, session, term) {
+    $.ajax({
+        url: 'terminalResultSummary.php',
+        type: 'POST',
+        data: { studclass: studclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#view-terminal-result-summary').text("View Terminal Result").prop("disabled", false);
+                $("#new-content").html(data);
+            } else {
+                $('#view-terminal-result-summary').text("View Terminal Result").prop("disabled", false);
+                // $("#my-info").addClass("error");
+                $("#new-content").html(data);
+            }
+        },
+    });
+}
+//end code block to handle display for terminal result summary
+
+//code to handle display for annual result result summary
+$("#new-content").on('click', '#view-annual-result-summary', function(e) {
+    e.preventDefault();
+    $('#view-annual-result-summary').text("wait a while...").prop("disabled", true);
+    var studclass = $("#studclass option:selected").val();
+    var session = $("#session option:selected").val();
+    var term = $("#term option:selected").val();
+    yearlyResultSummary(studclass, session, term);
+});
+
+//call back function to add new continous assessment scores
+function yearlyResultSummary(studclass, session, term) {
+    $.ajax({
+        url: 'yearlyResultSummary.php',
+        type: 'POST',
+        data: { studclass: studclass, session: session, term: term },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#view-annual-result-summary').text("View Annual Result").prop("disabled", false);
+                $("#new-content").html(data);
+            } else {
+                $('#view-annual-result-summary').text("View Annual Result").prop("disabled", false);
+                // $("#my-info").addClass("error");
+                $("#new-content").html(data);
+            }
+        },
+    });
+}
+//end code to handle
 
 //process scoresheet
 $("#new-content").on('click', '#scoresheet', function(e) {
