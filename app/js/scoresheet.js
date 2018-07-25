@@ -1270,7 +1270,6 @@ $('#new-content').on('click', '#newbtn', function(e) {
     var recordid = $(this).data('recordid');
     var classid = $(this).data('classid');
     var scores = $(this).data('scores');
-
     $('#edit-scores').val(scores);
     $('#record-id').val(recordid);
     $('#studclassid').val(classid);
@@ -4066,16 +4065,16 @@ $("#new-content").on('click', '#view-annual-result-summary', function(e) {
     $('#view-annual-result-summary').text("wait a while...").prop("disabled", true);
     var studclass = $("#studclass option:selected").val();
     var session = $("#session option:selected").val();
-    var term = $("#term option:selected").val();
-    yearlyResultSummary(studclass, session, term);
+    //var term = $("#term option:selected").val();
+    yearlyResultSummary(studclass, session);
 });
 
 //call back function to add new continous assessment scores
-function yearlyResultSummary(studclass, session, term) {
+function yearlyResultSummary(studclass, session) {
     $.ajax({
         url: 'yearlyResultSummary.php',
         type: 'POST',
-        data: { studclass: studclass, session: session, term: term },
+        data: { studclass: studclass, session: session},
         success: function(response) {
             var data = $.trim(response);
             if (data === "ok") {
@@ -4203,6 +4202,70 @@ $('#new-content').on('change', '#assignmentclass', function() {
         $("#listsubject").html(data);
     });
 });
+
+
+//ASSIGN ANNUAL SUBJECT POSITION
+$("#new-content").on('click', '#assign-annual-subj-position', function(e) {
+    e.preventDefault();
+    $('#assign-annual-subj-position').text("Assigning...").prop("disabled", true);
+    var subject = $("#position-subject option:selected").val();
+    var myclass = $("#my-class option:selected").val();
+    var session = $("#session option:selected").val();
+
+    annualsubjPosition(subject, myclass, session);
+});
+
+function annualsubjPosition(subj, myclass, session) {
+    $.ajax({
+        url: 'assignAnnualSubjPosition.php',
+        type: 'POST',
+        data: { subj: subj, myclass: myclass, session: session},
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#assign-annual-subj-position').text("Assign Position").prop("disabled", false);
+                $("#my-info").html("nnual ASubject Position Assigned Successfully");
+            } else {
+                $('#assign-annual-subj-position').text("Assign Position").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end assign annual subject position
+
+//code block to reset annual subject position
+$("#new-content").on('click', '#reset-annual-subj-position', function(e) {
+    e.preventDefault();
+    $('#reset-annual-subj-position').text("Reseting...").prop("disabled", true);
+    var subject = $("#position-subject option:selected").val();
+    var myclass = $("#my-class option:selected").val();
+    var session = $("#session option:selected").val();
+
+    resetAnnualSubjPosition(subject, myclass, session);
+});
+
+function resetAnnualSubjPosition(subj, myclass, session) {
+    $.ajax({
+        url: 'resetAnnualSubjPosition.php',
+        type: 'POST',
+        data: { subj: subj, myclass: myclass, session: session},
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#reset-annual-subj-position').text('Reset Position').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Position Reset successfully");
+            } else {
+                $('#reset-annual-subj-position').text("Reset Position").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//END CODE TO RESET ANNUAL SUBJECT POSITION
 
 //Assign subject position
 $("#new-content").on('click', '#assign-position', function(e) {
@@ -4432,7 +4495,7 @@ $("#new-content").on('click', '#remove-enrolled-student', function(e) {
     }
 
 });
-//call back for delete affective skilss
+//call back for deleting enrolled students
 function deleteEnrolledStud(id, myclass) {
     $.ajax({
         url: 'deleteEnrolledStudent.php',
@@ -4451,8 +4514,82 @@ function deleteEnrolledStud(id, myclass) {
         },
     });
 }
-
 //remove enrolled student
+
+//DELETE CA
+$("#new-content").on('click', '#deleteCa', function(e) {
+    e.preventDefault();
+    if (confirm("Are you sure you want to remove CA item from database. This action can not be reversed!") == true) {
+        $('#deleteCa').text("deleting...").prop("disabled", true);
+        var id = $(this).data('deleteid');
+        var myclass = $(this).data('myclass');
+        var mysubj = $(this).data('mysubj');
+        var mysess = $(this).data('mysess');
+        var myterm = $(this).data('myterm');
+        //alert(mysubj);
+        deleteCaItem(id,myclass,mysubj,mysess,myterm);
+    } else {
+        $('#deleteCa').prop("disabled", false);
+    }
+
+});
+//call back for deleting CA
+function deleteCaItem(id, myclass,mysubj,mysess,myterm) {
+    $.ajax({
+        url: 'deleteCaItem.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload CA Function here
+                $('#deleteCa').text("Remove").prop("disabled", false);
+                reloadCaScores(myclass,mysubj);
+            } else {
+                
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//END DELETE CA
+
+//DELETE ADVANCED EXAM SEARH ITEM
+$("#new-content").on('click', '#deleteExam', function(e) {
+    e.preventDefault();
+    if (confirm("Are you sure you want to remove EXAM item from database. This action can not be reversed!") == true) {
+        $('#deleteExam').text("deleting...").prop("disabled", true);
+        var id = $(this).data('deleteid');
+        var myclass = $(this).data('myclass');
+        var mysubj = $(this).data('mysubj');
+        var mysess = $(this).data('mysess');
+        var myterm = $(this).data('myterm');
+        //alert(mysubj);
+        deleteExamItem(id,myclass,mysubj,mysess,myterm);
+    } else {
+        $('#deleteExam').prop("disabled", false);
+    }
+
+});
+//call back for deleting EXAM ITEM
+function deleteExamItem(id, myclass,mysubj,mysess,myterm) {
+    $.ajax({
+        url: 'deleteExamItem.php',
+        type: 'POST',
+        data: { id: id },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#deleteExam').text("Remove").prop("disabled", false);
+                reloadSubjectScores(myclass, mysubj);
+            } else {
+                
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//END DELETE ADVANCED EXAM SEARCH ITEM
 
 //class teacher post result for processing i.e assigning class position
 $("#new-content").on('click', '#submit-result', function(e) {
