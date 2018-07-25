@@ -1,5 +1,5 @@
 <?php
-set_time_limit ( 600 );
+set_time_limit(1200);
 //session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
