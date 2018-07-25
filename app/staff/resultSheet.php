@@ -1,4 +1,5 @@
 <?php
+set_time_limit(600);
 //session_start();
 require '../../vendor/autoload.php';
 use ScoreSheet\dbConnection;
@@ -92,7 +93,6 @@ $staff->staffUser($myroleid,$schid);
             <?php
             $print->userScoresDetails($studentid,$class,$session,$term,$schoolid);
             ?>
-
         </div>
            <!-- End userr score details -->
     </div>
@@ -105,11 +105,33 @@ $staff->staffUser($myroleid,$schid);
       <!-- begin student  performance container -->
     <div class="student-performance-container">
                 <?php
-                $print->resultDetails($studentid,$class,$term,$session,$schoolid)
+                $print->resultDetails($studentid,$class,$term,$session,$schoolid);
                 ?>
             
     </div>
     <!-- End student performancen container -->
+    <?php if($term==3)
+        {
+            echo "<h6>STUDENT'S ANNUAL RESULT SUMMARY</h6>";
+        }
+    ?>
+    <div class="profile-details">
+            <?php
+            if($term==3){
+            $print->annualScoresDetails($studentid,$class,$session,$schoolid);
+            }
+            ?>
+        </div>
+    <!-- Begin Annual Summary Reports -->
+    <div class="student-performance-container">
+                <?php
+                if($term == 3){
+                $print->studentAnnualResultSummary($studentid,$class,$session,$schoolid);
+                }
+                ?>
+            
+    </div>
+    <!-- End Annual Summary Reports -->
 
     <!-- Begin Teacher comments container -->
     <div class="teacher-comments-container">
@@ -209,18 +231,13 @@ $staff->staffUser($myroleid,$schid);
 <!-- End main rating -->
 
 
-
-
-
-                          
-                    
-
-    
-
-
-
 </div>
 
+<script>
+$(window).load(function() {
+  window.print();
+});
+</script>
 </body>
 
 </html>
