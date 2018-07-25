@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"]=="GET")
 //$subjectid = filter_input(INPUT_GET, "subjectid", FILTER_SANITIZE_NUMBER_INT);
 $class = filter_input(INPUT_GET, "class", FILTER_SANITIZE_NUMBER_INT);
 $session = filter_input(INPUT_GET, "session", FILTER_SANITIZE_NUMBER_INT);
-$term = filter_input(INPUT_GET, "term", FILTER_SANITIZE_NUMBER_INT);
+//$term = filter_input(INPUT_GET, "term", FILTER_SANITIZE_NUMBER_INT);
 $schoolid = filter_input(INPUT_GET, "schoolid", FILTER_SANITIZE_NUMBER_INT);
 }
 else
@@ -59,7 +59,7 @@ else
     
     <div class="assessment-details background-cover">
         <?php
-        $print->printYearlyResultSummary($class,$session,$term,$schoolid);
+        $print->printYearlyResultSummary($class,$session,$schoolid);
         ?>
     </div>
 

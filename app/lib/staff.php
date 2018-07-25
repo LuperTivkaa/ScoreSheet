@@ -636,8 +636,9 @@ public function searchCa($searchVar,$schid)
   		if(is_numeric($searchVar))
   		{
           $activeSession = $this->getActiveSession($schid);
+          $termid = $this->getActiveTerm($schid);
           $studentID = $this->getStudentId($searchVar,$schid);
-  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject,assessment.id AS caRecordid,assessment.ca_score AS CaScores,ca_settings.ca_title AS caTitle
+  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,class.id AS ClassID,session.session AS Session,sch_term.term AS Term,subjects.subject_name AS Subject,subjects.sub_id AS SubjID,assessment.id AS caRecordid,assessment.ca_score AS CaScores,ca_settings.ca_title AS caTitle
              FROM assessment 
              INNER JOIN student_initial ON assessment.ass_student_id=student_initial.id
              INNER JOIN class ON assessment.ass_class_id=class.id 
@@ -645,11 +646,12 @@ public function searchCa($searchVar,$schid)
              INNER JOIN sch_term ON assessment.ass_term_id=sch_term.term_id 
              INNER JOIN subjects ON assessment.ass_subject_id=subjects.sub_id
              INNER JOIN ca_settings ON assessment.ca_no_id=ca_settings.ca_id
-             WHERE ass_student_id =?  && ass_sch_id=? && ass_session_id=? ORDER BY Subject,caTitle";
+             WHERE ass_student_id =?  && ass_sch_id=? && ass_session_id=?  && ass_term_id=? ORDER BY Term,Subject,caTitle DESC";
                     $this->conn->query($query);
                     $this->conn->bind(1, $studentID, PDO::PARAM_INT);
 					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
                     $this->conn->bind(3, $activeSession, PDO::PARAM_INT);
+                    $this->conn->bind(4, $termid, PDO::PARAM_INT);
                     $myResult= $this->conn->resultset();
 
                         //loop through the result
@@ -670,9 +672,13 @@ public function searchCa($searchVar,$schid)
                         <th>CA Scores</th>
                         <th>Action</th></tr>';
                         $ci=1;
-                        $ci=1;
                         foreach($myResult as $row => $key)
                         {
+                        $ID = $key['caRecordid'];
+                        $class = $key['ClassID'];
+                        // $session = $key['SessID'];
+                        // $term = $key['TermID'];
+                        $subject = $key['SubjID'];
                         $printOutput.='<tr>';
                         $printOutput.='<td>'.$ci.'</td>';
                         $printOutput.='<td>'.$key['Fullname'].'</td>';
@@ -682,8 +688,8 @@ public function searchCa($searchVar,$schid)
                         $printOutput.='<td>'.$key['Subject'].'</td>';
                         $printOutput.='<td>'.$key['caTitle'].'</td>';
                         $printOutput.='<td>'.$key['CaScores'].'</td>';
-                        $printOutput.='<td><button type="button"  data-recordid="'.$key['caRecordid'].'" data-scores="'.$key['CaScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
-                        $printOutput.='</tr>'; 
+                        $printOutput.='<td><button type="button"  data-recordid="'.$ID.'" data-scores="'.$key['CaScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button>
+                    <button type="button"  data-deleteid="'.$ID.'" data-myclass="'.$class.'"  data-mysubj="'.$subject.'" class="btn btn-danger btn-sm" id="deleteCa"><i class="fa fa-trash" aria-hidden="true"></i>Remove</button></td></tr>'; 
                         $ci++;
                         }
                       $printOutput.= "</table>";
@@ -749,7 +755,7 @@ public function advancedCaSearch($class,$subject,$session,$term,$schid)
                         else{
                         $printOutput = " ";
                         $printOutput.= '<table  class="table table-striped table-responsive">';
-                        $printOutput.='<tr><th>No</th>
+                        $printOutput.='<tr>
                         <th>Student Name</th>
                         <th>Class</th>
                         <th>Session</th>
@@ -758,11 +764,12 @@ public function advancedCaSearch($class,$subject,$session,$term,$schid)
                         <th>CA Title</th>
                         <th>CA Scores</th>
                         <th>Action</th></tr>';
-                        $ci=1;
+                        //$ci=1;
                         foreach($myResult as $row => $key)
                         {
+                        $ID = $key['caRecordid'];
                         $printOutput.='<tr>';
-                        $printOutput.='<td>'.$ci.'</td>';
+                        //$printOutput.='<td>'.$ci.'</td>';
                         $printOutput.='<td>'.$key['Fullname'].'</td>';
                         $printOutput.='<td>'.$key['ClassName'].'</td>';
                         $printOutput.='<td>'.$key['Session'].'</td>';
@@ -770,9 +777,10 @@ public function advancedCaSearch($class,$subject,$session,$term,$schid)
                         $printOutput.='<td>'.$key['Subject'].'</td>';
                         $printOutput.='<td>'.$key['caTitle'].'</td>';
                         $printOutput.='<td>'.$key['CaScores'].'</td>';
-                        $printOutput.='<td><button type="button"  data-recordid="'.$key['caRecordid'].'" data-scores="'.$key['CaScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
-                        $printOutput.='</tr>'; 
-                        $ci++;
+                        $printOutput.='<td><button type="button"  data-recordid="'.$ID.'" data-scores="'.$key['CaScores'].'" 
+                        class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button>
+  <button type="button"  data-deleteid="'.$ID.'" data-myclass="'.$class.'"  data-mysubj="'.$subject.'" data-mysess="'.$session.'" data-myterm="'.$term.'" class="btn btn-danger btn-sm" id="deleteCa"><i class="fa fa-trash" aria-hidden="true"></i>Remove</button></td></tr>'; 
+                        //$ci++;
                         }
                       $printOutput.= "</table>";
                       echo $printOutput;
@@ -793,7 +801,6 @@ public function advancedCaSearch($class,$subject,$session,$term,$schid)
   //End advanced CA search 
   
 
-
   //Search Examination reecord
 public function basicExamSearch($searchVar,$schid)
   {
@@ -804,19 +811,21 @@ public function basicExamSearch($searchVar,$schid)
   		if(is_numeric($searchVar))
   		{
         $activeSession = $this->getActiveSession($schid);
+        $termid = $this->getActiveTerm($schid);
           $studentID = $this->getStudentId($searchVar,$schid);
-  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject,terminal_exam.exam_score AS ExamScores,terminal_exam.id AS ExamRecordID
+  					$query ="SELECT CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname, student_initial.id AS StudentID, class.class_name AS ClassName,class.id AS ClassID,session.session AS Session,sch_term.term AS Term, subjects.subject_name AS Subject,subjects.sub_id AS SubjID,terminal_exam.exam_score AS ExamScores,terminal_exam.id AS ExamRecordID
              FROM terminal_exam 
              INNER JOIN student_initial ON terminal_exam.exam_stud_id=student_initial.id
              INNER JOIN class ON terminal_exam.exam_class_arm_id=class.id 
              INNER JOIN session ON  terminal_exam.exam_session_id=session.id 
              INNER JOIN sch_term ON terminal_exam.exam_term_id=sch_term.term_id 
              INNER JOIN subjects ON terminal_exam.exam_subj_id=subjects.sub_id
-             WHERE exam_stud_id =? && exam_sch_id=? && exam_session_id=?";
+             WHERE exam_stud_id =? && exam_sch_id=? && exam_session_id=? && exam_term_id=?";
                     $this->conn->query($query);
                     $this->conn->bind(1, $studentID, PDO::PARAM_INT);
 					          $this->conn->bind(2, $schid, PDO::PARAM_INT);
                     $this->conn->bind(3, $activeSession, PDO::PARAM_INT);
+                    $this->conn->bind(4, $termid, PDO::PARAM_INT);
                     $myResult= $this->conn->resultset();
 
                         //loop through the result
@@ -838,6 +847,9 @@ public function basicExamSearch($searchVar,$schid)
                         $ci=1;
                         foreach($myResult as $row => $key)
                         {
+                        $ID = $key['ExamRecordID'];
+                        $class = $key['ClassID'];
+                        $subject = $key['SubjID'];
                         $printOutput.='<tr>';
                         $printOutput.='<td>'.$ci.'</td>';
                         $printOutput.='<td>'.$key['Fullname'].'</td>';
@@ -846,7 +858,8 @@ public function basicExamSearch($searchVar,$schid)
                         $printOutput.='<td>'.$key['Term'].'</td>';
                         $printOutput.='<td>'.$key['Subject'].'</td>';
                         $printOutput.='<td>'.$key['ExamScores'].'</td>';
-                        $printOutput.='<td><button type="button"  data-recordid="'.$key['ExamRecordID'].'" data-scores="'.$key['ExamScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
+                        $printOutput.='<td><button type="button"  data-recordid="'.$ID.'" data-scores="'.$key['ExamScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button>
+                        <button type="button"  data-deleteid="'.$ID.'" data-myclass="'.$class.'"  data-mysubj="'.$subject.'" class="btn btn-danger btn-sm" id="deleteExam"><i class="fa fa-trash" aria-hidden="true"></i>Remove</button></td>'; 
                         $printOutput.='</tr>'; 
                         $ci++;
                         }
@@ -922,6 +935,7 @@ public function advancedExamSearch($class,$subject,$session,$term,$schid)
                         foreach($myResult as $row => $key)
                         {
                         //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $ID = $key['ExamRecordID'];
                         $printOutput.='<tr>';
                         $printOutput.='<td>'.$ci.'</td>';
                         $printOutput.='<td>'.$key['Fullname'].'</td>';
@@ -930,8 +944,8 @@ public function advancedExamSearch($class,$subject,$session,$term,$schid)
                         $printOutput.='<td>'.$key['Term'].'</td>';
                         $printOutput.='<td>'.$key['Subject'].'</td>';
                         $printOutput.='<td>'.$key['ExamScores'].'</td>';
-                        $printOutput.='<td><button type="button" data-classid="'.$class.'" data-sessionid="'.$session.'"data-subjectid="'.$subject.'" data-term="'.$term.'" data-recordid="'.$key['ExamRecordID'].'" data-scores="'.$key['ExamScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
-                        $printOutput.='</tr>'; 
+                        $printOutput.='<td><button type="button" data-classid="'.$class.'" data-sessionid="'.$session.'"data-subjectid="'.$subject.'" data-term="'.$term.'" data-recordid="'.$ID.'" data-scores="'.$key['ExamScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button>
+                        <button type="button"  data-deleteid="'.$ID.'" data-myclass="'.$class.'"  data-mysubj="'.$subject.'" data-mysess="'.$session.'" data-myterm="'.$term.'" class="btn btn-danger btn-sm" id="deleteExam"><i class="fa fa-trash" aria-hidden="true"></i>Remove</button></tr>'; 
                         $ci++;
                         }
                       $printOutput.= "</table>";
@@ -953,6 +967,7 @@ public function advancedExamSearch($class,$subject,$session,$term,$schid)
     }
 
 //End advanced exam search
+
 //Staff profile method
 public function staffProfile($clientid,$staffid)
         {
@@ -1249,6 +1264,85 @@ public function getSubjectPosition($studentID,$subjectid,$classid,$sessionid,$te
 	  }
 //end method to get subject position
 
+
+//METHOD TO GET STUDENT ANNUAL SUBJECT POSITION
+public function getAnnualSubjPosition($studentID,$subjid,$classid,$sessionid,$schid)
+	  {
+		try{
+      $query ="SELECT Annual_Subject_Position AS annualSubjPosition
+      FROM  annual_subject_position 
+      WHERE student_id=? AND subject_id=? AND 
+      class_id=? AND session_id=? AND sch_id=?"; 
+      $this->conn->query($query); 
+      $this->conn->bind(1, $studentID, PDO::PARAM_INT);
+      $this->conn->bind(2, $subjid, PDO::PARAM_INT);
+      $this->conn->bind(3, $classid, PDO::PARAM_INT); 
+			$this->conn->bind(4, $sessionid, PDO::PARAM_INT); 
+			$this->conn->bind(5, $schid, PDO::PARAM_INT);
+      $output = $this->conn->resultset();
+			//echo count($output);
+      $na = 'NA';
+      $c_pos ="";
+          if($this->conn->rowCount() >=1)
+          {
+              foreach($output as $row => $key)
+              {
+              $annualPosition = $key['annualSubjPosition'];
+              $c_pos = $this->ordinalSuffix($annualPosition);
+              }	
+              return $c_pos;
+          }
+          else
+          {
+          return $na;
+          }	
+          }//End of try catch block
+         catch(Exception $e)
+          {
+            echo "Error:". $e->getMessage();
+          }
+	  }
+//END METHOD TO GET STUDENT ANNUAL SUBJECT POSITION
+
+
+//METHOD TO GET ANNUAL POSITION FOR STUDENTS
+public function getAnnualPosition($studentID,$classid,$sessionid,$schid)
+	  {
+		try{
+      $query ="SELECT annual_position AS annualPosition
+      FROM  annual_result 
+      WHERE student_id=? AND 
+      class_id=? AND session_id=? AND sch_id=?"; 
+      $this->conn->query($query); 
+      $this->conn->bind(1, $studentID, PDO::PARAM_INT);
+      $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+			$this->conn->bind(3, $sessionid, PDO::PARAM_INT); 
+			$this->conn->bind(4, $schid, PDO::PARAM_INT);
+      $output = $this->conn->resultset();
+			//echo count($output);
+      $na = 'NA';
+      $c_pos ="";
+          if($this->conn->rowCount() >=1)
+          {
+              foreach($output as $row => $key)
+              {
+              $annualPosition = $key['annualPosition'];
+              $c_pos = $this->ordinalSuffix($annualPosition);
+              }	
+              return $c_pos;
+          }
+          else
+          {
+          return $na;
+          }	
+          }//End of try catch block
+         catch(Exception $e)
+          {
+            echo "Error:". $e->getMessage();
+          }
+	  }
+//END METHOD TO GET ANNUAL POSITION
+
 //Method to get class position
 public function getClassPosition($studentID,$classid,$sessionid,$termid,$schid)
 	  {
@@ -1287,9 +1381,48 @@ public function getClassPosition($studentID,$classid,$sessionid,$termid,$schid)
             echo "Error:". $e->getMessage();
           }
 	  }
-
-
 //end Method to get class position
+
+//Yearly subject totals
+public function yearlySubjectTotals($studentid,$subjectid,$classid,$sessionid,$schid)
+	  {
+		try {
+      $query ="SELECT YearlySubjTotal AS AnnualSubjTotal
+      FROM  annualsubjecttotals 
+      WHERE
+      student_id=? AND subject_id=? AND 
+      class_id=? AND session_id=? AND sch_id=?"; 
+      $this->conn->query($query);
+      $this->conn->bind(1, $studentid, PDO::PARAM_INT); 
+			$this->conn->bind(2, $subjectid, PDO::PARAM_INT);
+      $this->conn->bind(3, $classid, PDO::PARAM_INT); 
+			$this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+			$this->conn->bind(5, $schid, PDO::PARAM_INT);
+      $output = $this->conn->resultset();
+      $null="NA";
+      //$subjectTotal="";
+      if($this->conn->rowCount() >=1)
+      {
+					foreach($output as $row => $key)
+					{
+					$subjectTotal = $key['AnnualSubjTotal'];
+					//$arr.= '<td>'.$subjectTotal.'</td>';
+					}	
+					//return $arr;
+          return $subjectTotal;	
+      }
+        else{
+          return $null;
+        }
+      }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	  }
+
+//End yearly subject totals
+
 
 //subject totals scores
 public function subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
@@ -1299,9 +1432,9 @@ public function subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,
       $query ="SELECT subjecttotals.TermTotal AS SubjectTotal
       FROM  subjecttotals 
       WHERE
-      subjecttotals.student_id=? AND subjecttotals.subject_id=? AND 
-      subjecttotals.class_id=? AND subjecttotals.session_id=? AND
-      subjecttotals.term_id=? AND subjecttotals.sch_id=?"; 
+      student_id=? AND subject_id=? AND 
+      class_id=? AND session_id=? AND
+      term_id=? AND sch_id=?"; 
       $this->conn->query($query);
       $this->conn->bind(1, $studentid, PDO::PARAM_INT); 
 			$this->conn->bind(2, $subjectid, PDO::PARAM_INT);
@@ -1311,7 +1444,7 @@ public function subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,
 			$this->conn->bind(6, $schid, PDO::PARAM_INT);
       $output = $this->conn->resultset();
       $null="NA";
-      $subjectTotal="";
+      //$subjectTotal="";
       if($this->conn->rowCount() >=1)
       {
 					foreach($output as $row => $key)
@@ -1332,8 +1465,6 @@ public function subjectTotals($studentid,$subjectid,$classid,$sessionid,$termid,
         }
 	  }
     //End subject totals
-
-//subject totals
 
 //Get class category based on class id
 public function getClassCategoryID($class,$schid)
@@ -1420,6 +1551,90 @@ public function terminalAverage($studentid,$classid,$sessionid,$termid,$schid)
         }
 //TERMINAL AVERAGE
 
+//ANNUAL STUDENT AVERAGAE
+public function annualAverage($studentid,$classid,$sessionid,$schid)
+  {
+  try {
+
+      $query = "SELECT ROUND(AnnualTotal/(SELECT COUNT( DISTINCT subject_id)*3 AS SubjectCount
+      FROM annualsubjecttotals WHERE session_id=? AND class_id=? AND sch_id=? AND student_id=?),3 ) AS TotalAverage
+      FROM annualtotal WHERE 
+      annualtotal.student_id=? 
+      AND annualtotal.class_id=?
+      AND annualtotal.session_id=?
+      AND annualtotal.sch_id=?";
+                  $this->conn->query($query);
+                  $this->conn->bind(1, $sessionid, PDO::PARAM_INT);
+                  $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+                  $this->conn->bind(3, $schid, PDO::PARAM_INT); 
+                  $this->conn->bind(4, $studentid, PDO::PARAM_INT);
+                  $this->conn->bind(5, $studentid, PDO::PARAM_INT);
+                  $this->conn->bind(6, $classid, PDO::PARAM_INT);
+                  $this->conn->bind(7, $sessionid, PDO::PARAM_INT);
+                  $this->conn->bind(8, $schid, PDO::PARAM_INT);
+                  $output = $this->conn->resultset();
+                  $tav = "";
+                  $na = 'NA';
+                  if($this->conn->rowCount() >=1){
+                  foreach($output as $row => $key)
+                  {
+                  $tav = $key['TotalAverage'];
+                  }	
+                  return $tav;
+                }else{
+                  return $na;
+                }
+                  
+              }//End of try catch block
+              catch(Exception $e)
+              {
+                  echo "Error:". $e->getMessage();
+              }
+        }
+//END ANNUAL STUDENT AVERAGE
+
+
+
+
+
+//Method to find annual subject average
+public function annualSubjectAverage($subjectid,$classid,$sessionid,$schid)
+	  {		
+		try {
+      $query ="SELECT AnnualSubjAverage AS YrlySubjectAv
+      FROM  annualsubjectaverage
+      WHERE subject_id=? AND 
+      class_id=? AND session_id=? AND sch_id=?"; 
+      $this->conn->query($query); 
+			$this->conn->bind(1, $subjectid, PDO::PARAM_INT);
+      $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+			$this->conn->bind(3, $sessionid, PDO::PARAM_INT); 
+			$this->conn->bind(4, $schid, PDO::PARAM_INT);
+      $output = $this->conn->resultset();
+      //echo count($output);
+      $null ='0';
+			$arr="";
+          if($output && $this->conn->rowCount() >=1)
+          {
+					  foreach($output as $row => $key)
+					  {
+					  $subjectAv = $key['YrlySubjectAv'];
+					  //$arr.= '<td>'.$subjectAv.'</td>';
+					  }	
+					  //$arr.='</tr><br>';
+            return $subjectAv;
+          }
+          else{
+          return $null;
+          }	
+        }//End of try catch block
+         catch(Exception $e)
+          {
+            echo "Error:". $e->getMessage();
+          }
+	  }
+//End Method Annual Average
+
  //SELECT GRAND TOTAL
 public function grandTotals($studentid,$classid,$sessionid,$termid,$schid)
 	  {
@@ -1459,6 +1674,45 @@ public function grandTotals($studentid,$classid,$sessionid,$termid,$schid)
         }
 	  }
  //END GRAND TOTAL
+
+//Method to find student annual totals
+public function annualTotals($studentid,$classid,$sessionid,$schid)
+	  {
+		try {
+      $query ="SELECT AnnualTotal AS YearlyTotals
+      FROM  annualtotal 
+      WHERE
+      student_id=? AND
+      class_id=? AND session_id=? AND
+      sch_id=?"; 
+      $this->conn->query($query);
+      $this->conn->bind(1, $studentid, PDO::PARAM_INT); 
+      $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+			$this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+			$this->conn->bind(4, $schid, PDO::PARAM_INT);
+      $output = $this->conn->resultset();
+			//echo count($output);
+			$arr="";
+      $ndf = "NA";
+      if($output && $this->conn->rowCount()==0)
+        {
+        return $ndf;  
+        }else{
+          foreach($output as $row => $key)
+            {
+            $grandTotal = $key['YearlyTotals'];
+            //$arr.='td>'.$grandTotal.'</td>';
+            }	
+            return $grandTotal;
+        }	
+        }//End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+	  }
+//End  Method to find terminal totals
+
 
 //ca Totals 
 public function caTotals($studentid,$subjectid,$classid,$sessionid,$termid,$schid)
@@ -1673,8 +1927,8 @@ public function getStudent($searchVar,$schid)
 
 
     //RESET RESULT SUBMITTED
-    function resetResultSubmit($termid,$sessionid,$classid,$schid)
-    { 
+function resetResultSubmit($termid,$sessionid,$classid,$schid)
+      { 
       try
       {
                         $this->lockResult($classid,$schid);
@@ -1701,11 +1955,11 @@ public function getStudent($searchVar,$schid)
                             {
                             exit("Reset failed!");
                             }
-  }
-  catch(Exception $e)
-  {
-      echo "Error:". $e->getMessage();
-  }
+        }
+        catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
 } 
 //END RESET RESULT SUBMITTED
 
@@ -1749,7 +2003,7 @@ public function resetClassPosition($termid,$sessionid,$classid,$schid)
 //END RESET CLASS POSITIONING
 
 
-    //RESET SUBJECT POSITION
+//RESET SUBJECT POSITION
 public function resetSubjectPosition($subjectid,$termid,$sessionid,$classid,$schid)
         { 
           try
@@ -1790,7 +2044,13 @@ public function resetSubjectPosition($subjectid,$termid,$sessionid,$classid,$sch
     } 
     //END RESET SUBJECT POSITION
 
-
+//Method to return last key of an array
+public function endKey($array)
+  {
+  end($array);
+  return key($array);
+  }
+//End method to return last key of an array
 
 //Function definition to get student subject totals, record id from terminal_exam table and loop through to 
 //update the table with the subject position
@@ -1834,7 +2094,7 @@ public function subjectPosition($subjectid,$termid,$sessionid,$classid,$schid)
               $studentid = key($arr);
               $subjectPosition =1;
              // echo $frequencyOfValue = $occurences[$scores_value];
-
+             $lastKey = $this->endKey($arr);
               //========================================================
                     for($i=0; $i < count($arr); $i++)
                     {
@@ -1862,8 +2122,14 @@ public function subjectPosition($subjectid,$termid,$sessionid,$classid,$schid)
                               $this->conn->bind(7, $schid, PDO::PARAM_INT);
                               $this->conn->execute();
                               //check for the success of the update operation and not end of array
+                              //Test for end of array in the if statement
                                 if($this->conn->rowCount() == 1)
                                 {
+                                        //check for end of array
+                                    if($lastKey == $studentid)
+                                    {
+                                      exit("Subject position assigned successfully");
+                                    }
                                   $scores_value = next($arr);
                                   $studentid = key($arr);
                                 }
@@ -1903,25 +2169,24 @@ public function subjectPosition($subjectid,$termid,$sessionid,$classid,$schid)
                               $this->conn->execute();
                               if($this->conn->rowCount() == 1)
                                 {
-                                $scores_value = next($arr);
-                                $studentid = key($arr);
-                                $subjectPosition+=1;
-                                $frequencyOfValue = $occurences[$scores_value];
+                                  //check for end of array
+                                  //check for end of array
+                                  if($lastKey == $studentid)
+                                  {
+                                  exit("Subject position assigned successfully");
+                                  }
+                                  $scores_value = next($arr);
+                                  $studentid = key($arr);
+                                  $subjectPosition+=1;
+                                  $frequencyOfValue = $occurences[$scores_value];
                                  
                                 }
                                 else
                                 {
-                                exit("Position 2 update failed!");
+                                exit("Position update failed!");
                                 }
                         }
-                      //INCREMENT NEW VALUES
-                     
-                        // $subjectPosition = $subjectPosition + $frequencyOfValue;
-                         //$scores_value = next($arr);
-                         //$studentid = key($arr);
-                      //check for another occurence of the array occurences of the array value
-                        //$frequencyOfValue = $occurences[$scores_value];
-
+                      
              }
               //============================================================================================
 
@@ -1937,6 +2202,333 @@ public function subjectPosition($subjectid,$termid,$sessionid,$classid,$schid)
       }
     } 
 // End subject position method
+
+//METHOD TO ASSIGN ANNUAL SUBJECT POSITION
+public function annualSubjectPosition($classid,$subjid,$sessionid,$schid)
+    { 
+      try
+      {
+      //check for lock result
+      $this->lockResult($classid,$schid);
+      $query ="SELECT student_id AS studentID,YearlySubjTotal AS Total
+		  FROM annualsubjecttotals  
+      WHERE 
+      session_id= ? AND 
+      class_id=? AND 
+      sch_id= ? AND subject_id=? ORDER BY Total DESC";
+      $this->conn->query($query); 
+			$this->conn->bind(1, $sessionid, PDO::PARAM_INT);
+      $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+      $this->conn->bind(3, $schid, PDO::PARAM_INT);
+      $this->conn->bind(4, $subjid, PDO::PARAM_INT);
+      $arr = array();
+      $output = $this->conn->resultset();
+      //check for empty result
+        if($output)
+        {
+           foreach($output as $row => $key)
+					 {
+            //make the record id of the terminal exam table the key of the array
+						$arr[$key['studentID']] = $key['Total'];
+            //var_dump($arr);
+					 }
+           
+              //get occurences of values in an array
+              //var_dump($arr);
+              $occurences = array_count_values($arr);
+              //var_dump($occurences);
+              $scores_value = current($arr);
+              $studentid = key($arr);
+              $subjectPosition =1;
+              //Get the last key of the array
+              $lastKey = $this->endKey($arr);
+             // echo $frequencyOfValue = $occurences[$scores_value];
+
+              //========================================================
+                    for($i=0; $i < count($arr); $i++)
+                    {
+                    //check for initial occurences of the array value
+                        $frequencyOfValue = $occurences[$scores_value];
+                        if($frequencyOfValue >= 2)
+                         {
+                            for($k=0; $k < $frequencyOfValue; $k++)
+                             {
+                              //Insert annual_result record with correct  position
+                              $updateQuery = "INSERT INTO annual_subject_position(student_id,subject_id,class_id,session_id,sch_id,Annual_Subject_Position) VALUES (?,?,?,?,?,?)";
+                              $this->conn->query($updateQuery);
+                              $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                              $this->conn->bind(2, $subjid, PDO::PARAM_INT);
+                              $this->conn->bind(3, $classid, PDO::PARAM_INT); 
+                              $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                              $this->conn->bind(5, $schid, PDO::PARAM_INT);
+                              $this->conn->bind(6, $subjectPosition, PDO::PARAM_INT);
+                              $this->conn->execute();
+                              //check for the success of the update operation and not end of array
+                              //Test for end of array in the if statement
+                                if($this->conn->rowCount() == 1)
+                                {
+                                  //check for end of array
+                                  if($lastKey == $studentid)
+                                  {
+                                    exit("Annual Subject Position Assigned Successfully");
+                                  }
+                                  $scores_value = next($arr);
+                                  $studentid = key($arr);
+                                }
+                                else{
+                                  exit("Position update failed!");
+                                }
+                            }
+                            /*
+                            write a code snippet to check for end of array
+                            */
+                            //increment the subjetPosition counter
+                            $subjectPosition = $subjectPosition + $frequencyOfValue;
+                            //$scores_value = next($arr);
+                            //$studentid = key($arr);
+                            //check for another occurence of the array occurences of the array value
+                            $frequencyOfValue = $occurences[$scores_value];
+                        }
+                        else
+                        {
+                            //Update terminal_exam record with correct  position
+                              $updateQuery = "INSERT INTO annual_subject_position(student_id,subject_id,class_id,session_id,sch_id,Annual_Subject_Position) VALUES (?,?,?,?,?,?)";
+                              $this->conn->query($updateQuery);
+                              $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                              $this->conn->bind(2, $subjid, PDO::PARAM_INT);
+                              $this->conn->bind(3, $classid, PDO::PARAM_INT); 
+                              $this->conn->bind(4, $sessionid, PDO::PARAM_INT);
+                              $this->conn->bind(5, $schid, PDO::PARAM_INT);
+                              $this->conn->bind(6, $subjectPosition, PDO::PARAM_INT);
+                              $this->conn->execute();
+                              if($this->conn->rowCount() == 1)
+                                {
+                                  //check for end of array
+                                  if($lastKey == $studentid)
+                                  {
+                                  exit("Annual Subject  Position Assigned Successfully");
+                                  }
+                                  $scores_value = next($arr);
+                                  $studentid = key($arr);
+                                  $subjectPosition+=1;
+                                  $frequencyOfValue = $occurences[$scores_value];
+                                }
+                                else
+                                {
+                                exit("Position update failed");
+                                }
+                        }
+
+             }
+              //============================================================================================
+
+            }
+            else
+            {
+              exit("No Record is found matching your selection!");
+            }
+      }
+      catch(Exception $e)
+      {
+          echo "Error:". $e->getMessage();
+      }
+    } 
+//END METHOD TO ASSIGN ANNUAL SUBJECT POSITION 
+
+//Method to assign annual position
+public function annualPosition($classid,$sessionid,$schid)
+    { 
+      try
+      {
+      //check for lock result
+      $this->lockResult($classid,$schid);
+      $query ="SELECT student_id AS studentID,AnnualTotal AS Total
+		  FROM annualtotal  
+      WHERE 
+      session_id= ? AND 
+      class_id=? AND 
+      sch_id= ? ORDER BY Total DESC";
+      $this->conn->query($query); 
+			$this->conn->bind(1, $sessionid, PDO::PARAM_INT);
+      $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+			$this->conn->bind(3, $schid, PDO::PARAM_INT);
+      $arr = array();
+      $output = $this->conn->resultset();
+      //check for empty result
+        if($output)
+        {
+           foreach($output as $row => $key)
+					 {
+            //make the record id of the terminal exam table the key of the array
+						$arr[$key['studentID']] = $key['Total'];
+            //var_dump($arr);
+					 }
+           
+              //get occurences of values in an array
+              //var_dump($arr);
+              $occurences = array_count_values($arr);
+              //var_dump($occurences);
+              $scores_value = current($arr);
+              $studentid = key($arr);
+              $subjectPosition =1;
+              //Get the last key of the array
+              $lastKey = $this->endKey($arr);
+             // echo $frequencyOfValue = $occurences[$scores_value];
+
+              //========================================================
+                    for($i=0; $i < count($arr); $i++)
+                    {
+                    //check for initial occurences of the array value
+                        $frequencyOfValue = $occurences[$scores_value];
+                        if($frequencyOfValue >= 2)
+                         {
+                            for($k=0; $k < $frequencyOfValue; $k++)
+                             {
+                              //Insert annual_result record with correct  position
+                              $updateQuery = "INSERT INTO annual_result(student_id,class_id,session_id,sch_id,annual_position) VALUES (?,?,?,?,?)";
+                              $this->conn->query($updateQuery);
+                              $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                              $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+                              $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+                              $this->conn->bind(4, $schid, PDO::PARAM_INT);
+                              $this->conn->bind(5, $subjectPosition, PDO::PARAM_INT);
+                              $this->conn->execute();
+                              //check for the success of the update operation and not end of array
+                              //Test for end of array in the if statement
+                                if($this->conn->rowCount() == 1)
+                                {
+                                  //check for end of array
+                                  if($lastKey == $studentid)
+                                  {
+                                    exit("Annual position assigned successfully");
+                                  }
+                                  $scores_value = next($arr);
+                                  $studentid = key($arr);
+                                }
+                                else{
+                                  exit("Position update failed!");
+                                }
+                            }
+                            /*
+                            write a code snippet to check for end of array
+                            */
+                            //increment the subjetPosition counter
+                            $subjectPosition = $subjectPosition + $frequencyOfValue;
+                            //$scores_value = next($arr);
+                            //$studentid = key($arr);
+                            //check for another occurence of the array occurences of the array value
+                            $frequencyOfValue = $occurences[$scores_value];
+                        }
+                        else
+                        {
+                            //Update terminal_exam record with correct  position
+                              $updateQuery = "INSERT INTO annual_result(student_id,class_id,session_id,sch_id,annual_position) VALUES (?,?,?,?,?)";
+                              $this->conn->query($updateQuery);
+                              $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+                              $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+                              $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+                              $this->conn->bind(4, $schid, PDO::PARAM_INT);
+                              $this->conn->bind(5, $subjectPosition, PDO::PARAM_INT);
+                              $this->conn->execute();
+                              if($this->conn->rowCount() == 1)
+                                {
+                                  //check for end of array
+                                  if($lastKey == $studentid)
+                                  {
+                                  exit("Annual position assigned successfully");
+                                  }
+                                  $scores_value = next($arr);
+                                  $studentid = key($arr);
+                                  $subjectPosition+=1;
+                                  $frequencyOfValue = $occurences[$scores_value];
+                                }
+                                else
+                                {
+                                exit("Position update failed");
+                                }
+                        }
+
+             }
+              //============================================================================================
+
+            }
+            else
+            {
+              exit("No Record is found matching your selection!");
+            }
+      }
+      catch(Exception $e)
+      {
+          echo "Error:". $e->getMessage();
+      }
+    } 
+//End method to assign annual position
+
+
+//RESET ANNUAL SUBJECT POSITION
+function resetAnnualSubjPosition($sessionid,$subj,$classid,$schid)
+      { 
+      try
+      {
+                        $this->lockResult($classid,$schid);
+                        $null = "";
+                          //Reset terminal_exam  subject postion
+                          $updateQuery = "DELETE  FROM annual_subject_position 
+                          WHERE session_id=? AND subject_id=? AND class_id=? AND sch_id=?";
+                          $this->conn->query($updateQuery); 
+                          $this->conn->bind(1, $sessionid, PDO::PARAM_INT);
+                          $this->conn->bind(2, $subj, PDO::PARAM_INT);
+                          $this->conn->bind(3, $classid, PDO::PARAM_INT);
+                          $this->conn->bind(4, $schid, PDO::PARAM_INT);
+                          $this->conn->execute();
+                          //check for the success of the update operation and not end of array
+                            if($this->conn->rowCount() >= 1)
+                            {
+                             echo "ok";
+                            }
+                            else
+                            {
+                            exit("Reset failed! or no record to delete");
+                            }
+        }
+        catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+} 
+//END RESET ANNUAL SUBJECT POSITION
+
+//Method to reset annual Position
+function resetAnnualPosition($sessionid,$classid,$schid)
+      { 
+      try
+      {
+                        $this->lockResult($classid,$schid);
+                        $null = "";
+                          //Reset terminal_exam  subject postion
+                          $updateQuery = "DELETE  FROM annual_result 
+                          WHERE session_id=? AND class_id=? AND sch_id=?";
+                          $this->conn->query($updateQuery); 
+                          $this->conn->bind(1, $sessionid, PDO::PARAM_INT);
+                          $this->conn->bind(2, $classid, PDO::PARAM_INT);
+                          $this->conn->bind(3, $schid, PDO::PARAM_INT);
+                          $this->conn->execute();
+                          //check for the success of the update operation and not end of array
+                            if($this->conn->rowCount() >= 1)
+                            {
+                             echo "ok";
+                            }
+                            else
+                            {
+                            exit("Reset failed!");
+                            }
+        }
+        catch(Exception $e)
+        {
+            echo "Error:". $e->getMessage();
+        }
+} 
+//End Method to reset annual Position
 
 //Highest by subject in a class
 public function highestInClass($subjectid,$classid,$termid,$sessionid,$schoolid)
@@ -2021,18 +2613,16 @@ public function lowestInClass($subjectid,$classid,$termid,$sessionid,$schoolid)
 //end lowest by subject in class
 
 //method to find highest total in class
-public function highestYearTotal($studentid,$classid,$termid,$sessid,$schid)
+public function highestYearTotal($classid,$sessid,$schid)
 	    {
 		  try {
         //check to see if records already exist 
-        $query ="SELECT GrandTermTotal AS HighestTotal FROM termgrandtotal WHERE student_id=? AND class_id=? AND 
-        term_id=? AND session_id=? AND sch_id=? ORDER BY HighestTotal DESC LIMIT 1";
+        $query ="SELECT AnnualTotal AS HighestTotal FROM annualtotal WHERE class_id=? AND  session_id=? AND sch_id=? ORDER BY HighestTotal DESC LIMIT 1";
         $this->conn->query($query);
-        $this->conn->bind(1, $studentid, PDO::PARAM_INT);
-        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
-				$this->conn->bind(3, $termid, PDO::PARAM_INT);
-        $this->conn->bind(4, $sessid, PDO::PARAM_INT); 
-				$this->conn->bind(5, $schid, PDO::PARAM_INT);
+        //$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+        $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+        $this->conn->bind(2, $sessid, PDO::PARAM_INT); 
+				$this->conn->bind(3, $schid, PDO::PARAM_INT);
         $output = $this->conn->resultset();
         $null="NA";
         $printOutput = "";
@@ -2058,18 +2648,16 @@ public function highestYearTotal($studentid,$classid,$termid,$sessid,$schid)
 
 
 //Method to find lowest term total
-public function lowestYearTotal($studentid,$classid,$termid,$sessid,$schid)
+public function lowestYearTotal($classid,$sessid,$schid)
 	    {
 		  try {
         //check to see if records already exist 
-        $query ="SELECT GrandTermTotal AS LowestTotal FROM termgrandtotal WHERE student_id=? AND class_id=? AND 
-        term_id=? AND session_id=? AND sch_id=? ORDER BY LowestTotal ASC LIMIT 1";
+        $query ="SELECT AnnualTotal AS LowestTotal FROM annualtotal WHERE  class_id=? AND session_id=? AND sch_id=? ORDER BY LowestTotal ASC LIMIT 1";
         $this->conn->query($query);
-        $this->conn->bind(1, $studentid, PDO::PARAM_INT);
-        $this->conn->bind(2, $classid, PDO::PARAM_INT); 
-				$this->conn->bind(3, $termid, PDO::PARAM_INT);
-        $this->conn->bind(4, $sessid, PDO::PARAM_INT); 
-				$this->conn->bind(5, $schid, PDO::PARAM_INT);
+        //$this->conn->bind(1, $studentid, PDO::PARAM_INT);
+        $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+        $this->conn->bind(2, $sessid, PDO::PARAM_INT); 
+				$this->conn->bind(3, $schid, PDO::PARAM_INT);
         $output = $this->conn->resultset();
         $null="NA";
         $printOutput = "";
@@ -2246,7 +2834,7 @@ public function scoreSheetHeaderInformation($subjectid,$classid,$termid,$session
 
 
     //method to write annual result header Information
-    public function annualResultHeader($classid,$termid,$sess,$schid)
+public function annualResultHeader($classid,$termid,$sess,$schid)
 	    {
         $printOutput="";
         $printOutput.='<div class="student-profile">
@@ -2260,24 +2848,18 @@ public function scoreSheetHeaderInformation($subjectid,$classid,$termid,$session
     //end method to write annual result header information
 
 //Yearly result header
-public function yearlyResultHeader($classid,$termid,$sess,$schid)
+public function yearlyResultHeader($classid,$sess,$schid)
 	    {
         $printOutput="";
         $printOutput.='<div class="student-profile">
         <h5>Annual Result Summary</h5>
         <ul class="scoresheet-header">';
               $printOutput.='<li><span class="scoresheet-header-title">Class</span><span class="scoresheet-header-sub">'.$this->getClassName($schid,$classid).'</span></li>';
-              $printOutput.='<li><span class="scoresheet-header-title">Term</span><span class="scoresheet-header-sub">'.$this->getTermName($schid,$termid).'</span></li>';
+              //$printOutput.='<li><span class="scoresheet-header-title">Term</span><span class="scoresheet-header-sub">'.$this->getTermName($schid,$termid).'</span></li>';
               $printOutput.='<li><span class="scoresheet-header-title">Session</span><span class="scoresheet-header-sub">'.$this->getSessionName($schid,$sess).'</span></li></ul></div>';
           echo $printOutput;
 	    }
 //end yearly result header
-
-
-
-
-
-
 
 //Class result summary Sheet
 public function classResultHeader($classid,$termid,$sessionid,$schoolid)
@@ -2796,6 +3378,8 @@ public function classPosition($termid,$sessionid,$classid,$schid)
               $scores_value = current($arr);
               $studentid = key($arr);
               $classPosition =1;
+              $lastKey = $this->endKey($arr);
+
                     for($i=0; $i < count($arr); $i++)
                     {
                     //check for initial occurences of the array value
@@ -2822,6 +3406,11 @@ public function classPosition($termid,$sessionid,$classid,$schid)
                               //check for the success of the update operation and not end of array
                                 if($this->conn->rowCount() == 1)
                                 {
+                                  //check for end of array
+                                  if($lastKey == $studentid)
+                                  {
+                                    exit("Class position assigned successfully");
+                                  }
                                   $scores_value = next($arr);
                                   $studentid = key($arr);
                                 }
@@ -2858,6 +3447,11 @@ public function classPosition($termid,$sessionid,$classid,$schid)
                               $this->conn->execute();
                               if($this->conn->rowCount() == 1)
                                 {
+                                  //check for end of array
+                                  if($lastKey == $studentid)
+                                  {
+                                    exit("Class position assigned successfully");
+                                  }
                                 $scores_value = next($arr);
                                 $studentid = key($arr);
                                 $classPosition+=1;
@@ -3356,7 +3950,7 @@ public function editTerminalExam($score,$subj,$class,$staffid,$recordid,$schid)
 //Reload exam record after edit
 public function reloadExam($class,$subject,$schid)
   {
-        // Try and Catch block
+        //Try and Catch block
    try
     {
            $termid = $this->getActiveTerm($schid);
@@ -3403,6 +3997,7 @@ public function reloadExam($class,$subject,$schid)
                         foreach($myResult as $row => $key)
                         {
                         //TODO: CREATE TWO FUNCTIONS IN JAVASCRIPT TO DIAPLAY DETAILS OF CA AND EXAMS WHEN BUTTON IS CLICKED
+                        $ID = $key['ExamRecordID'];
                         $printOutput.='<tr>';
                         $printOutput.='<td>'.$ci.'</td>';
                         $printOutput.='<td>'.$key['Fullname'].'</td>';
@@ -3411,7 +4006,9 @@ public function reloadExam($class,$subject,$schid)
                         $printOutput.='<td>'.$key['Term'].'</td>';
                         $printOutput.='<td>'.$key['Subject'].'</td>';
                         $printOutput.='<td>'.$key['ExamScores'].'</td>';
-                        $printOutput.='<td><button type="button" data-classid="'.$class.'" data-sessionid="'.$sessionid.'"data-subjectid="'.$subject.'" data-term="'.$termid.'" data-examrecordid="'.$key['ExamRecordID'].'" data-scores="'.$key['ExamScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
+                        $printOutput.='<td><button type="button" data-classid="'.$class.'" data-sessionid="'.$sessionid.'"data-subjectid="'.$subject.'" data-term="'.$termid.'" data-examrecordid="'.$ID.'" data-scores="'.$key['ExamScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button>
+                        <button type="button"  data-deleteid="'.$ID.'" data-myclass="'.$class.'"  data-mysubj="'.$subject.'" class="btn btn-danger btn-sm" id="deleteExam"><i class="fa fa-trash" aria-hidden="true"></i>Remove</button>
+                        </td>'; 
                         $printOutput.='</tr>'; 
                         $ci++;
                         }
@@ -3455,7 +4052,7 @@ public function reloadCa($class,$subject,$schid)
              && ass_session_id=? 
              && ass_class_id=? 
              && ass_term_id=?
-             && ass_subject_id=? ORDER BY Fullname,Subject,caTitle";
+             && ass_subject_id=? ORDER BY Fullname,Subject,caTitle,Term";
              $this->conn->query($query);
              //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
 					   $this->conn->bind(1, $schid, PDO::PARAM_INT);
@@ -3485,6 +4082,7 @@ public function reloadCa($class,$subject,$schid)
                         $ci=1;
                         foreach($myResult as $row => $key)
                         {
+                          $ID = $key['caRecordid'];
                         $printOutput.='<tr>';
                         $printOutput.='<td>'.$ci.'</td>';
                         $printOutput.='<td>'.$key['Fullname'].'</td>';
@@ -3494,8 +4092,8 @@ public function reloadCa($class,$subject,$schid)
                         $printOutput.='<td>'.$key['Subject'].'</td>';
                         $printOutput.='<td>'.$key['caTitle'].'</td>';
                         $printOutput.='<td>'.$key['CaScores'].'</td>';
-                        $printOutput.='<td><button type="button"  data-CAid="'.$key['caRecordid'].'" data-scores="'.$key['CaScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button></td>'; 
-                        $printOutput.='</tr>'; 
+                        $printOutput.='<td><button type="button"  data-CAid="'.$ID.'" data-scores="'.$key['CaScores'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</button>
+                        <button type="button"  data-deleteid="'.$ID.'" data-myclass="'.$class.'"  data-mysubj="'.$subject.'" class="btn btn-danger btn-sm" id="deleteCa"><i class="fa fa-trash" aria-hidden="true"></i>Remove</button>     </td></tr>'; 
                         $ci++;
                         }
                       $printOutput.= "</table>";
@@ -3569,35 +4167,27 @@ public function editCa($score,$subj,$class,$staffid,$recordid,$schid)
   }
 
 //function to fetch students and display them for adding traits
-public function traits($classid,$schoolid)
+function traits($classid,$schoolid)
 	    {
 		 try {
        //check for locked results
       $this->lockResult($classid,$schoolid);
       $termid = $this->getActiveTerm($schoolid);
       $sessionid = $this->getActiveSession($schoolid);
-        $query ="SELECT DISTINCT 
-        CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname,
-        student_initial.id AS StudentID,
-        classpositionals.id AS RecordID,
-        termgrandtotal.GrandTermTotal AS CumulativeScores,
-        classpositionals.termposition AS Position,
-        class.class_name AS ClassName,
-        session.session AS SessionName,
-        sch_term.term AS TermName
-	      FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
+         
+        $query ="SELECT classpositionals.student_id AS StudentID,
+        CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname
+        FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
         INNER JOIN class ON class.id=classpositionals.class_id
-        INNER JOIN termgrandtotal ON termgrandtotal.student_id=student_initial.id
-        INNER JOIN session ON session.id=classpositionals.session_id
-        INNER JOIN sch_term ON sch_term.term_id=classpositionals.term_id 
-	      WHERE classpositionals.class_id=? AND 
+        WHERE classpositionals.class_id=? AND 
         classpositionals.term_id=? AND classpositionals.session_id=?
-        AND classpositionals.school_id=?";
+        AND classpositionals.school_id=? ORDER BY Fullname";
         $this->conn->query($query);
+        //$this->conn->bind(1, $subjectid, PDO::PARAM_INT);
         $this->conn->bind(1, $classid, PDO::PARAM_INT); 
-				$this->conn->bind(2, $termid, PDO::PARAM_INT);
+        $this->conn->bind(2, $termid, PDO::PARAM_INT);
         $this->conn->bind(3, $sessionid, PDO::PARAM_INT); 
-				$this->conn->bind(4, $schoolid, PDO::PARAM_INT);
+        $this->conn->bind(4, $schoolid, PDO::PARAM_INT);
         $output = $this->conn->resultset(); 
         if($this->conn->rowCount() >= 1)
             {
@@ -3607,10 +4197,8 @@ public function traits($classid,$schoolid)
           $printOutput.="<tr>
           <th>S/NO</th>
           <th>Student Name</th>
-          <TH>Class</th>
-          <TH>Term</th>
-          <TH>Session</th>
-          <TH>Cumulative Scores</th>
+          <TH>Obtained Scores</TH>
+          <TH>Max Scores</th>
           <TH>Avg</th>
           <TH>Position</th>
           <TH>Action</th>
@@ -3618,17 +4206,21 @@ public function traits($classid,$schoolid)
 				  $ci=1;
           foreach($output as $row => $key)
           {
-           $StudID = $key['StudentID'];
-           $termAv = $this->terminalAverage($StudID,$classid,$sessionid,$termid,$schoolid);          
+                   
           $printOutput.='<tr>';
           $printOutput.='<td>'.$ci.'</td>';
-          $printOutput.='<td>'.$key['Fullname'].'</td>';
-          $printOutput.='<td>'.$key['ClassName'].'</td>';
-          $printOutput.='<td>'.$key['TermName'].'</td>';
-          $printOutput.='<td>'.$key['SessionName'].'</td>';
-          $printOutput.='<td>'.$key['CumulativeScores'].'</td>';
-          $printOutput.='<td>'.$termAv.'</td>';
-          $printOutput.='<td>'.$this->ordinalSuffix($key['Position']).'</td>';
+          
+              $studentID = $key['StudentID'];
+              $studentName = $key['Fullname'];
+              $cumTotal = $this->grandTotals($studentID,$classid,$sessionid,$termid,$schoolid);
+              $av = $this->terminalAverage($studentID,$classid,$sessionid,$termid,$schoolid);
+              //check promotion status                  
+              //$printOutput.='<tr>';
+              $printOutput.='<td>'.$studentName.'</td>';
+              $printOutput.='<td>'.$cumTotal.'</td>';
+              $printOutput.='<td>'.$this->maxScoresAvailable($classid,$schoolid).'</td>';
+              $printOutput.='<td>'.$av.'</td>';
+              $printOutput.='<td>'.$this->getClassPosition($studentID,$classid,$sessionid,$termid,$schoolid).'</td>';
           $printOutput.='<td><button type="button" data-classid="'.$classid.'"  data-recordid="'.$key['StudentID'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-plus" aria-hidden="true"></i>Add Traits & comments</button></td>';
           $printOutput.='</tr>'; 
           $ci++;
@@ -3849,12 +4441,14 @@ public function reloadAffectiveTraits($studentid,$schid)
              INNER JOIN affective_domain ON affective_domain.id=stud_affective_skills.domain_id
              INNER JOIN rating_system ON rating_system.id=stud_affective_skills.rating
              WHERE 
-             stud_affective_skills.studentid=? 
+             stud_affective_skills.studentid=? AND stud_affective_skills.termid=? AND stud_affective_skills.sessionid=?
              AND stud_affective_skills.schid=?";
           $this->conn->query($query);
           //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
-					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
-          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+          $this->conn->bind(2, $termid, PDO::PARAM_INT);
+          $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+          $this->conn->bind(4, $schid, PDO::PARAM_INT);
           $myResult= $this->conn->resultset();
 
                         //loop through the result
@@ -3964,9 +4558,67 @@ public function reloadEnrolledStudents($class,$schid)
         echo "Error:". $e->getMessage();
          }
     }
-
-
 //RELOAD ENROLLED STUDENTS
+
+
+//REMOVE CA ITEM FROM DB
+public function deleteCaItem($id)
+   {
+                 try {
+          					     //Remove student when supplied with class id
+                            $sqlStmt = "DELETE  FROM assessment WHERE id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $id, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// action successful
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error removing CA item";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        echo "Error:". $e->getMessage();
+      }
+    }
+//END REMOVE CA ITEM FROM DB
+
+
+//REMOVE EXAM
+public function deleteExamItem($id)
+   {
+                 try {
+          					     //Remove student when supplied with class id
+                            $sqlStmt = "DELETE  FROM terminal_exam WHERE id=?";
+                            $this->conn->query($sqlStmt);
+                            $this->conn->bind(1, $id, PDO::PARAM_INT);
+                            $this->conn->execute();
+                        		if ($this->conn->rowCount() == 1)
+                        		{
+                         		// action successful
+                        		echo "ok";
+                        		}
+                        		else
+                        		{
+                        		echo "Error removing EXAM item";
+                      			}
+
+                    		}
+
+        catch(Exception $e)
+        {
+        echo "Error:". $e->getMessage();
+      }
+    }
+//END REMOVE EXAM
+
+
 
 //REMOVE ENROLLED STUDENT
 public function deleteEnrolledStudent($id)
@@ -3999,8 +4651,6 @@ public function deleteEnrolledStudent($id)
         
       }
     }
-
-
 //END REMOVE ENROLLED STUDENT
 
 //Reload psychomotor skills added for a particular student
@@ -4016,11 +4666,13 @@ public function reloadPsychomotorSkills($studentid,$schid)
              INNER JOIN psychomotor_skills ON psychomotor_skills.id=stud_psychomotor_skills.psycho_domain
              INNER JOIN rating_system ON rating_system.id=stud_psychomotor_skills.rating
              WHERE 
-             stud_psychomotor_skills.studentid=? 
+             stud_psychomotor_skills.studentid=? AND stud_psychomotor_skills.termid=? AND stud_psychomotor_skills.sessionid=?
              AND stud_psychomotor_skills.schid=?";
           $this->conn->query($query);
-					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
-          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+          $this->conn->bind(2, $termid, PDO::PARAM_INT);
+          $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+          $this->conn->bind(4, $schid, PDO::PARAM_INT);
           $myResult= $this->conn->resultset();
 
                         //loop through the result
@@ -4485,7 +5137,7 @@ public function resultDetails($studentid,$classid,$termid,$sessionid,$schoolid)
             
           $printOutput.= "<table class='examtable-print'>";
           $printOutput.='<tr>
-          <th>Student Name</th>
+          <th>Subject Name</th>
           <th>1st CA '.$caMaxScore.'%</th>
           <th>2nd CA '.$caMaxScore.'%</th>
           <TH>3rd CA '.$caMaxScore.'%</th>
@@ -4585,7 +5237,72 @@ public function listSubjectSummary($classid,$termid,$sessionid,$schoolid){
         echo "Error:". $e->getMessage();
       }
 }
-//END METHOD TO LIST SUBJECT BASED ON STUDENT  CLASS
+//END METHOD TO LIST SUBJECT BASED ON STUDENT CLASS
+
+//STUDENT ANNUAL SUMMARY  RESULT
+public function studentAnnualResultSummary($studentid,$classid,$sessid,$schid)
+  {
+  try {
+    $query ="SELECT DISTINCT 
+    subjects.subject_name AS subjectName,
+    subjects.sub_id AS SubjectID
+    FROM subjects INNER JOIN subjecttotals ON subjecttotals.subject_id=subjects.sub_id
+    WHERE 
+    subjecttotals.class_id=? AND subjecttotals.student_id=?
+    AND subjecttotals.sch_id=? ORDER BY SubjectID ASC";
+    $this->conn->query($query);
+    $this->conn->bind(1, $classid, PDO::PARAM_INT); 
+    $this->conn->bind(2, $studentid, PDO::PARAM_INT);
+    $this->conn->bind(3, $schid, PDO::PARAM_INT);
+    $output = $this->conn->resultset();
+    if($this->conn->rowCount()>=1)
+    {
+      //loop through the result and  display column headers
+      $returnOuput="";
+      $returnOuput.='<table class="asstable-print">';
+      $returnOuput.='<tr>';
+      $returnOuput.='<th>Subject</th>';
+      $returnOuput.='<th>First Term</th>';
+      $returnOuput.='<th>Second Term</th>';
+      $returnOuput.='<th>Third Term</th>';
+      $returnOuput.='<th>Total</th>';
+      $returnOuput.='<th>class Average</th>';
+      $returnOuput.='<th>Subject Position</th>';
+      $returnOuput.='<th>Grade</th></tr>'; 
+      //create a second row based on the number of subjects available
+
+          foreach($output as $row => $key)
+          {
+            $subjName = $key['subjectName'];
+            $subjID = $key['SubjectID'];
+            $subj_Total_1 = $this->subjectTotals($studentid,$subjID,$classid,$sessid,1,$schid);
+            $subj_Total_2 = $this->subjectTotals($studentid,$subjID,$classid,$sessid,2,$schid);
+            $subj_Total_3 = $this->subjectTotals($studentid,$subjID,$classid,$sessid,3,$schid);
+            $yrlySubjTotal = $this->yearlySubjectTotals($studentid,$subjID,$classid,$sessid,$schid);
+            $yrlyAv = $this->annualSubjectAverage($subjID,$classid,$sessid,$schid);
+            $yrlySubjPos = $this->getAnnualSubjPosition($subjID,$subjID,$classid,$sessid,$schid);
+            $grade = $this->singleGrade($yrlySubjTotal);
+            
+            $returnOuput.='<tr>';
+            $returnOuput.='<td>'.$subjName.'</td>';
+            $returnOuput.='<td>'.$subj_Total_1.'</td>';
+            $returnOuput.='<td>'.$subj_Total_2.'</td>';
+            $returnOuput.='<td>'.$subj_Total_3.'</td>';
+            $returnOuput.='<td>'.$yrlySubjTotal.'</td>';
+            $returnOuput.='<td>'.$yrlyAv.'</td>';
+            $returnOuput.='<td>'.$yrlySubjPos.'</td>';
+            $returnOuput.='<td>'.$grade.'</td></tr>';
+          }
+          $returnOuput.='</table>';
+      echo $returnOuput;
+    }
+  }
+  catch(Exception $e)
+      {
+        echo "Error:". $e->getMessage();
+      }
+}
+//END STUDENT ANNUAL SUMMARY RESULT
 
 //Retrieve Affecctive ratings
 public function resultAffectiveTraits($studentid,$schid)
@@ -4842,7 +5559,7 @@ public function schoolAvatar($schid)
           else
           {
           $printOutput.='<div class="logo-img">
-          <h5><img src="'.$Image.'" alt="'.$schName.'" class="logo-img"></h5>
+          <h5><img src="'.$Image.'" alt="" class="logo-img"></h5>
           </div>';
           }
                     
@@ -4928,29 +5645,21 @@ public function isSubjectTeacher($staff_id,$subjectid,$class_id,$schid)
 
 
 //View Published results
-public function findPublishedResult($classid,$schoolid,$status='Yes')
+function findPublishedResult($classid,$schoolid,$status='Yes')
 	    {
 		 try {
       $termid = $this->getActiveTerm($schoolid);
       $sessionid = $this->getActiveSession($schoolid);
-      //Removed DISTINCT Keyword in the SELECT Statement
-        $query ="SELECT  
+        $query ="SELECT classpositionals.student_id AS StudentID,
         CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname,
-        student_initial.id AS StudentID,
-        classpositionals.id AS RecordID,
-        termgrandtotal.GrandTermTotal AS CumulativeScores,
-        classpositionals.termposition AS Position,
         class.class_name AS ClassName,
-        session.session AS SessionName,
         sch_term.term AS TermName
-	      FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
+        FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
         INNER JOIN class ON class.id=classpositionals.class_id
-        INNER JOIN termgrandtotal ON termgrandtotal.student_id=student_initial.id
-        INNER JOIN session ON session.id=classpositionals.session_id
         INNER JOIN sch_term ON sch_term.term_id=classpositionals.term_id 
-	      WHERE classpositionals.class_id=? AND 
+        WHERE classpositionals.class_id=? AND 
         classpositionals.term_id=? AND classpositionals.session_id=?
-        AND classpositionals.school_id=? AND classpositionals.published_status=?";
+        AND classpositionals.school_id=? AND classpositionals.published_status=? ORDER BY Fullname";
         $this->conn->query($query);
         $this->conn->bind(1, $classid, PDO::PARAM_INT); 
 		    $this->conn->bind(2, $termid, PDO::PARAM_INT);
@@ -4968,7 +5677,6 @@ public function findPublishedResult($classid,$schoolid,$status='Yes')
           <th>Student Name</th>
           <TH>Class</th>
           <TH>Term</th>
-          <TH>Session</th>
           <TH>Cum Total</th>
           <TH>Avg</th>
           <TH>Position</th>
@@ -4977,18 +5685,24 @@ public function findPublishedResult($classid,$schoolid,$status='Yes')
 				  $ci=1;
           foreach($output as $row => $key)
           {
-          $studID= $key['StudentID'];
-          $av = $this->terminalAverage($studID,$classid,$sessionid,$termid,$schoolid);
-          $printOutput.='<tr>';
-          $printOutput.='<td>'.$ci.'</td>';
-          $printOutput.='<td>'.$key['Fullname'].'</td>';
-          $printOutput.='<td>'.$key['ClassName'].'</td>';
-          $printOutput.='<td>'.$key['TermName'].'</td>';
-          $printOutput.='<td>'.$key['SessionName'].'</td>';
-          $printOutput.='<td>'.$key['CumulativeScores'].'</td>';
-          $printOutput.='<td>'.$av.'</td>';
-          $printOutput.='<td>'.$this->ordinalSuffix($key['Position']).'</td>';
-          $printOutput.='<td><button type="button"  data-recordid="'.$key['StudentID'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-plus" aria-hidden="true"></i>Add Traits & comments</button></td>';
+          
+              $studentID = $key['StudentID'];
+              $studentName = $key['Fullname'];
+              $classname = $key['ClassName'];
+              $termname = $key['TermName'];
+              $cumTotal = $this->grandTotals($studentID,$classid,$sessionid,$termid,$schoolid);
+              $av = $this->terminalAverage($studentID,$classid,$sessionid,$termid,$schoolid);
+              //check promotion status                  
+              $printOutput.='<tr>';
+              $printOutput.='<td>'.$ci.'</td>';
+              $printOutput.='<td>'.$studentName.'</td>';
+              $printOutput.='<td>'.$classname.'</td>';
+              $printOutput.='<td>'.$termname.'</td>';
+              $printOutput.='<td>'.$cumTotal.'</td>';
+              $printOutput.='<td>'.$this->maxScoresAvailable($classid,$schoolid).'</td>';
+              $printOutput.='<td>'.$av.'</td>';
+              $printOutput.='<td>'.$this->getClassPosition($studentID,$classid,$sessionid,$termid,$schoolid).'</td>';
+          $printOutput.='<td><button type="button"  data-recordid="'.$key['StudentID'].'" class="btn btn-info btn-sm" id="newbtn"><i class="fa fa-plus" aria-hidden="true"></i>Add comments</button></td>';
           $printOutput.='</tr>'; 
           $ci++;
           }
@@ -5005,7 +5719,6 @@ public function findPublishedResult($classid,$schoolid,$status='Yes')
             echo "Error:". $e->getMessage();
         }
 	    }
-
 //end published results
 
 //Fetch result for approval
