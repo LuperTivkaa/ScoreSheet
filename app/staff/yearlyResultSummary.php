@@ -25,17 +25,17 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
       
       $studclass = filter_input(INPUT_POST, "studclass", FILTER_SANITIZE_NUMBER_INT);
       $session = filter_input(INPUT_POST, "session", FILTER_SANITIZE_NUMBER_INT);
-      $term = filter_input(INPUT_POST, "term", FILTER_SANITIZE_NUMBER_INT);
+      //$term = filter_input(INPUT_POST, "term", FILTER_SANITIZE_NUMBER_INT);
       
       //check for empty variable
-        if(empty($studclass) || empty($session)  || empty($term) )
+        if(empty($studclass) || empty($session) )
         {
         exit("Please fill all the fields...");
         }
         else
         {
         //Display terminal result summary
-        $printObj->yearlyResultSummary($studclass,$session,$term,$clientid);
+        $printObj->yearlyResultSummary($studclass,$session,$clientid);
         }
    }
 else

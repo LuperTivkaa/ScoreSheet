@@ -23,7 +23,7 @@ $staff->staffUser($myroleid,$clientid);
                          <h5 class="top-header">View Annual Result Summary</h6>
                         <div class="row">
 
-                            <div class="col-12">
+                            <div class="col-6">
                             <label for="studclass">Select Class</label>
                             <select class="custom-select  form-control" id="studclass">
                               <?php
@@ -37,15 +37,6 @@ $staff->staffUser($myroleid,$clientid);
                             <select class="custom-select  form-control" id="session">
                                 <?php
                                 $staff->ActiveSession($clientid);
-                                ?>
-                            </select>
-                            </div>
-
-                            <div class="col-6">
-                            <label for="term">Term</label>
-                            <select class="custom-select  form-control" id="term">
-                                <?php
-                                $client->loadTerm($clientid);
                                 ?>
                             </select>
                             </div>
