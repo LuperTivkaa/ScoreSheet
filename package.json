@@ -16,9 +16,7 @@
     "url": "https://github.com/LuperTivkaa/ScoreSheet/issues"
   },
   "homepage": "https://github.com/LuperTivkaa/ScoreSheet#readme",
-  "dependencies": {
-    "gulp": "^3.9.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
