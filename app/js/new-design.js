@@ -65,7 +65,6 @@ $('#new-content').on('click', '#newbtn', function(e) {
     var recordid = $(this).data('recordid');
     var classid = $(this).data('classid');
     var scores = $(this).data('scores');
-
     $('#edit-scores').val(scores);
     $('#record-id').val(recordid);
     $('#studclassid').val(classid);
@@ -820,6 +819,74 @@ function publishResult(myclass, session, term) {
     });
 }
 
+//process annual result summary
+$("#new-content").on('click', '#process-annual-result', function(e) {
+    e.preventDefault();
+    $('#process-annual-result').text('Processing...').prop("disabled", true);
+    //var id = $(this).data('id');
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    //var term = $("#term option:selected").val();
+
+    annual_Result(myclass, session);
+});
+//call back for delete affective skills
+function annual_Result(myclass, session) {
+    $.ajax({
+        url: 'annualResultProcess.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                //call a reload function here
+                //reloadPsychoSkills(recordid);
+                $('#process-annual-result').text('Process Annual Result').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").text("Action Completed Successfully");
+            } else {
+                //$('#add-comments').text('Add Comment').prop("disabled", true);
+                $('#process-annual-result').text('Process Annual Result').prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//end method to process annual result summary
+
+//Reset annual Result processing
+$("#new-content").on('click', '#reset-annual-result', function(e) {
+    e.preventDefault();
+    $('#reset-annual-result').text("Reseting...").prop("disabled", true);
+
+    var myclass = $("#studentclass option:selected").val();
+    var session = $("#session option:selected").val();
+    //var term = $("#term option:selected").val();
+
+    reset_Annual_Result(myclass, session);
+});
+
+function reset_Annual_Result(myclass, session) {
+    $.ajax({
+        url: 'resetAnnualResult.php',
+        type: 'POST',
+        data: { myclass: myclass, session: session },
+        success: function(response) {
+            var data = $.trim(response);
+            if (data === "ok") {
+                $('#reset-annual-result').text('Undo Process Annual Result').prop("disabled", false);
+                $("#my-info").addClass("info");
+                $("#my-info").html("Annual Result Reset Successfully");
+            } else {
+                $('#reset-annual-result').text("Undo Process Annual Result").prop("disabled", false);
+                $("#my-info").addClass("error");
+                $("#my-info").html(data);
+            }
+        },
+    });
+}
+//End reset annual result processing
 
 //Approve Result 
 $("#new-content").on('click', '#result-approval', function(e) {
@@ -1646,7 +1713,7 @@ $("#new-content").on('click', '#promote', function(e) {
     var recordid = $(this).data('recordid');
     var studentid = $(this).data('studentid');
 
-    $(this).text('Please wait...');
+    $(this).text('Please wait...').prop("disabled", true);
 
     promote(recordid, promotedClass, promotedSess, studentid, mybutton);
 });
@@ -1663,10 +1730,10 @@ function promote(recordid, promotedClass, promotedSess, studentid, mybutton) {
                 mybutton.attr('id', 'unpromote');
                 //alert(id);
                 //$(this).attr('id', 'disapprove');
-                mybutton.text('Unpromote');
+                mybutton.text('Unpromote').prop("disabled", false);
                 mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
             } else {
-                mybutton.text('Promote');
+                mybutton.text('Promote').prop("disabled", true);
                 $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }

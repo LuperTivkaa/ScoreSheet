@@ -2918,7 +2918,7 @@ $("#new-content").on('click', '#promote', function(e) {
     var recordid = $(this).data('recordid');
     var studentid = $(this).data('studentid');
 
-    $(this).text('Please wait...');
+    $(this).text('Please wait...').prop("disabled", true);
 
     promote(recordid, promotedClass, promotedSess, studentid, mybutton);
 });
@@ -2935,10 +2935,10 @@ function promote(recordid, promotedClass, promotedSess, studentid, mybutton) {
                 mybutton.attr('id', 'unpromote');
                 //alert(id);
                 //$(this).attr('id', 'disapprove');
-                mybutton.text('Unpromote');
+                mybutton.text('Unpromote').prop("disabled", false);
                 mybutton.removeClass('not-approvedBtn').addClass('approvedBtn');
             } else {
-                mybutton.text('Promote');
+                mybutton.text('Promote').prop("disabled", true);
                 $("#my-info").addClass("error");
                 $("#my-info").html(data);
             }
