@@ -45,7 +45,7 @@ $myroleid = $_SESSION['user_info'][2];
 $staff->staffUser($myroleid,$schid);
     ?>
 
-<body>
+<body onload="window.print()">
 
 <div class="result-content-wrapper">
     <div class="national-emblem">
@@ -110,14 +110,14 @@ $staff->staffUser($myroleid,$schid);
             
     </div>
     <!-- End student performancen container -->
-    <?php if($term==3)
+    <?php if($term==33)
         {
             echo "<h6>STUDENT'S ANNUAL RESULT SUMMARY</h6>";
         }
     ?>
     <div class="profile-details">
             <?php
-            if($term==3){
+            if($term==33){
             $print->annualScoresDetails($studentid,$class,$session,$schoolid);
             }
             ?>
@@ -125,7 +125,7 @@ $staff->staffUser($myroleid,$schid);
     <!-- Begin Annual Summary Reports -->
     <div class="student-performance-container">
                 <?php
-                if($term == 3){
+                if($term == 33){
                 $print->studentAnnualResultSummary($studentid,$class,$session,$schoolid);
                 }
                 ?>
@@ -232,12 +232,6 @@ $staff->staffUser($myroleid,$schid);
 
 
 </div>
-
-<script>
-$(window).load(function() {
-  window.print();
-});
-</script>
 </body>
 
 </html>
