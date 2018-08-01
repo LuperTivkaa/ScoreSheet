@@ -182,7 +182,7 @@
 .stud-details-sub-item {
   font-family: "Barlow Condensed";
   font-size: .7em;
-  color: #566573;
+  color: #000;
   margin-bottom: 0px;
   padding-left: 1px; }
 
@@ -486,16 +486,16 @@ a:hover {
     font-size: .6em; }
 
 .rating-table {
-  border: 0.5px solid #e5e7e9;
+  border: 0.5px solid #000;
   border-collapse: collapse;
   font-family: "Open Sans"; }
   .rating-table td {
-    border: 1px solid #e5e7e9;
+    border: 1px solid #000;
     text-align: left;
     font-size: .4em;
     white-space: nowrap; }
   .rating-table th {
-    border: 0.5px solid #e5e7e9;
+    border: 0.5px solid #000;
     text-align: left;
     font-size: .4em; }
 
@@ -635,7 +635,7 @@ a:hover {
 .item-container span {
   font-family: "Quicksand";
   color: #000;
-  font-size: .5em;
+  font-size: .7em;
   font-weight: 400; }
 
 .item-container .grading-header {
@@ -684,7 +684,7 @@ a:hover {
   margin-right: -5px; }
   .grading-items span {
     margin-top: .6px;
-    color: lightgrey; }
+    color: #000; }
 
 .logo-img {
   width: 60px;
@@ -735,15 +735,14 @@ a:hover {
 
 .staff-comments-header {
   display: block;
-  font-family: "Open Sans";
-  font-size: 11px;
-  font-weight: bold; }
+  font-family: "Fjalla One";
+  font-size: .6em;
+  color: #000; }
 
 .staff-comments-item {
   display: block;
   font-family: "Open Sans";
   font-size: 10px;
-  font-weight: bold;
   color: #96a1ac; }
 
 .domain-ratings-header {
