@@ -3,7 +3,48 @@ namespace ScoreSheet;
 use \PDO;
 class printRoutines extends \ScoreSheet\staff{
 
+//next session
+public function NextSession($clientid)
+    {
+        try {
+                $query ="SELECT id,session FROM session WHERE sess_inst_id=? order by id DESC LIMIT 1";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $myResult = $this->conn->resultset();
+                    foreach ($myResult as $row => $key) 
+                    {
+                        $session = $key['session'];         
+                    }
+                    return $session;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Retrieving session";
+        }
+    }
+//next session
 
+    //Method to get current session
+    public function CurrentSession($sessid,$clientid)
+    {
+        try {
+                $query ="SELECT session FROM session WHERE sess_inst_id=? AND id=?";
+                    $this->conn->query($query);
+                    $this->conn->bind(1, $clientid, PDO::PARAM_INT);
+                    $this->conn->bind(2, $sessid, PDO::PARAM_INT);
+                    $myResult = $this->conn->resultset();
+                    foreach ($myResult as $row => $key) 
+                    {
+                        $session = $key['session'];         
+                    }
+                    return $session;
+        }// End of try catch block
+         catch(Exception $e)
+        {
+            echo "Error: Retrieving session";
+        }
+    }
+    //End method to get current session 
     //COUNT OF STUDENTS
 
 function studentCount($classid,$sessionid,$termid,$schid)
@@ -160,8 +201,44 @@ function academicInfo($studentid,$classid,$sessionid,$termid,$schid)
     }
 
 }
-
 //Method to get student user details and scores details For Result Sheet
+
+//promoted student academic info
+
+function promotedAcademicInfo($studentid,$schid)
+    {
+    try{
+        
+    $query =  "SELECT student_class.student_id AS StudID, class.class_name AS MyClass,class.id AS ClassID, session.session AS MySess FROM student_class INNER JOIN class ON student_class.stud_class=class.id INNER JOIN session ON session.id=student_class.stud_sess_id WHERE student_class.student_id=? AND student_class.stud_school_id=? ORDER BY ClassID DESC LIMIT 1 ";
+    $this->conn->query($query);
+    $this->conn->bind(1, $studentid, PDO::PARAM_INT);
+    $this->conn->bind(2, $schid, PDO::PARAM_INT);
+    
+    $printOutput="";
+    $output = $this->conn->resultset(); 
+    $null ="No";
+        if($output)
+        { 
+            foreach($output as $row => $key)
+            {
+                $class = $key['MyClass'];          
+            }
+            $sess = $this->NextSession($schid);
+            $printOutput.='<div class="student-item colm"><h6>Next Class</h6><span>'.$class.'</span></div>';
+            $printOutput.='<div class="student-item colm"><h6>Next Session</h6><span>'.$sess.'</span></div>';
+            return $printOutput;
+        }
+        else{
+            return $null;
+        }
+    }
+    catch(Exception $e)
+    {
+        echo "Error:". $e->getMessage();
+    }
+
+}
+//end promoted student academic Info
 
 //Method to get student user details and scores details For Result Sheet
 function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
@@ -205,21 +282,32 @@ function userScoresDetails($studentid,$classid,$sessionid,$termid,$schid)
 //METHOD TO COMPUTE STUDENT ANNUAL SCORES DETAILS
 function annualScoresDetails($studentid,$classid,$sessionid,$schid)
 	    {
-                    $printOutput="";
-                    $annualTotal = $this->annualTotals($studentid,$classid,$sessionid,$schid);
-                    $annualAv = $this->annualAverage($studentid,$classid,$sessionid,$schid);
-                    $annualPos= $this->getAnnualPosition($studentid,$classid,$sessionid,$schid);
+            $printOutput="";
+            $currentSess = $this->CurrentSession($sessionid,$schid);
+            $cumTotal = $this->annualTotals($studentid,$classid,$sessionid,$schid);
+            
+            $pos= $this->getAnnualPosition($studentid,$classid,$sessionid,$schid);
 
-                    $count = $this->annualStudentCount($classid,$sessionid,$schid);
-                    
-    
-                    $printOutput.='<div class="student-item colm"><h6>Annual Students</h6><span>'.$count.'</span></div>';
-                    $printOutput.='<div class="student-item colm"><h6>Annual Scores</h6><span>'.$annualTotal.'</span></div>';
-                    $printOutput.='<div class="student-item colm"><h6>Annual Average</h6><span>'.$annualAv.'</span></div>';
-                    $printOutput.='<div class="student-item colm"><h6>Annual Position</h6><span>'.$annualPos.'</span></div>';
-					                   
-                echo $printOutput;
-        
+            $prefix = $this->schoolPrefix($schid);
+
+            $info = $this->studentBio($studentid,$schid);
+            $acadeInfo = $this->promotedAcademicInfo($studentid,$schid);
+            $count = $count = $this->annualStudentCount($classid,$sessionid,$schid);
+            $yearAdmitted = $this->yearAdmitted($studentid,$schid);
+            $studSerial = $this->studentSerialNumber($studentid,$schid);
+            
+            $terminalAv = $this->annualAverage($studentid,$classid,$sessionid,$schid);
+           
+            $printOutput.=$info;
+            $printOutput.='<h4 class="stud-details-sub-item">'.$prefix.'/'.$yearAdmitted.'/'.$studSerial.'</h4>';
+            $printOutput.='<div class="item-container">';
+            $printOutput.=$acadeInfo;
+            $printOutput.='<div class="student-item colm"><h6> Session</h6><span>'.$currentSess.'</span></div>';
+            $printOutput.='<div class="student-item colm"><h6>Students</h6><span>'.$count.'</span></div>';
+            $printOutput.='<div class="student-item colm"><h6>Annual Total</h6><span>'.$cumTotal.'</span></div>';
+            $printOutput.='<div class="student-item colm"><h6>Annual Average</h6><span>'.$terminalAv.'</span></div>';
+            $printOutput.='<div class="student-item colm"><h6>Annual Position</h6><span>'.$pos.'</span></div></div>';
+        echo $printOutput;
 	}
 //END METHOD TO COMPUTE STUDENT ANNUAL SCORES DETAILS
 
