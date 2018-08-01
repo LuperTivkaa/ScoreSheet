@@ -217,7 +217,7 @@
                             .stud-details-sub-item {
                                 font-family: $highlight;
                                 font-size: .7em;
-                                color: $list-bg-Color;
+                                color: $black;
                                 margin-bottom: 0px;
                                 padding-left: 1px;
                             }
@@ -587,13 +587,13 @@
                             
                             //////////////////////////////////////////////////
                             .rating-table {
-                                border: 0.5px solid #e5e7e9;
+                                border: 0.5px solid $black;
                                 border-collapse: collapse;
                                 //font-family: $datatable;
                                 font-family: $font-secondary;
                                 //margin-left: 3px;
                                 td {
-                                    border: 1px solid #e5e7e9;
+                                    border: 1px solid $black;
                                     text-align: left;
                                     //padding: 0.2em;
                                     //font-family: $font-primary;
@@ -601,7 +601,7 @@
                                     white-space: nowrap;
                                 }
                                 th {
-                                    border: 0.5px solid #e5e7e9;
+                                    border: 0.5px solid $black;
                                     text-align: left;
                                     font-size: .4em;
                                     //font-weight: 20;
@@ -790,7 +790,7 @@
                                 span {
                                     font-family: $result-font1;
                                     color: $black;
-                                    font-size: .5em;
+                                    font-size: .7em;
                                     font-weight: 400;
                                 }
                                 .grading-header {
@@ -852,7 +852,7 @@
                                 margin-right: -5px;
                                 span {
                                     margin-top: .6px;
-                                    color: lightgrey;
+                                    color: $black;
                                 }
                             }
                             
@@ -926,16 +926,17 @@
                             
                             .staff-comments-header {
                                 display: block;
-                                font-family: $font-secondary;
-                                font-size: 11px;
-                                font-weight: bold;
+                                font-family: $font-primary;
+                                font-size: .6em;
+                                //font-weight: bold;
+                                color: $black; 
                             }
                             
                             .staff-comments-item {
                                 display: block;
                                 font-family: $font-secondary;
                                 font-size: 10px;
-                                font-weight: bold;
+                                //font-weight: bold;
                                 color: #96a1ac;
                             }
                             
