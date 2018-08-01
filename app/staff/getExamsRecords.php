@@ -20,10 +20,10 @@ if ($_SERVER["REQUEST_METHOD"]=="POST")
 {
 $classid = filter_input(INPUT_POST, "studentclass", FILTER_SANITIZE_NUMBER_INT);
 $session = filter_input(INPUT_POST, "session", FILTER_SANITIZE_NUMBER_INT);
-$term = filter_input(INPUT_POST, "term", FILTER_SANITIZE_NUMBER_INT);
+//$term = filter_input(INPUT_POST, "term", FILTER_SANITIZE_NUMBER_INT);
 // $app->setPin($id);
 // $did = $app->getPin();
-$staff->promotionSummarySheet($classid,$term,$session,$clientid);
+$staff->promotionSummarySheet($classid,$session,$clientid);
 }
 else
 {
