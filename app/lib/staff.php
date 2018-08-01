@@ -1601,7 +1601,7 @@ public function annualAverage($studentid,$classid,$sessionid,$schid)
 public function annualSubjectAverage($subjectid,$classid,$sessionid,$schid)
 	  {		
 		try {
-      $query ="SELECT AnnualSubjAverage AS YrlySubjectAv
+      $query ="SELECT ROUND(AnnualSubjAverage/3,3) AS YrlySubjectAv
       FROM  annualsubjectaverage
       WHERE subject_id=? AND 
       class_id=? AND session_id=? AND sch_id=?"; 
@@ -2208,6 +2208,25 @@ public function annualSubjectPosition($classid,$subjid,$sessionid,$schid)
     { 
       try
       {
+        //check for unique records
+        $query ="SELECT class_id AS ID
+		    FROM annual_subject_position  
+          WHERE 
+          session_id= ? AND 
+          class_id=? AND
+          subject_id=? AND
+          sch_id= ?";
+          $this->conn->query($query); 
+          $this->conn->bind(1, $sessionid, PDO::PARAM_INT);
+          $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+          $this->conn->bind(3, $subjid, PDO::PARAM_INT);
+          $this->conn->bind(4, $schid, PDO::PARAM_INT);
+          $chk = $this->conn->resultset();
+          if($chk && $this->conn->rowCount() >=1)
+          {
+            exit("Record exist!");
+          }
+          
       //check for lock result
       $this->lockResult($classid,$schid);
       $query ="SELECT student_id AS studentID,YearlySubjTotal AS Total
@@ -2327,7 +2346,7 @@ public function annualSubjectPosition($classid,$subjid,$sessionid,$schid)
             {
               exit("No Record is found matching your selection!");
             }
-      }
+      }//end catch
       catch(Exception $e)
       {
           echo "Error:". $e->getMessage();
@@ -2340,6 +2359,23 @@ public function annualPosition($classid,$sessionid,$schid)
     { 
       try
       {
+        //check for unique records
+        $query ="SELECT class_id AS ID
+		    FROM annual_result  
+          WHERE 
+          session_id= ? AND 
+          class_id=? AND 
+          sch_id= ?";
+          $this->conn->query($query); 
+          $this->conn->bind(1, $sessionid, PDO::PARAM_INT);
+          $this->conn->bind(2, $classid, PDO::PARAM_INT); 
+          $this->conn->bind(3, $schid, PDO::PARAM_INT);
+          $chk = $this->conn->resultset();
+          if($chk && $this->conn->rowCount() >=1)
+          {
+            exit("Record exist!");
+          }
+
       //check for lock result
       $this->lockResult($classid,$schid);
       $query ="SELECT student_id AS studentID,AnnualTotal AS Total
@@ -2916,7 +2952,6 @@ public function classResultHeader($classid,$termid,$sessionid,$schoolid)
 }
 //end class result summary
 
-//Examination Summary Sheet
 
 //View result summary
 public function viewResultSummary($classid,$termid,$sessionid,$schoolid)
@@ -3044,24 +3079,23 @@ public function classResultSheet($classid,$termid,$sessionid,$schoolid)
 // END RESULT SHEET BY CLASS
 
 
-public function promotionSummarySheet($classid,$termid,$sessionid,$schoolid)
+public function promotionSummarySheet($classid,$sessionid,$schoolid)
 	    {
 		  try {
 			
-        $query ="SELECT classpositionals.id AS ID, classpositionals.student_id AS StudentID,
-        classpositionals.promotion_status AS PromotionStatus,
+        $query ="SELECT annual_result.id AS ID, annual_result.student_id AS StudentID,
+        annual_result.promotion_status AS PromotionStatus,
+        class.class_name AS ClassName,
         CONCAT(student_initial.surname, ' ', student_initial.firstName) AS Fullname
-	      FROM classpositionals INNER JOIN student_initial ON student_initial.id=classpositionals.student_id
-        INNER JOIN class ON class.id=classpositionals.class_id
-	      WHERE classpositionals.class_id=? AND 
-        classpositionals.term_id=? AND classpositionals.session_id=?
-        AND classpositionals.school_id=?";
+	      FROM annual_result INNER JOIN student_initial ON student_initial.id=annual_result.student_id
+        INNER JOIN class ON class.id=annual_result.class_id
+	      WHERE annual_result.class_id=? AND annual_result.session_id=?
+        AND annual_result.sch_id=?";
         $this->conn->query($query);
         //$this->conn->bind(1, $subjectid, PDO::PARAM_INT);
         $this->conn->bind(1, $classid, PDO::PARAM_INT); 
-				$this->conn->bind(2, $termid, PDO::PARAM_INT);
-        $this->conn->bind(3, $sessionid, PDO::PARAM_INT); 
-				$this->conn->bind(4, $schoolid, PDO::PARAM_INT);
+        $this->conn->bind(2, $sessionid, PDO::PARAM_INT); 
+				$this->conn->bind(3, $schoolid, PDO::PARAM_INT);
         $output = $this->conn->resultset(); 
 					//echo count($output);
             $sessOutput ='';
@@ -3074,19 +3108,21 @@ public function promotionSummarySheet($classid,$termid,$sessionid,$schoolid)
           $printOutput.= "<table class='table'>";
           $printOutput.="<tr>
           <th>Student Name</th>
-          <TH>Term Grand Total</th>
-           <TH>Maximum Scores</th>
-          <TH>Student Average</th>
-          <TH>Position In Class</th>
-          <TH>Action</th>
+          <th>Current Class</th>
+          <TH>Annual Total</th>
+          <TH>Annual Average</th>
+          <TH>Annual Position</th>
+          <TH>Promote</th>
+          <TH>Print</th>
           </tr>";
 					foreach($output as $row => $key)
 					{
             //Promotional status
             $studentID = $key['StudentID'];
-						$studentName = $key['Fullname'];
-            $cumTotal = $this->grandTotals($studentID,$classid,$sessionid,$termid,$schoolid);
-            $av = $this->terminalAverage($studentID,$classid,$sessionid,$termid,$schoolid);
+            $studentName = $key['Fullname'];
+            $className = $key['ClassName'];
+            $cumTotal = $this->annualTotals($studentID,$classid,$sessionid,$schoolid);
+            $av = $this->annualAverage($studentID,$classid,$sessionid,$schoolid);
             //check promotion status
                         if($key['PromotionStatus'] =='On'){
                         $promotion_status = '<button type="button" data-studentid="'.$key['StudentID'].'" data-recordid="'.$key['ID'].'" class="approvedBtn" id="unpromote">Unpromote</button>';
@@ -3094,12 +3130,14 @@ public function promotionSummarySheet($classid,$termid,$sessionid,$schoolid)
                         $promotion_status= '<button type="button" data-studentid="'.$key['StudentID'].'"  data-recordid="'.$key['ID'].'" class="not-approvedBtn" id="promote">Promote</button>';
                         }
 						$printOutput.='<tr>';
-						$printOutput.='<td>'.$studentName.'</td>';
+            $printOutput.='<td>'.$studentName.'</td>';
+            $printOutput.='<td>'.$className.'</td>';
             $printOutput.='<td>'.$cumTotal.'</td>';
-            $printOutput.='<td>'.$this->maxScoresAvailable($classid,$schoolid).'</td>';
+            //$printOutput.='<td>'.$this->maxScoresAvailable($classid,$schoolid).'</td>';
             $printOutput.='<td>'.$av.'</td>';
-            $printOutput.='<td>'.$this->getClassPosition($studentID,$classid,$sessionid,$termid,$schoolid).'</td>';
+            $printOutput.='<td>'.$this->getAnnualPosition($studentID,$classid,$sessionid,$schoolid).'</td>';
             $printOutput.='<td>'.$promotion_status.'</td>';
+            $printOutput.='<td><a href="annualResultSheet.php?studentid='.$studentID.'&class='.$classid.'&session='.$sessionid.'&schoolid='.$schoolid.'" target="_blank" class="btn btn-success" id="result-link"><i class="fa fa-print" aria-hidden="true"></i> Print</a></td>';
 						$printOutput.='</tr>';
 					}
           $printOutput.='</table>';
@@ -3218,7 +3256,7 @@ public function promoteStudent($studentid,
 
                                       }else{
                                           
-                                            $sqlStmt = "UPDATE classpositionals SET promotion_status=? WHERE id=? AND school_id=?";
+                                            $sqlStmt = "UPDATE annual_result SET promotion_status=? WHERE id=? AND sch_id=?";
                                             $this->conn->query($sqlStmt);
                                             $this->conn->bind(1, $promotionStatus, PDO::PARAM_STR);
                                             $this->conn->bind(2, $recordid, PDO::PARAM_INT);
@@ -3259,7 +3297,7 @@ public function unpromoteStudent($studentid,$recordid,$class,
       
         try {
 
-                        $sqlStmt = "UPDATE classpositionals SET promotion_status=? WHERE id=? AND school_id=?";
+                        $sqlStmt = "UPDATE annual_result SET promotion_status=? WHERE id=? AND sch_id=?";
                             $this->conn->query($sqlStmt);
                             $this->conn->bind(1, $promotionStatus, PDO::PARAM_STR);
                             $this->conn->bind(2, $recordid, PDO::PARAM_INT);
@@ -5267,8 +5305,7 @@ public function studentAnnualResultSummary($studentid,$classid,$sessid,$schid)
       $returnOuput.='<th>Third Term</th>';
       $returnOuput.='<th>Total</th>';
       $returnOuput.='<th>class Average</th>';
-      $returnOuput.='<th>Subject Position</th>';
-      $returnOuput.='<th>Grade</th></tr>'; 
+      $returnOuput.='<th>Subject Position</th></tr>'; 
       //create a second row based on the number of subjects available
 
           foreach($output as $row => $key)
@@ -5280,8 +5317,8 @@ public function studentAnnualResultSummary($studentid,$classid,$sessid,$schid)
             $subj_Total_3 = $this->subjectTotals($studentid,$subjID,$classid,$sessid,3,$schid);
             $yrlySubjTotal = $this->yearlySubjectTotals($studentid,$subjID,$classid,$sessid,$schid);
             $yrlyAv = $this->annualSubjectAverage($subjID,$classid,$sessid,$schid);
-            $yrlySubjPos = $this->getAnnualSubjPosition($subjID,$subjID,$classid,$sessid,$schid);
-            $grade = $this->singleGrade($yrlySubjTotal);
+            $yrlySubjPos = $this->getAnnualSubjPosition($studentid,$subjID,$classid,$sessid,$schid);
+            //$grade = $this->singleGrade($yrlySubjTotal);
             
             $returnOuput.='<tr>';
             $returnOuput.='<td>'.$subjName.'</td>';
@@ -5290,8 +5327,7 @@ public function studentAnnualResultSummary($studentid,$classid,$sessid,$schid)
             $returnOuput.='<td>'.$subj_Total_3.'</td>';
             $returnOuput.='<td>'.$yrlySubjTotal.'</td>';
             $returnOuput.='<td>'.$yrlyAv.'</td>';
-            $returnOuput.='<td>'.$yrlySubjPos.'</td>';
-            $returnOuput.='<td>'.$grade.'</td></tr>';
+            $returnOuput.='<td>'.$yrlySubjPos.'</td></tr>';
           }
           $returnOuput.='</table>';
       echo $returnOuput;
@@ -5317,12 +5353,14 @@ public function resultAffectiveTraits($studentid,$schid)
              INNER JOIN affective_domain ON affective_domain.id=stud_affective_skills.domain_id
              INNER JOIN rating_system ON rating_system.id=stud_affective_skills.rating
              WHERE 
-             stud_affective_skills.studentid=? 
+             stud_affective_skills.studentid=? AND stud_affective_skills.termid=? AND stud_affective_skills.sessionid=?
              AND stud_affective_skills.schid=?";
           $this->conn->query($query);
           //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
 					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
-          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $this->conn->bind(2, $termid, PDO::PARAM_INT);
+          $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+          $this->conn->bind(4, $schid, PDO::PARAM_INT);
           $myResult= $this->conn->resultset();
 
                         //loop through the result
@@ -5380,12 +5418,14 @@ public function resultPsychomotorSkills($studentid,$schid)
              INNER JOIN psychomotor_skills ON psychomotor_skills.id=stud_psychomotor_skills.psycho_domain
              INNER JOIN rating_system ON rating_system.id=stud_psychomotor_skills.rating
              WHERE 
-             stud_psychomotor_skills.studentid=? 
+             stud_psychomotor_skills.studentid=? AND stud_psychomotor_skills.termid=? AND stud_psychomotor_skills.sessionid=?
              AND stud_psychomotor_skills.schid=?";
           $this->conn->query($query);
           //$this->conn->bind(1, $studentID, PDO::PARAM_INT);
 					$this->conn->bind(1, $studentid, PDO::PARAM_INT);
-          $this->conn->bind(2, $schid, PDO::PARAM_INT);
+          $this->conn->bind(2, $termid, PDO::PARAM_INT);
+          $this->conn->bind(3, $sessionid, PDO::PARAM_INT);
+          $this->conn->bind(4, $schid, PDO::PARAM_INT);
           $myResult= $this->conn->resultset();
 
                         //loop through the result
